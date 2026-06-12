@@ -1,0 +1,166 @@
+{% extends "base.html" %}
+
+{% block body_class %}template-homepage bg-light text-dark{% endblock %}
+
+{% block content %}
+<main>
+    <section id="{{ page.hero_anchor_id|default:'hero' }}" class="bg-white border-bottom">
+        <div class="container py-5">
+            <div class="row align-items-center g-5">
+                <div class="col-lg-7">
+                    {% if page.hero_eyebrow %}
+                    <p class="text-uppercase small text-secondary mb-3">{{ page.hero_eyebrow }}</p>
+                    {% endif %}
+                    <h1 class="display-4 mb-4">{{ page.hero_title }}</h1>
+                    <p class="lead text-secondary mb-4">{{ page.hero_description|linebreaksbr }}</p>
+                    <div class="d-flex flex-column flex-sm-row gap-2">
+                        {% if page.hero_primary_button_label %}
+                        <a href="{{ page.hero_primary_button_url|default:'#contact' }}" class="btn btn-dark btn-lg">
+                            {{ page.hero_primary_button_label }}
+                        </a>
+                        {% endif %}
+                        {% if page.hero_secondary_button_label %}
+                        <a href="{{ page.hero_secondary_button_url|default:'#services' }}" class="btn btn-outline-dark btn-lg">
+                            {{ page.hero_secondary_button_label }}
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="col-lg-5">
+                    {% if page.hero_image %}
+                    <img
+                        src="{{ page.hero_image.url }}"
+                        class="img-fluid rounded-4 ks-hero-visual"
+                        alt="{{ page.hero_image_alt|default:page.hero_title }}"
+                    >
+                    {% else %}
+                    <div class="ks-hero-visual rounded-4 bg-body-tertiary d-flex align-items-center justify-content-center text-secondary">
+                        <div class="text-center px-4">
+                            <div class="small text-uppercase mb-1">Image placeholder</div>
+                            <div>Hero visual</div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="{{ page.clients_anchor_id|default:'clients' }}" class="py-5">
+        <div class="container">
+            <div class="card mb-5">
+                <div class="card-body p-4">
+                    <div class="row align-items-center g-4">
+                        <div class="col-lg-3">
+                            {% if page.clients_eyebrow %}
+                            <p class="text-uppercase small text-secondary mb-2">{{ page.clients_eyebrow }}</p>
+                            {% endif %}
+                            <h2 class="h5 mb-0">{{ page.clients_title }}</h2>
+                        </div>
+                        <div class="col-lg-9">
+                            <div class="row row-cols-2 row-cols-md-4 g-3">
+                                {% for client in page.client_logos.all %}
+                                <div class="col">
+                                    <div class="border rounded p-4 text-center text-secondary">
+                                        {{ client.name }}
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="{{ page.services_anchor_id|default:'services' }}" class="py-5">
+        <div class="container">
+            <div class="row align-items-end mb-5">
+                <div class="col-lg-8">
+                    <p class="text-uppercase small text-secondary mb-3">{{ page.services_kicker }}</p>
+                    <h2 class="h3 mb-3">{{ page.services_title }}</h2>
+                    {% if page.services_description %}
+                    <p class="lead text-secondary">{{ page.services_description|linebreaksbr }}</p>
+                    {% endif %}
+                </div>
+                <div class="col-lg-4 text-lg-end">
+                    {% if page.services_button_label %}
+                    <a href="{{ page.services_button_url|default:'#contact' }}" class="btn btn-outline-dark">
+                        {{ page.services_button_label }}
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="row g-4 mb-5">
+                {% for card in page.service_cards.all %}
+                <div class="col-md-6 col-lg-4">
+                    {% include "home/includes/home_card.html" with card=card button_text="View service" %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <section id="{{ page.products_anchor_id|default:'products' }}" class="py-5">
+        <div class="container">
+            <div class="row align-items-end mb-5">
+                <div class="col-lg-8">
+                    <p class="text-uppercase small text-secondary mb-3">{{ page.products_kicker }}</p>
+                    <h2 class="display-5 mb-3">{{ page.products_title }}</h2>
+                    {% if page.products_description %}
+                    <p class="lead text-secondary">{{ page.products_description|linebreaksbr }}</p>
+                    {% endif %}
+                </div>
+                <div class="col-lg-4 text-lg-end">
+                    {% if page.products_button_label %}
+                    <a href="{{ page.products_button_url|default:'#contact' }}" class="btn btn-outline-dark">
+                        {{ page.products_button_label }}
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="row g-4">
+                {% for card in page.product_cards.all %}
+                <div class="col-lg-6">
+                    {% include "home/includes/home_card.html" with card=card button_text="View product" %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <section id="{{ page.cta_anchor_id|default:'cta' }}" class="bg-white border-top">
+        <div class="container py-5">
+            <div class="row align-items-center g-4">
+                <div class="col-lg-8">
+                    {% if page.cta_kicker %}
+                    <p class="text-uppercase small text-secondary mb-3">{{ page.cta_kicker }}</p>
+                    {% endif %}
+                    <h2 class="display-5 mb-3">{{ page.cta_title }}</h2>
+                    {% if page.cta_description %}
+                    <p class="lead text-secondary mb-0">{{ page.cta_description|linebreaksbr }}</p>
+                    {% endif %}
+                </div>
+                <div class="col-lg-4 text-lg-end">
+                    <div class="d-flex flex-column flex-sm-row justify-content-lg-end gap-2">
+                        {% if page.cta_primary_button_label %}
+                        <a href="{{ page.cta_primary_button_url|default:'#contact' }}" class="btn btn-dark btn-lg">
+                            {{ page.cta_primary_button_label }}
+                        </a>
+                        {% endif %}
+                        {% if page.cta_secondary_button_label %}
+                        <a href="{{ page.cta_secondary_button_url|default:'#contact' }}" class="btn btn-outline-dark btn-lg">
+                            {{ page.cta_secondary_button_label }}
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+{% endblock content %}
