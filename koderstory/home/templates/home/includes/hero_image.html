@@ -1,0 +1,14 @@
+{% if page.hero_image %}
+<img
+    src="{{ page.hero_image.url }}"
+    class="{{ image_class|default:'img-fluid rounded-4 ks-hero-visual' }}"
+    alt="{{ page.hero_image_alt|default:page.hero_title }}"
+>
+{% else %}
+<div class="{{ placeholder_class|default:'ks-hero-visual rounded-4 bg-body-tertiary d-flex align-items-center justify-content-center text-secondary' }}">
+    <div class="text-center px-4">
+        <div class="small text-uppercase mb-1">Image placeholder</div>
+        <div>Hero visual</div>
+    </div>
+</div>
+{% endif %}

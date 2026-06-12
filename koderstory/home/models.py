@@ -79,7 +79,24 @@ class HomeProductCard(HomeCardBase):
 
 
 class HomePage(Page):
+    HERO_LAYOUT_CENTERED_SIMPLE = "centered_simple"
+    HERO_LAYOUT_CENTERED_PREVIEW = "centered_preview"
+    HERO_LAYOUT_SPLIT_IMAGE_RIGHT = "split_image_right"
+    HERO_LAYOUT_ANGLED_IMAGE_RIGHT = "angled_image_right"
+    HERO_LAYOUT_CHOICES = [
+        (HERO_LAYOUT_CENTERED_SIMPLE, "Centered simple"),
+        (HERO_LAYOUT_CENTERED_PREVIEW, "Centered with preview image"),
+        (HERO_LAYOUT_SPLIT_IMAGE_RIGHT, "Split image right"),
+        (HERO_LAYOUT_ANGLED_IMAGE_RIGHT, "Angled image right"),
+    ]
+
     hero_anchor_id = models.CharField(max_length=32, blank=True, default="hero")
+    hero_layout = models.CharField(
+        max_length=40,
+        choices=HERO_LAYOUT_CHOICES,
+        default=HERO_LAYOUT_SPLIT_IMAGE_RIGHT,
+        help_text="Choose how the hero content and image are arranged.",
+    )
     hero_eyebrow = models.CharField(max_length=80, blank=True)
     hero_title = models.CharField(max_length=180, blank=True)
     hero_description = models.TextField(blank=True)
@@ -91,6 +108,11 @@ class HomePage(Page):
         related_name="+",
     )
     hero_image_alt = models.CharField(max_length=120, blank=True)
+    hero_buttons_enabled = models.BooleanField(
+        default=False,
+        verbose_name="Enable hero buttons",
+        help_text="Show or hide the hero call-to-action buttons.",
+    )
     hero_primary_button_label = models.CharField(max_length=80, blank=True)
     hero_primary_button_url = models.CharField(max_length=255, blank=True)
     hero_secondary_button_label = models.CharField(max_length=80, blank=True)
@@ -123,10 +145,24 @@ class HomePage(Page):
     cta_secondary_button_label = models.CharField(max_length=80, blank=True)
     cta_secondary_button_url = models.CharField(max_length=255, blank=True)
 
+    @property
+    def hero_template_name(self):
+        template_names = {
+            self.HERO_LAYOUT_CENTERED_SIMPLE: "home/includes/heroes/centered_simple.html",
+            self.HERO_LAYOUT_CENTERED_PREVIEW: "home/includes/heroes/centered_preview.html",
+            self.HERO_LAYOUT_SPLIT_IMAGE_RIGHT: "home/includes/heroes/split_image_right.html",
+            self.HERO_LAYOUT_ANGLED_IMAGE_RIGHT: "home/includes/heroes/angled_image_right.html",
+        }
+        return template_names.get(
+            self.hero_layout,
+            "home/includes/heroes/split_image_right.html",
+        )
+
     content_panels = Page.content_panels + [
         MultiFieldPanel(
             [
                 FieldPanel("hero_anchor_id"),
+                FieldPanel("hero_layout"),
                 FieldPanel("hero_eyebrow"),
                 FieldPanel("hero_title"),
                 FieldPanel("hero_description"),
@@ -136,17 +172,25 @@ class HomePage(Page):
                         FieldPanel("hero_image_alt"),
                     ]
                 ),
-                FieldRowPanel(
+                MultiFieldPanel(
                     [
-                        FieldPanel("hero_primary_button_label"),
-                        FieldPanel("hero_primary_button_url"),
-                    ]
-                ),
-                FieldRowPanel(
-                    [
-                        FieldPanel("hero_secondary_button_label"),
-                        FieldPanel("hero_secondary_button_url"),
-                    ]
+                        FieldPanel("hero_buttons_enabled"),
+                        FieldRowPanel(
+                            [
+                                FieldPanel("hero_primary_button_label"),
+                                FieldPanel("hero_primary_button_url"),
+                            ]
+                        ),
+                        FieldRowPanel(
+                            [
+                                FieldPanel("hero_secondary_button_label"),
+                                FieldPanel("hero_secondary_button_url"),
+                            ]
+                        ),
+                    ],
+                    heading="Hero buttons",
+                    classname="hero-buttons-group",
+                    attrs={"data-ks-panel": "hero-buttons"},
                 ),
             ],
             heading="Hero section",

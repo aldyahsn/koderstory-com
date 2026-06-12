@@ -160,6 +160,53 @@ small {
 .ks-hero-visual {
   aspect-ratio: 1 / 1;
   min-height: 320px;
+  object-fit: cover;
+}
+
+.ks-hero-copy {
+  max-width: 760px;
+}
+
+.ks-hero-centered-simple,
+.ks-hero-centered-preview {
+  background:
+    radial-gradient(circle at 18% 8%, rgba(243, 214, 247, 0.7), transparent 34%),
+    radial-gradient(circle at 58% 0%, rgba(221, 215, 255, 0.75), transparent 30%),
+    #fff;
+}
+
+.ks-hero-preview {
+  max-width: 1120px;
+}
+
+.ks-hero-preview-image,
+.ks-hero-preview-placeholder {
+  width: 100%;
+  aspect-ratio: 16 / 7;
+  object-fit: cover;
+}
+
+.ks-hero-preview-placeholder,
+.ks-hero-angled-placeholder {
+  min-height: 320px;
+}
+
+.ks-hero-angled {
+  min-height: 640px;
+}
+
+.ks-hero-angled-copy {
+  width: min(100%, 680px);
+  margin-left: auto;
+}
+
+.ks-hero-angled-media {
+  min-height: 520px;
+  clip-path: polygon(14% 0, 100% 0, 100% 100%, 0 100%);
+}
+
+.ks-hero-angled-image {
+  min-height: 520px;
 }
 
 .ks-placeholder {
@@ -169,4 +216,23 @@ small {
 
 .ks-footer-contact a {
   color: inherit;
+}
+
+@media (max-width: 991.98px) {
+  .ks-hero-angled {
+    min-height: auto;
+  }
+
+  .ks-hero-angled-copy {
+    margin-left: 0;
+  }
+
+  .ks-hero-angled-media {
+    min-height: 360px;
+    clip-path: none;
+  }
+
+  .ks-hero-angled-image {
+    min-height: 360px;
+  }
 }

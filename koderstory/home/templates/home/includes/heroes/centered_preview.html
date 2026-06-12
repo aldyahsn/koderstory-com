@@ -1,0 +1,16 @@
+<section id="{{ page.hero_anchor_id|default:'hero' }}" class="ks-hero ks-hero-centered-preview bg-white border-bottom">
+    <div class="container py-5">
+        <div class="text-center mx-auto ks-hero-copy">
+            {% if page.hero_eyebrow %}
+            <p class="text-uppercase small text-secondary mb-3">{{ page.hero_eyebrow }}</p>
+            {% endif %}
+            <h1 class="display-4 mb-4">{{ page.hero_title }}</h1>
+            <p class="lead text-secondary mb-4">{{ page.hero_description|linebreaksbr }}</p>
+            {% include "home/includes/hero_buttons.html" with center=True %}
+        </div>
+
+        <div class="ks-hero-preview mt-5 mx-auto">
+            {% include "home/includes/hero_image.html" with image_class="img-fluid rounded-4 border shadow-sm ks-hero-preview-image" placeholder_class="ks-hero-preview-placeholder rounded-4 border bg-body-tertiary d-flex align-items-center justify-content-center text-secondary" %}
+        </div>
+    </div>
+</section>

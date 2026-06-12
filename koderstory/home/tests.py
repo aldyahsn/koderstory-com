@@ -6,6 +6,7 @@ from home.models import HomeClientLogo, HomePage, HomeProductCard, HomeServiceCa
 
 HOMEPAGE_DEFAULTS = {
     "hero_anchor_id": "hero",
+    "hero_layout": HomePage.HERO_LAYOUT_SPLIT_IMAGE_RIGHT,
     "hero_eyebrow": "Custom digital systems",
     "hero_title": "Practical digital systems for business operations and growth",
     "hero_description": (
@@ -13,6 +14,7 @@ HOMEPAGE_DEFAULTS = {
         "mobile tools, and automation systems that help businesses organize "
         "operations and grow with clearer systems."
     ),
+    "hero_buttons_enabled": True,
     "hero_primary_button_label": "Start project",
     "hero_primary_button_url": "#contact",
     "hero_secondary_button_label": "View work",
@@ -133,3 +135,21 @@ class HomeTests(WagtailPageTestCase):
         self.assertContains(response, "Custom Web Application")
         self.assertContains(response, "SIRASA")
         self.assertContains(response, "Need a practical system for your business?")
+
+    def test_homepage_hero_buttons_can_be_disabled(self):
+        self.homepage.hero_buttons_enabled = False
+        self.homepage.save(update_fields=["hero_buttons_enabled"])
+
+        response = self.client.get(self.homepage.url)
+        hero_markup = response.content.decode().split('<section id="hero"', 1)[1].split('</section>', 1)[0]
+        self.assertNotIn("Start project", hero_markup)
+        self.assertNotIn("View work", hero_markup)
+
+    def test_homepage_hero_layout_can_change(self):
+        self.homepage.hero_layout = HomePage.HERO_LAYOUT_CENTERED_SIMPLE
+        self.homepage.save(update_fields=["hero_layout"])
+
+        response = self.client.get(self.homepage.url)
+
+        self.assertContains(response, "ks-hero-centered-simple")
+        self.assertNotContains(response, "Hero visual")
