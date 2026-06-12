@@ -1,0 +1,22 @@
+{% load wagtailimages_tags theme_tags %}
+{% section_classes value.settings as section_cls %}
+{% container_classes value.settings as container_cls %}
+{% placeholder_data_uri "1x1" "Avatar" as avatar_placeholder %}
+{% anchor_attr value.settings as anchor %}
+<section {{ anchor }} class="{{ section_cls }}">
+  <div class="{{ container_cls }} testimonial">
+    <blockquote>{{ value.quote }}</blockquote>
+    <div class="person-row">
+      {% if value.image %}
+        {% image value.image fill-160x160 as avatar %}
+        <img src="{{ avatar.url }}" alt="{{ value.person }}">
+      {% else %}
+        <img src="{{ avatar_placeholder }}" alt="">
+      {% endif %}
+      <div>
+        <strong>{{ value.person }}</strong>
+        {% if value.role %}<span>{{ value.role }}</span>{% endif %}
+      </div>
+    </div>
+  </div>
+</section>

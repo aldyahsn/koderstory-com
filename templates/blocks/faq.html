@@ -1,0 +1,17 @@
+{% load wagtailcore_tags theme_tags %}
+{% section_classes value.settings as section_cls %}
+{% container_classes value.settings as container_cls %}
+{% anchor_attr value.settings as anchor %}
+<section {{ anchor }} class="{{ section_cls }}">
+  <div class="{{ container_cls }}">
+    {% if value.heading %}<div class="section-heading"><h2>{{ value.heading }}</h2></div>{% endif %}
+    <div class="faq-list">
+      {% for item in value.items %}
+        <details>
+          <summary>{{ item.question }}</summary>
+          <div class="rich-text">{{ item.answer|richtext }}</div>
+        </details>
+      {% endfor %}
+    </div>
+  </div>
+</section>

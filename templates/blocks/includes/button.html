@@ -1,0 +1,12 @@
+{% load wagtailcore_tags %}
+{% if button.page or button.external_url %}
+  <a
+    class="button button-{{ button.style|default:'primary' }}"
+    href="{% if button.page %}{% pageurl button.page %}{% else %}{{ button.external_url }}{% endif %}"
+    {% if button.open_in_new_tab %}target="_blank" rel="noopener noreferrer"{% endif %}
+  >
+    {{ button.label }}
+  </a>
+{% else %}
+  <span class="button button-{{ button.style|default:'primary' }}">{{ button.label }}</span>
+{% endif %}
