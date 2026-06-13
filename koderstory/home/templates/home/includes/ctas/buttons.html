@@ -1,0 +1,12 @@
+<div class="d-flex flex-column flex-sm-row gap-2 {% if not dark %}justify-content-lg-end{% endif %}">
+    {% if page.cta_primary_button_label %}
+    <a href="{{ page.cta_primary_button_url|default:'#contact' }}" class="btn {% if dark %}btn-light{% else %}btn-dark{% endif %} btn-lg">
+        {{ page.cta_primary_button_label }}
+    </a>
+    {% endif %}
+    {% if page.cta_secondary_button_label %}
+    <a href="{{ page.cta_secondary_button_url|default:'#contact' }}" class="btn {% if dark %}btn-link text-white{% else %}btn-outline-dark{% endif %} btn-lg">
+        {{ page.cta_secondary_button_label }}
+    </a>
+    {% endif %}
+</div>

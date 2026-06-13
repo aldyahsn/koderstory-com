@@ -4,65 +4,19 @@
 
 {% block content %}
 <main>
+    {% if page.hero_enabled %}
     {% include page.hero_template_name %}
+    {% endif %}
 
-    <section id="{{ page.clients_anchor_id|default:'clients' }}" class="py-5">
-        <div class="container">
-            <div class="card mb-5">
-                <div class="card-body p-4">
-                    <div class="row align-items-center g-4">
-                        <div class="col-lg-3">
-                            {% if page.clients_eyebrow %}
-                            <p class="text-uppercase small text-secondary mb-2">{{ page.clients_eyebrow }}</p>
-                            {% endif %}
-                            <h2 class="h5 mb-0">{{ page.clients_title }}</h2>
-                        </div>
-                        <div class="col-lg-9">
-                            <div class="row row-cols-2 row-cols-md-4 g-3">
-                                {% for client in page.client_logos.all %}
-                                <div class="col">
-                                    <div class="border rounded p-4 text-center text-secondary">
-                                        {{ client.name }}
-                                    </div>
-                                </div>
-                                {% endfor %}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+    {% if page.clients_enabled %}
+    {% include page.clients_template_name %}
+    {% endif %}
 
-    <section id="{{ page.services_anchor_id|default:'services' }}" class="py-5">
-        <div class="container">
-            <div class="row align-items-end mb-5">
-                <div class="col-lg-8">
-                    <p class="text-uppercase small text-secondary mb-3">{{ page.services_kicker }}</p>
-                    <h2 class="h3 mb-3">{{ page.services_title }}</h2>
-                    {% if page.services_description %}
-                    <p class="lead text-secondary">{{ page.services_description|linebreaksbr }}</p>
-                    {% endif %}
-                </div>
-                <div class="col-lg-4 text-lg-end">
-                    {% if page.services_button_label %}
-                    <a href="{{ page.services_button_url|default:'#contact' }}" class="btn btn-outline-dark">
-                        {{ page.services_button_label }}
-                    </a>
-                    {% endif %}
-                </div>
-            </div>
+    {% if page.services_enabled %}
+    {% include page.services_template_name %}
+    {% endif %}
 
-            <div class="row g-4 mb-5">
-                {% for card in page.service_cards.all %}
-                <div class="col-md-6 col-lg-4">
-                    {% include "home/includes/home_card.html" with card=card button_text="View service" %}
-                </div>
-                {% endfor %}
-            </div>
-        </div>
-    </section>
-
+    {% if page.products_enabled %}
     <section id="{{ page.products_anchor_id|default:'products' }}" class="py-5">
         <div class="container">
             <div class="row align-items-end mb-5">
@@ -91,35 +45,10 @@
             </div>
         </div>
     </section>
+    {% endif %}
 
-    <section id="{{ page.cta_anchor_id|default:'cta' }}" class="bg-white border-top">
-        <div class="container py-5">
-            <div class="row align-items-center g-4">
-                <div class="col-lg-8">
-                    {% if page.cta_kicker %}
-                    <p class="text-uppercase small text-secondary mb-3">{{ page.cta_kicker }}</p>
-                    {% endif %}
-                    <h2 class="display-5 mb-3">{{ page.cta_title }}</h2>
-                    {% if page.cta_description %}
-                    <p class="lead text-secondary mb-0">{{ page.cta_description|linebreaksbr }}</p>
-                    {% endif %}
-                </div>
-                <div class="col-lg-4 text-lg-end">
-                    <div class="d-flex flex-column flex-sm-row justify-content-lg-end gap-2">
-                        {% if page.cta_primary_button_label %}
-                        <a href="{{ page.cta_primary_button_url|default:'#contact' }}" class="btn btn-dark btn-lg">
-                            {{ page.cta_primary_button_label }}
-                        </a>
-                        {% endif %}
-                        {% if page.cta_secondary_button_label %}
-                        <a href="{{ page.cta_secondary_button_url|default:'#contact' }}" class="btn btn-outline-dark btn-lg">
-                            {{ page.cta_secondary_button_label }}
-                        </a>
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+    {% if page.cta_enabled %}
+    {% include page.cta_template_name %}
+    {% endif %}
 </main>
 {% endblock content %}

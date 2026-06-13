@@ -1,0 +1,24 @@
+<section id="{{ page.services_anchor_id|default:'services' }}" class="py-5 ks-services-card-grid">
+    <div class="container">
+        <div class="row align-items-end mb-5">
+            <div class="col-lg-8">
+                {% include "home/includes/services/section_heading.html" %}
+            </div>
+            <div class="col-lg-4 text-lg-end">
+                {% if page.services_button_label %}
+                <a href="{{ page.services_button_url|default:'#contact' }}" class="btn btn-outline-dark">
+                    {{ page.services_button_label }}
+                </a>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="row g-4 mb-5">
+            {% for card in page.service_cards.all %}
+            <div class="col-md-6 col-lg-4">
+                {% include "home/includes/home_card.html" with card=card button_text="View service" %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>

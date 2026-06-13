@@ -5,6 +5,7 @@ from home.models import HomeClientLogo, HomePage, HomeProductCard, HomeServiceCa
 
 
 HOMEPAGE_DEFAULTS = {
+    "hero_enabled": True,
     "hero_anchor_id": "hero",
     "hero_layout": HomePage.HERO_LAYOUT_SPLIT_IMAGE_RIGHT,
     "hero_eyebrow": "Custom digital systems",
@@ -19,20 +20,27 @@ HOMEPAGE_DEFAULTS = {
     "hero_primary_button_url": "#contact",
     "hero_secondary_button_label": "View work",
     "hero_secondary_button_url": "#services",
+    "clients_enabled": True,
     "clients_anchor_id": "clients",
+    "clients_layout": HomePage.CLIENTS_LAYOUT_CARD_SPLIT,
     "clients_title": "Experience across digital products and operations",
+    "services_enabled": True,
     "services_anchor_id": "services",
+    "services_layout": HomePage.SERVICES_LAYOUT_CARD_GRID,
     "services_kicker": "Services",
     "services_title": "Build the right system for the right business need",
     "services_description": "Start from your current workflow, problem, or operational bottleneck.",
     "services_button_label": "View all services",
     "services_button_url": "#contact",
+    "products_enabled": True,
     "products_anchor_id": "products",
     "products_kicker": "Products",
     "products_title": "Products and solution concepts",
     "products_button_label": "View all products",
     "products_button_url": "#contact",
+    "cta_enabled": True,
     "cta_anchor_id": "cta",
+    "cta_layout": HomePage.CTA_LAYOUT_SPLIT,
     "cta_kicker": "Start a project",
     "cta_title": "Need a practical system for your business?",
     "cta_description": "Start with your process, problem, or product idea.",
@@ -145,6 +153,15 @@ class HomeTests(WagtailPageTestCase):
         self.assertNotIn("Start project", hero_markup)
         self.assertNotIn("View work", hero_markup)
 
+    def test_homepage_section_can_be_disabled(self):
+        self.homepage.services_enabled = False
+        self.homepage.save(update_fields=["services_enabled"])
+
+        response = self.client.get(self.homepage.url)
+
+        self.assertNotContains(response, 'id="services"')
+        self.assertNotContains(response, "Custom Web Application")
+
     def test_homepage_hero_layout_can_change(self):
         self.homepage.hero_layout = HomePage.HERO_LAYOUT_CENTERED_SIMPLE
         self.homepage.save(update_fields=["hero_layout"])
@@ -153,3 +170,49 @@ class HomeTests(WagtailPageTestCase):
 
         self.assertContains(response, "ks-hero-centered-simple")
         self.assertNotContains(response, "Hero visual")
+
+    def test_homepage_clients_layout_can_change(self):
+        self.homepage.clients_layout = HomePage.CLIENTS_LAYOUT_DARK_GRID
+        self.homepage.save(update_fields=["clients_layout"])
+
+        response = self.client.get(self.homepage.url)
+
+        self.assertContains(response, "ks-clients-dark-grid")
+        self.assertContains(response, "Client 01")
+
+    def test_homepage_services_layout_can_change(self):
+        self.homepage.services_layout = HomePage.SERVICES_LAYOUT_DARK_MEDIA
+        self.homepage.save(update_fields=["services_layout"])
+
+        response = self.client.get(self.homepage.url)
+
+        self.assertContains(response, "ks-services-dark-media")
+        self.assertContains(response, "Custom Web Application")
+
+    def test_homepage_cta_layout_can_change(self):
+        self.homepage.cta_layout = HomePage.CTA_LAYOUT_SPLIT_MEDIA
+        self.homepage.save(update_fields=["cta_layout"])
+
+        response = self.client.get(self.homepage.url)
+
+        self.assertContains(response, "ks-cta-split-media")
+        self.assertContains(response, "Need a practical system for your business?")
+
+    def test_homepage_section_settings_are_available_in_editor(self):
+        edit_handler = HomePage.get_edit_handler()
+        form_class = edit_handler.get_form_class()
+
+        self.assertEqual(
+            [child.heading for child in edit_handler.children],
+            ["Content", "Section settings", "Promote", "Settings"],
+        )
+        self.assertIn("hero_enabled", form_class.base_fields)
+        self.assertIn("hero_buttons_enabled", form_class.base_fields)
+        self.assertIn("services_enabled", form_class.base_fields)
+        self.assertIn("hero_image_position", form_class.base_fields)
+        self.assertIn("clients_layout", form_class.base_fields)
+        self.assertIn("services_layout", form_class.base_fields)
+        self.assertIn("cta_layout", form_class.base_fields)
+        self.assertIn("hero_section_height", form_class.base_fields)
+        self.assertIn("services_content_width", form_class.base_fields)
+        self.assertIn("cta_content_horizontal_alignment", form_class.base_fields)

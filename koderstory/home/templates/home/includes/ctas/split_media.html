@@ -1,0 +1,17 @@
+<section id="{{ page.cta_anchor_id|default:'cta' }}" class="ks-cta-dark ks-cta-split-media">
+    <div class="container-fluid px-0">
+        <div class="row g-0 align-items-stretch">
+            <div class="col-lg-6">
+                {% include "home/includes/ctas/media_panel.html" %}
+            </div>
+            <div class="col-lg-6">
+                <div class="ks-cta-panel-copy">
+                    {% include "home/includes/ctas/content.html" with dark=True %}
+                    <div class="mt-4">
+                        {% include "home/includes/ctas/buttons.html" with dark=True %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

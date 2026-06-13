@@ -1,0 +1,25 @@
+<div class="ks-service-preview ks-service-preview-{{ variant|default:'light' }}">
+    {% for card in page.service_cards.all %}
+    {% if forloop.first and card.image %}
+    <img src="{{ card.image.url }}" alt="{{ card.image_alt|default:card.title }}" class="ks-service-preview-image">
+    {% endif %}
+    {% endfor %}
+    <div class="ks-service-preview-ui">
+        <div class="ks-service-preview-sidebar">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <div class="ks-service-preview-main">
+            <div class="ks-service-preview-topbar"></div>
+            <div class="ks-service-preview-lines">
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </div>
+</div>

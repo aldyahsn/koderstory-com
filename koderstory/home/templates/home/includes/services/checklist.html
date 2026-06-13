@@ -1,0 +1,18 @@
+<section id="{{ page.services_anchor_id|default:'services' }}" class="py-5 bg-white ks-services-checklist">
+    <div class="container py-4">
+        <div class="row g-5">
+            <div class="col-lg-4">
+                {% include "home/includes/services/section_heading.html" %}
+            </div>
+            <div class="col-lg-8">
+                <div class="row g-4">
+                    {% for card in page.service_cards.all %}
+                    <div class="col-md-6">
+                        {% include "home/includes/services/check_feature.html" with card=card %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

@@ -1,0 +1,8 @@
+<section id="{{ page.services_anchor_id|default:'services' }}" class="py-5 bg-white ks-services-media-top">
+    <div class="container py-4">
+        <div class="mb-5 ks-section-copy">
+            {% include "home/includes/services/section_heading.html" %}
+        </div>
+        {% include "home/includes/services/preview_panel.html" with variant="light" %}
+    </div>
+</section>

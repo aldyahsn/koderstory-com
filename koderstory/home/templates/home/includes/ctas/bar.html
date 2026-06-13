@@ -1,0 +1,14 @@
+<section id="{{ page.cta_anchor_id|default:'cta' }}" class="ks-cta-bar">
+    <div class="container-fluid py-5">
+        <div class="row align-items-center g-4">
+            <div class="col-lg-8">
+                {% include "home/includes/ctas/content.html" %}
+            </div>
+            <div class="col-lg-4">
+                <div class="d-flex justify-content-lg-end">
+                    {% include "home/includes/ctas/buttons.html" %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
