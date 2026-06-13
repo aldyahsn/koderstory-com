@@ -1,0 +1,10 @@
+<section id="{{ page.clients_anchor_id|default:'clients' }}" class="ks-section ks-height-{{ page.clients_section_height }}">
+    <div class="container ks-container" data-ks-align="{{ page.clients_text_alignment }}" data-ks-width="{{ page.clients_content_width }}">
+        <div class="ks-logo-row mb-5">
+            {% for client in page.client_logos.all %}{% include "home/components/client_logo.html" %}{% endfor %}
+        </div>
+        {% if page.clients_cta_text %}
+        <div class="ks-inline-cta {% if page.clients_text_alignment == 'center' %}mx-auto{% endif %}">{{ page.clients_cta_text }} {% if page.clients_cta_label %}<a href="{{ page.clients_cta_url|default:'#' }}">{{ page.clients_cta_label }} →</a>{% endif %}</div>
+        {% endif %}
+    </div>
+</section>

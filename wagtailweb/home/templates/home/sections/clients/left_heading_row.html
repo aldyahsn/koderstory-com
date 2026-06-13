@@ -1,0 +1,8 @@
+<section id="{{ page.clients_anchor_id|default:'clients' }}" class="ks-section ks-height-{{ page.clients_section_height }}">
+    <div class="container ks-container" data-ks-width="{{ page.clients_content_width }}">
+        {% if page.clients_title %}<h2 class="h5 mb-5">{{ page.clients_title }}</h2>{% endif %}
+        <div class="ks-logo-row">
+            {% for client in page.client_logos.all %}{% include "home/components/client_logo.html" %}{% endfor %}
+        </div>
+    </div>
+</section>

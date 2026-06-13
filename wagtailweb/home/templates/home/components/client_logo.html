@@ -1,0 +1,8 @@
+{% if client.url %}<a class="ks-client-logo" href="{{ client.url }}">{% else %}<div class="ks-client-logo">{% endif %}
+    {% if client.logo %}
+    <img src="{{ client.logo.url }}" alt="{{ client.name }}">
+    {% else %}
+    <span class="ks-logo-mark">{{ client.name|slice:":2" }}</span>
+    <span>{{ client.name }}</span>
+    {% endif %}
+{% if client.url %}</a>{% else %}</div>{% endif %}

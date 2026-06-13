@@ -1,0 +1,119 @@
+{% load static wagtailcore_tags wagtailsettings_tags wagtailuserbar %}
+{% get_settings %}
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <title>
+            {% block title %}
+            {% if page.seo_title %}{{ page.seo_title }}{% else %}{{ page.title }}{% endif %}
+            {% endblock %}
+            {% block title_suffix %}
+            {% wagtail_site as current_site %}
+            {% if current_site and current_site.site_name %}- {{ current_site.site_name }}{% endif %}
+            {% endblock %}
+        </title>
+        {% if page.search_description %}
+        <meta name="description" content="{{ page.search_description }}" />
+        {% endif %}
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+        {# Force all links in the live preview panel to be opened in a new tab #}
+        {% if request.in_preview_panel %}
+        <base target="_blank">
+        {% endif %}
+
+        <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+            integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+            crossorigin="anonymous"
+        >
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link
+            href="{{ settings.home.DesignSystemSettings.google_fonts_url }}"
+            rel="stylesheet"
+        >
+        <style>
+            :root {
+                /* Typography */
+                --ks-font-heading: "{{ settings.home.DesignSystemSettings.heading_font }}", system-ui, sans-serif;
+                --ks-font-body: "{{ settings.home.DesignSystemSettings.body_font }}", system-ui, sans-serif;
+                --ks-base-font-size: {{ settings.home.DesignSystemSettings.base_font_size }}px;
+                --ks-line-height: {{ settings.home.DesignSystemSettings.line_height }};
+                --ks-letter-spacing: {{ settings.home.DesignSystemSettings.letter_spacing }};
+
+                /* Heading sizes (rem) */
+                --ks-h1-size: {{ settings.home.DesignSystemSettings.h1_size }}rem;
+                --ks-h2-size: {{ settings.home.DesignSystemSettings.h2_size }}rem;
+                --ks-h3-size: {{ settings.home.DesignSystemSettings.h3_size }}rem;
+                --ks-h4-size: {{ settings.home.DesignSystemSettings.h4_size }}rem;
+                --ks-h5-size: {{ settings.home.DesignSystemSettings.h5_size }}rem;
+                --ks-h6-size: {{ settings.home.DesignSystemSettings.h6_size }}rem;
+
+                /* Theme Colors */
+                --ks-color-brand: {{ settings.home.DesignSystemSettings.brand_color }};
+                --ks-color-primary: {{ settings.home.DesignSystemSettings.primary_color }};
+                --ks-color-secondary: {{ settings.home.DesignSystemSettings.secondary_color }};
+                --ks-color-accent: {{ settings.home.DesignSystemSettings.accent_color }};
+
+                /* Semantic Colors */
+                --ks-color-success: {{ settings.home.DesignSystemSettings.success_color }};
+                --ks-color-warning: {{ settings.home.DesignSystemSettings.warning_color }};
+                --ks-color-error: {{ settings.home.DesignSystemSettings.error_color }};
+                --ks-color-info: {{ settings.home.DesignSystemSettings.info_color }};
+
+                /* Surface Colors */
+                --ks-color-background: {{ settings.home.DesignSystemSettings.background_color }};
+                --ks-color-surface: {{ settings.home.DesignSystemSettings.surface_color }};
+                --ks-color-surface-variant: {{ settings.home.DesignSystemSettings.surface_variant_color }};
+
+                /* Text Colors */
+                --ks-color-text: {{ settings.home.DesignSystemSettings.text_color }};
+                --ks-color-muted: {{ settings.home.DesignSystemSettings.text_muted_color }};
+                --ks-color-text-on-brand: {{ settings.home.DesignSystemSettings.text_on_brand_color }};
+
+                /* Spacing Scale */
+                --ks-spacing-xs: {{ settings.home.DesignSystemSettings.spacing_xs }}px;
+                --ks-spacing-sm: {{ settings.home.DesignSystemSettings.spacing_sm }}px;
+                --ks-spacing-md: {{ settings.home.DesignSystemSettings.spacing_md }}px;
+                --ks-spacing-lg: {{ settings.home.DesignSystemSettings.spacing_lg }}px;
+                --ks-spacing-xl: {{ settings.home.DesignSystemSettings.spacing_xl }}px;
+                --ks-spacing-2xl: {{ settings.home.DesignSystemSettings.spacing_2xl }}px;
+
+                /* Layout */
+                --ks-section-padding: {{ settings.home.DesignSystemSettings.section_padding }}px;
+                --ks-container-width: {{ settings.home.DesignSystemSettings.container_width }}px;
+
+                /* Border Radius */
+                --ks-button-radius: {{ settings.home.DesignSystemSettings.button_radius }}px;
+                --ks-card-radius: {{ settings.home.DesignSystemSettings.card_radius }}px;
+                --ks-input-radius: {{ settings.home.DesignSystemSettings.input_radius }}px;
+            }
+        </style>
+        <link rel="stylesheet" type="text/css" href="{% static 'css/config.css' %}">
+
+        {% block extra_css %}
+        {# Override this in templates to add extra stylesheets #}
+        {% endblock %}
+    </head>
+
+    <body class="{% block body_class %}{% endblock %}">
+        {% wagtailuserbar %}
+
+        {% block content %}{% endblock %}
+
+        <script
+            src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+            crossorigin="anonymous"
+        ></script>
+        <script type="text/javascript" src="{% static 'js/config.js' %}"></script>
+
+        {% block extra_js %}
+        {# Override this in templates to add extra javascript #}
+        {% endblock %}
+    </body>
+</html>

@@ -1,0 +1,16 @@
+<section id="{{ page.features_anchor_id|default:'features' }}" class="ks-section ks-height-{{ page.features_section_height }}">
+    <div class="container-fluid px-0">
+        <div class="row g-0 align-items-stretch">
+            <div class="col-lg-5 p-4 p-lg-5 d-flex align-items-center">
+                <div>
+                    {% include "home/components/feature_heading.html" %}
+                    {% include "home/components/feature_button.html" %}
+                    <div class="d-grid gap-4 mt-5">
+                        {% for feature in page.features.all|slice:":3" %}{% include "home/components/feature_item.html" with show_icon=True %}{% endfor %}
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-7">{% include "home/components/feature_media.html" %}</div>
+        </div>
+    </div>
+</section>

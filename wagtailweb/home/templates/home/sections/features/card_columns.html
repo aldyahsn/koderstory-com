@@ -1,0 +1,12 @@
+<section id="{{ page.features_anchor_id|default:'features' }}" class="ks-section ks-height-{{ page.features_section_height }}">
+    <div class="container ks-container" data-ks-align="{{ page.features_text_alignment }}" data-ks-width="{{ page.features_content_width }}">
+        <div class="ks-copy mb-5">{% include "home/components/feature_heading.html" %}</div>
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+            {% for feature in page.features.all %}
+            <div class="col">
+                <div class="ks-feature-card h-100">{% include "home/components/feature_item.html" with show_icon=True %}</div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>

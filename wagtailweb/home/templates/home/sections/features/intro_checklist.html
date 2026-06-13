@@ -1,0 +1,19 @@
+<section id="{{ page.features_anchor_id|default:'features' }}" class="ks-section ks-height-{{ page.features_section_height }}">
+    <div class="container ks-container" data-ks-width="{{ page.features_content_width }}">
+        <div class="row g-5">
+            <div class="col-lg-4">{% include "home/components/feature_heading.html" %}</div>
+            <div class="col-lg-8">
+                <div class="row row-cols-1 row-cols-md-2 g-4">
+                    {% for feature in page.features.all %}
+                    <div class="col">
+                        <article class="ks-check-item">
+                            <span class="ks-check">✓</span>
+                            <div><h3 class="h6 mb-2">{{ feature.title }}</h3><p class="text-secondary mb-0">{{ feature.description }}</p></div>
+                        </article>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

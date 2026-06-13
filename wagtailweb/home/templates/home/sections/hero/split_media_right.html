@@ -1,0 +1,12 @@
+<section id="{{ page.hero_anchor_id|default:'hero' }}" class="ks-section ks-height-{{ page.hero_section_height }}">
+    <div class="container ks-container" data-ks-width="{{ page.hero_content_width }}">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-6">
+                {% include "home/components/hero_announcement.html" %}
+                {% include "home/components/hero_copy.html" %}
+                {% include "home/components/hero_buttons.html" %}
+            </div>
+            <div class="col-lg-6">{% include "home/components/hero_media.html" %}</div>
+        </div>
+    </div>
+</section>

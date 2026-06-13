@@ -1,9 +1,0 @@
-<section id="{{ page.clients_anchor_id|default:'clients' }}" class="py-5 bg-white ks-clients-simple-row">
-    <div class="container py-4">
-        <div class="ks-client-logo-row">
-            {% for client in page.client_logos.all %}
-            {% include "home/includes/clients/logo_item.html" with client=client %}
-            {% endfor %}
-        </div>
-    </div>
-</section>

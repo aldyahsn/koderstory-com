@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block body_class %}template-homepage{% endblock %}
+
+{% block content %}
+<main>
+    {% if page.hero_enabled %}{% include page.hero_template_name %}{% endif %}
+    {% if page.clients_enabled %}{% include page.clients_template_name %}{% endif %}
+    {% if page.features_enabled %}{% include page.features_template_name %}{% endif %}
+    {% if page.cta_enabled %}{% include page.cta_template_name %}{% endif %}
+</main>
+{% endblock %}

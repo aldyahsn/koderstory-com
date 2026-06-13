@@ -1,0 +1,9 @@
+<div class="ks-media-frame ks-feature-media">
+    {% if page.features_image %}
+    <img src="{{ page.features_image.url }}" alt="{{ page.features_image_alt|default:page.features_title }}">
+    {% else %}
+    <div class="ks-media-placeholder" role="img" aria-label="Feature image placeholder">
+        <span>Feature media</span>
+    </div>
+    {% endif %}
+</div>

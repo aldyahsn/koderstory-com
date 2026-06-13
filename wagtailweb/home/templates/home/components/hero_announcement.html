@@ -1,0 +1,8 @@
+{% if page.hero_announcement %}
+<div class="ks-announcement mb-4">
+    <span>{{ page.hero_announcement }}</span>
+    {% if page.hero_announcement_link_label %}
+    <a href="{{ page.hero_announcement_link_url|default:'#' }}">{{ page.hero_announcement_link_label }} <span aria-hidden="true">→</span></a>
+    {% endif %}
+</div>
+{% endif %}

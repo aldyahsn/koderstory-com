@@ -1,0 +1,7 @@
+<div class="ks-media-frame ks-cta-media">
+    {% if page.cta_image %}
+    <img src="{{ page.cta_image.url }}" alt="{{ page.cta_image_alt|default:page.cta_title }}">
+    {% else %}
+    <div class="ks-media-placeholder" role="img" aria-label="CTA image placeholder"><span>CTA media</span></div>
+    {% endif %}
+</div>

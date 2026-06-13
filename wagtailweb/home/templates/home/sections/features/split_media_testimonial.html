@@ -1,0 +1,12 @@
+<section id="{{ page.features_anchor_id|default:'features' }}" class="ks-section ks-height-{{ page.features_section_height }}">
+    <div class="container ks-container" data-ks-width="{{ page.features_content_width }}">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-5">
+                {% include "home/components/feature_heading.html" %}
+                {% include "home/components/feature_button.html" %}
+                {% include "home/components/testimonial.html" %}
+            </div>
+            <div class="col-lg-7">{% include "home/components/feature_media.html" %}</div>
+        </div>
+    </div>
+</section>

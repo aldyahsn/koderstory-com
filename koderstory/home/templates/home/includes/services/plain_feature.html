@@ -1,7 +1,0 @@
-<article class="ks-service-plain">
-    <h3 class="h6 mb-2">{{ card.title }}</h3>
-    <p class="text-secondary mb-4">{{ card.description|linebreaksbr }}</p>
-    {% if card.button_label %}
-    <a href="{{ card.button_url|default:'#contact' }}" class="ks-link-arrow">{{ card.button_label }}</a>
-    {% endif %}
-</article>

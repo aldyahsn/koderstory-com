@@ -1,0 +1,11 @@
+<section id="{{ page.hero_anchor_id|default:'hero' }}" class="ks-section ks-height-{{ page.hero_section_height }} ks-hero-background">
+    {% if page.hero_image %}<img class="ks-background-image" src="{{ page.hero_image.url }}" alt="{{ page.hero_image_alt|default:page.hero_title }}">{% endif %}
+    <div class="ks-background-overlay"></div>
+    <div class="container ks-container position-relative" data-ks-align="{{ page.hero_text_alignment }}" data-ks-width="{{ page.hero_content_width }}">
+        <div class="ks-copy">
+            {% include "home/components/hero_announcement.html" %}
+            {% include "home/components/hero_copy.html" %}
+            <div class="ks-button-group">{% include "home/components/hero_buttons.html" %}</div>
+        </div>
+    </div>
+</section>

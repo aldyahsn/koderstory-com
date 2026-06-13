@@ -1,0 +1,10 @@
+{% if page.cta_primary_button_label or page.cta_secondary_button_label %}
+<div class="d-flex flex-wrap gap-3 mt-4 ks-buttons">
+    {% if page.cta_primary_button_label %}
+    <a class="btn btn-primary" href="{{ page.cta_primary_button_url|default:'#' }}">{{ page.cta_primary_button_label }}</a>
+    {% endif %}
+    {% if page.cta_secondary_button_label %}
+    <a class="btn btn-link text-decoration-none" href="{{ page.cta_secondary_button_url|default:'#' }}">{{ page.cta_secondary_button_label }} <span aria-hidden="true">→</span></a>
+    {% endif %}
+</div>
+{% endif %}

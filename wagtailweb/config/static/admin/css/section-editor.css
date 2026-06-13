@@ -1,0 +1,38 @@
+.ks-section-settings,
+.ks-component-group {
+  margin-block: 1rem;
+  padding: 1rem;
+  border: 1px solid var(--w-color-border-field-default);
+  border-radius: 0.5rem;
+  background: var(--w-color-surface-page);
+}
+
+.ks-section-settings {
+  border-color: var(--w-color-border-furniture);
+}
+
+.ks-settings-grid > .w-panel__content {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.ks-settings-grid .w-field {
+  margin-bottom: 0;
+}
+
+.ks-settings-grid input:not([type="checkbox"]),
+.ks-settings-grid select {
+  width: 100%;
+  max-width: 24rem;
+}
+
+.ks-component-group[hidden] {
+  display: none !important;
+}
+
+@media (max-width: 800px) {
+  .ks-settings-grid > .w-panel__content {
+    grid-template-columns: 1fr;
+  }
+}

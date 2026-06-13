@@ -1,0 +1,16 @@
+<section id="{{ page.clients_anchor_id|default:'clients' }}" class="ks-section ks-height-{{ page.clients_section_height }}">
+    <div class="container ks-container" data-ks-width="{{ page.clients_content_width }}">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-5">
+                <h2 class="display-5 mb-3">{{ page.clients_title }}</h2>
+                {% if page.clients_description %}<p class="lead text-secondary">{{ page.clients_description|linebreaksbr }}</p>{% endif %}
+                {% include "home/components/client_buttons.html" %}
+            </div>
+            <div class="col-lg-7">
+                <div class="row row-cols-2 g-4">
+                    {% for client in page.client_logos.all %}<div class="col">{% include "home/components/client_logo.html" %}</div>{% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

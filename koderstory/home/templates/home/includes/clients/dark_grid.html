@@ -1,9 +1,0 @@
-<section id="{{ page.clients_anchor_id|default:'clients' }}" class="py-5 ks-clients-dark ks-clients-dark-grid">
-    <div class="container py-4">
-        <div class="ks-client-dark-grid rounded-4 overflow-hidden">
-            {% for client in page.client_logos.all %}
-            {% include "home/includes/clients/logo_item.html" with client=client boxed=True dark=True %}
-            {% endfor %}
-        </div>
-    </div>
-</section>

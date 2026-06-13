@@ -1,0 +1,8 @@
+<section id="{{ page.cta_anchor_id|default:'cta' }}" class="ks-section ks-height-{{ page.cta_section_height }}">
+    <div class="container ks-container" data-ks-align="{{ page.cta_text_alignment }}" data-ks-width="{{ page.cta_content_width }}">
+        <div class="ks-copy">
+            {% include "home/components/cta_content.html" %}
+            <div class="ks-button-group">{% include "home/components/cta_buttons.html" %}</div>
+        </div>
+    </div>
+</section>

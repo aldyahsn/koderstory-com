@@ -1,0 +1,12 @@
+<section id="{{ page.hero_anchor_id|default:'hero' }}" class="ks-hero-half" data-ks-align="{{ page.hero_text_alignment }}">
+    <div class="row g-0 min-vh-75">
+        <div class="col-lg-6 d-flex align-items-center">
+            <div class="p-4 p-lg-5">
+                {% include "home/components/hero_announcement.html" %}
+                {% include "home/components/hero_copy.html" %}
+                {% include "home/components/hero_buttons.html" %}
+            </div>
+        </div>
+        <div class="col-lg-6">{% include "home/components/hero_media.html" %}</div>
+    </div>
+</section>
