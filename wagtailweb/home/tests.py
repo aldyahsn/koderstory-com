@@ -1,7 +1,15 @@
+import json
+
+from wagtail.admin.rich_text.converters.contentstate import ContentstateConverter
 from wagtail.models import Page, Site
 from wagtail.test.utils import WagtailPageTestCase
 
-from home.models import DesignSystemSettings, HomeFeature, HomePage
+from home.models import (
+    RICH_TEXT_FEATURES,
+    DesignSystemSettings,
+    HomeFeature,
+    HomePage,
+)
 
 
 class HomeTests(WagtailPageTestCase):
@@ -96,3 +104,26 @@ class HomeTests(WagtailPageTestCase):
             [panel.heading for panel in DesignSystemSettings.edit_handler.children],
             ["Typography", "Colors", "Layout & components"],
         )
+
+    def test_rich_text_alignment_features_round_trip_bootstrap_classes(self):
+        alignment_features = ["align-left", "align-center", "align-right"]
+        for feature in alignment_features:
+            self.assertIn(feature, RICH_TEXT_FEATURES)
+
+        converter = ContentstateConverter(features=alignment_features)
+        contentstate = json.loads(
+            converter.from_database_format(
+                '<p class="text-start">Left</p>'
+                '<p class="text-center">Center</p>'
+                '<p class="text-end">Right</p>'
+            )
+        )
+        self.assertEqual(
+            [block["type"] for block in contentstate["blocks"]],
+            alignment_features,
+        )
+
+        rendered = converter.to_database_format(json.dumps(contentstate))
+        self.assertIn('class="text-start"', rendered)
+        self.assertIn('class="text-center"', rendered)
+        self.assertIn('class="text-end"', rendered)

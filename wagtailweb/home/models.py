@@ -19,6 +19,9 @@ RICH_TEXT_FEATURES = [
     "ul",
     "h3",
     "h4",
+    "align-left",
+    "align-center",
+    "align-right",
 ]
 from wagtail.models import Orderable, Page
 
