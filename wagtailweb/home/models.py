@@ -11,6 +11,8 @@ from wagtail.admin.panels import (
 from wagtail.contrib.settings.models import BaseSiteSetting, register_setting
 from wagtail.fields import RichTextField
 
+from home.widgets import ColorInputWidget
+
 RICH_TEXT_FEATURES = [
     "bold",
     "italic",
@@ -144,44 +146,49 @@ class DesignSystemSettings(BaseSiteSetting):
     )
 
     # Theme Colors
-    brand_color = models.CharField(max_length=16, default="#4f46e5")
+    brand_color = models.CharField(max_length=16, default="#4f46e5", verbose_name="Brand")
     primary_color = models.CharField(
         max_length=16,
         default="#3b82f6",
+        verbose_name="Primary",
         help_text="Primary action color",
     )
     secondary_color = models.CharField(
         max_length=16,
         default="#8b5cf6",
+        verbose_name="Secondary",
         help_text="Secondary accent color",
     )
     accent_color = models.CharField(
         max_length=16,
         default="#f59e0b",
+        verbose_name="Accent",
         help_text="Accent/highlight color",
     )
 
     # Semantic Colors
-    success_color = models.CharField(max_length=16, default="#10b981")
-    warning_color = models.CharField(max_length=16, default="#f59e0b")
-    error_color = models.CharField(max_length=16, default="#ef4444")
-    info_color = models.CharField(max_length=16, default="#3b82f6")
+    success_color = models.CharField(max_length=16, default="#10b981", verbose_name="Success")
+    warning_color = models.CharField(max_length=16, default="#f59e0b", verbose_name="Warning")
+    error_color = models.CharField(max_length=16, default="#ef4444", verbose_name="Error")
+    info_color = models.CharField(max_length=16, default="#3b82f6", verbose_name="Info")
 
     # Surface Colors
-    background_color = models.CharField(max_length=16, default="#ffffff")
-    surface_color = models.CharField(max_length=16, default="#f8f9fa")
+    background_color = models.CharField(max_length=16, default="#ffffff", verbose_name="Background")
+    surface_color = models.CharField(max_length=16, default="#f8f9fa", verbose_name="Surface")
     surface_variant_color = models.CharField(
         max_length=16,
         default="#e5e7eb",
+        verbose_name="Surface variant",
         help_text="Secondary surface color",
     )
 
     # Text Colors
-    text_color = models.CharField(max_length=16, default="#111827")
-    text_muted_color = models.CharField(max_length=16, default="#667085")
+    text_color = models.CharField(max_length=16, default="#111827", verbose_name="Text")
+    text_muted_color = models.CharField(max_length=16, default="#667085", verbose_name="Muted")
     text_on_brand_color = models.CharField(
         max_length=16,
         default="#ffffff",
+        verbose_name="On brand",
         help_text="Text color on brand/primary backgrounds",
     )
 
@@ -276,15 +283,12 @@ class DesignSystemSettings(BaseSiteSetting):
             [
                 FieldRowPanel(
                     [
-                        FieldPanel("brand_color"),
-                        FieldPanel("primary_color"),
-                    ]
-                ),
-                FieldRowPanel(
-                    [
-                        FieldPanel("secondary_color"),
-                        FieldPanel("accent_color"),
-                    ]
+                        FieldPanel("brand_color", widget=ColorInputWidget()),
+                        FieldPanel("primary_color", widget=ColorInputWidget()),
+                        FieldPanel("secondary_color", widget=ColorInputWidget()),
+                        FieldPanel("accent_color", widget=ColorInputWidget()),
+                    ],
+                    classname="ks-color-row",
                 ),
             ],
             heading="Brand colors",
@@ -294,15 +298,12 @@ class DesignSystemSettings(BaseSiteSetting):
             [
                 FieldRowPanel(
                     [
-                        FieldPanel("success_color"),
-                        FieldPanel("warning_color"),
-                    ]
-                ),
-                FieldRowPanel(
-                    [
-                        FieldPanel("error_color"),
-                        FieldPanel("info_color"),
-                    ]
+                        FieldPanel("success_color", widget=ColorInputWidget()),
+                        FieldPanel("warning_color", widget=ColorInputWidget()),
+                        FieldPanel("error_color", widget=ColorInputWidget()),
+                        FieldPanel("info_color", widget=ColorInputWidget()),
+                    ],
+                    classname="ks-color-row",
                 ),
             ],
             heading="Status colors",
@@ -312,14 +313,11 @@ class DesignSystemSettings(BaseSiteSetting):
             [
                 FieldRowPanel(
                     [
-                        FieldPanel("background_color"),
-                        FieldPanel("surface_color"),
-                    ]
-                ),
-                FieldRowPanel(
-                    [
-                        FieldPanel("surface_variant_color"),
-                    ]
+                        FieldPanel("background_color", widget=ColorInputWidget()),
+                        FieldPanel("surface_color", widget=ColorInputWidget()),
+                        FieldPanel("surface_variant_color", widget=ColorInputWidget()),
+                    ],
+                    classname="ks-color-row",
                 ),
             ],
             heading="Surface colors",
@@ -329,14 +327,11 @@ class DesignSystemSettings(BaseSiteSetting):
             [
                 FieldRowPanel(
                     [
-                        FieldPanel("text_color"),
-                        FieldPanel("text_muted_color"),
-                    ]
-                ),
-                FieldRowPanel(
-                    [
-                        FieldPanel("text_on_brand_color"),
-                    ]
+                        FieldPanel("text_color", widget=ColorInputWidget()),
+                        FieldPanel("text_muted_color", widget=ColorInputWidget()),
+                        FieldPanel("text_on_brand_color", widget=ColorInputWidget()),
+                    ],
+                    classname="ks-color-row",
                 ),
             ],
             heading="Text colors",
@@ -466,6 +461,11 @@ class HomePage(Page):
         ("left", "Left"),
         ("center", "Center"),
         ("right", "Right"),
+    ]
+    VERTICAL_ALIGNMENT_CHOICES = [
+        ("top", "Top"),
+        ("center", "Center"),
+        ("bottom", "Bottom"),
     ]
 
     HERO_CENTERED_SIMPLE = "centered_simple"
@@ -676,6 +676,11 @@ class HomePage(Page):
         choices=ALIGNMENT_CHOICES,
         default="center",
     )
+    hero_vertical_alignment = models.CharField(
+        max_length=16,
+        choices=VERTICAL_ALIGNMENT_CHOICES,
+        default="center",
+    )
     hero_announcement = models.CharField(max_length=160, blank=True)
     hero_announcement_link_label = models.CharField(max_length=80, blank=True)
     hero_announcement_link_url = models.CharField(max_length=255, blank=True)
@@ -716,6 +721,11 @@ class HomePage(Page):
         choices=ALIGNMENT_CHOICES,
         default="center",
     )
+    clients_vertical_alignment = models.CharField(
+        max_length=16,
+        choices=VERTICAL_ALIGNMENT_CHOICES,
+        default="center",
+    )
     clients_title = models.CharField(max_length=180, blank=True)
     clients_description = RichTextField(blank=True, features=RICH_TEXT_FEATURES)
     clients_cta_text = models.CharField(max_length=180, blank=True)
@@ -747,6 +757,11 @@ class HomePage(Page):
         max_length=16,
         choices=ALIGNMENT_CHOICES,
         default="left",
+    )
+    features_vertical_alignment = models.CharField(
+        max_length=16,
+        choices=VERTICAL_ALIGNMENT_CHOICES,
+        default="center",
     )
     features_eyebrow = models.CharField(max_length=80, blank=True)
     features_title = models.CharField(max_length=180, blank=True)
@@ -793,6 +808,11 @@ class HomePage(Page):
         max_length=16,
         choices=ALIGNMENT_CHOICES,
         default="left",
+    )
+    cta_vertical_alignment = models.CharField(
+        max_length=16,
+        choices=VERTICAL_ALIGNMENT_CHOICES,
+        default="center",
     )
     cta_eyebrow = models.CharField(max_length=80, blank=True)
     cta_title = models.CharField(max_length=180, blank=True)
@@ -1092,9 +1112,15 @@ class HomePage(Page):
                 FieldRowPanel(
                     [
                         FieldPanel(f"{prefix}_text_alignment"),
-                        FieldPanel(f"{prefix}_anchor_id"),
+                        FieldPanel(f"{prefix}_vertical_alignment"),
                     ],
                     heading="Alignment",
+                ),
+                FieldRowPanel(
+                    [
+                        FieldPanel(f"{prefix}_anchor_id"),
+                    ],
+                    heading="Advanced",
                 ),
             ],
             heading=heading,

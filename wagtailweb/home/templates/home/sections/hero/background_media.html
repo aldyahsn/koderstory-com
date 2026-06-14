@@ -1,4 +1,4 @@
-<section id="{{ page.hero_anchor_id|default:'hero' }}" class="ks-section ks-height-{{ page.hero_section_height }} ks-hero-background">
+<section id="{{ page.hero_anchor_id|default:'hero' }}" class="ks-section ks-height-{{ page.hero_section_height }} ks-hero-background" data-ks-vertical="{{ page.hero_vertical_alignment }}">
     {% if page.hero_image %}<img class="ks-background-image" src="{{ page.hero_image.url }}" alt="{{ page.hero_image_alt|default:page.hero_title }}">{% endif %}
     <div class="ks-background-overlay"></div>
     <div class="container ks-container position-relative" data-ks-align="{{ page.hero_text_alignment }}" data-ks-width="{{ page.hero_content_width }}">

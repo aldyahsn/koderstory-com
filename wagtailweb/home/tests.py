@@ -75,6 +75,12 @@ class HomeTests(WagtailPageTestCase):
         response = self.client.get(self.homepage.url)
         self.assertNotContains(response, 'id="features"')
 
+    def test_section_vertical_alignment_is_rendered(self):
+        self.homepage.hero_vertical_alignment = "bottom"
+        self.homepage.save(update_fields=["hero_vertical_alignment"])
+        response = self.client.get(self.homepage.url)
+        self.assertContains(response, 'data-ks-vertical="bottom"')
+
     def test_editor_has_content_and_section_settings_tabs(self):
         edit_handler = HomePage.get_edit_handler()
         self.assertEqual(
@@ -87,6 +93,10 @@ class HomeTests(WagtailPageTestCase):
             "clients_layout",
             "features_layout",
             "cta_layout",
+            "hero_vertical_alignment",
+            "clients_vertical_alignment",
+            "features_vertical_alignment",
+            "cta_vertical_alignment",
         ]:
             self.assertIn(field_name, form_class.base_fields)
 

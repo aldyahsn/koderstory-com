@@ -1,7 +1,7 @@
-<section id="{{ page.features_anchor_id|default:'features' }}" class="ks-section ks-height-{{ page.features_section_height }}">
+<section id="{{ page.features_anchor_id|default:'features' }}" class="ks-section ks-height-{{ page.features_section_height }}" data-ks-vertical="{{ page.features_vertical_alignment }}">
     <div class="container-fluid px-0">
         <div class="row g-0 align-items-stretch">
-            <div class="col-lg-5 p-4 p-lg-5 d-flex align-items-center">
+            <div class="col-lg-5 p-4 p-lg-5 ks-vertical-content">
                 <div>
                     {% include "home/components/feature_heading.html" %}
                     {% include "home/components/feature_button.html" %}
