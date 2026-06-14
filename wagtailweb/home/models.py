@@ -9,6 +9,17 @@ from wagtail.admin.panels import (
     TabbedInterface,
 )
 from wagtail.contrib.settings.models import BaseSiteSetting, register_setting
+from wagtail.fields import RichTextField
+
+RICH_TEXT_FEATURES = [
+    "bold",
+    "italic",
+    "link",
+    "ol",
+    "ul",
+    "h3",
+    "h4",
+]
 from wagtail.models import Orderable, Page
 
 
@@ -207,119 +218,188 @@ class DesignSystemSettings(BaseSiteSetting):
             f"display=swap"
         )
 
-    panels = [
+    typography_panels = [
         MultiFieldPanel(
             [
-                FieldRowPanel([
-                    FieldPanel("heading_font"),
-                    FieldPanel("body_font"),
-                ]),
-                FieldRowPanel([
-                    FieldPanel("base_font_size"),
-                    FieldPanel("line_height"),
-                ]),
-                FieldPanel("letter_spacing"),
+                FieldRowPanel(
+                    [
+                        FieldPanel("heading_font"),
+                        FieldPanel("body_font"),
+                    ]
+                ),
+                FieldRowPanel(
+                    [
+                        FieldPanel("base_font_size"),
+                        FieldPanel("line_height"),
+                    ]
+                ),
+                FieldRowPanel(
+                    [
+                        FieldPanel("letter_spacing"),
+                    ]
+                ),
             ],
-            heading="Font Family & Base",
+            heading="Font family and base",
+            classname="ks-global-settings-group",
         ),
         MultiFieldPanel(
             [
-                FieldRowPanel([
-                    FieldPanel("h1_size"),
-                    FieldPanel("h2_size"),
-                ]),
-                FieldRowPanel([
-                    FieldPanel("h3_size"),
-                    FieldPanel("h4_size"),
-                ]),
-                FieldRowPanel([
-                    FieldPanel("h5_size"),
-                    FieldPanel("h6_size"),
-                ]),
+                FieldRowPanel(
+                    [
+                        FieldPanel("h1_size"),
+                        FieldPanel("h2_size"),
+                    ]
+                ),
+                FieldRowPanel(
+                    [
+                        FieldPanel("h3_size"),
+                        FieldPanel("h4_size"),
+                    ]
+                ),
+                FieldRowPanel(
+                    [
+                        FieldPanel("h5_size"),
+                        FieldPanel("h6_size"),
+                    ]
+                ),
             ],
-            heading="Heading Sizes (rem)",
-        ),
-        MultiFieldPanel(
-            [
-                FieldRowPanel([
-                    FieldPanel("brand_color"),
-                    FieldPanel("primary_color"),
-                ]),
-                FieldRowPanel([
-                    FieldPanel("secondary_color"),
-                    FieldPanel("accent_color"),
-                ]),
-            ],
-            heading="Theme Colors",
-        ),
-        MultiFieldPanel(
-            [
-                FieldRowPanel([
-                    FieldPanel("success_color"),
-                    FieldPanel("warning_color"),
-                ]),
-                FieldRowPanel([
-                    FieldPanel("error_color"),
-                    FieldPanel("info_color"),
-                ]),
-            ],
-            heading="Semantic Colors",
-        ),
-        MultiFieldPanel(
-            [
-                FieldRowPanel([
-                    FieldPanel("background_color"),
-                    FieldPanel("surface_color"),
-                ]),
-                FieldPanel("surface_variant_color"),
-            ],
-            heading="Surface Colors",
-        ),
-        MultiFieldPanel(
-            [
-                FieldRowPanel([
-                    FieldPanel("text_color"),
-                    FieldPanel("text_muted_color"),
-                ]),
-                FieldPanel("text_on_brand_color"),
-            ],
-            heading="Text Colors",
-        ),
-        MultiFieldPanel(
-            [
-                FieldRowPanel([
-                    FieldPanel("spacing_xs"),
-                    FieldPanel("spacing_sm"),
-                    FieldPanel("spacing_md"),
-                ]),
-                FieldRowPanel([
-                    FieldPanel("spacing_lg"),
-                    FieldPanel("spacing_xl"),
-                    FieldPanel("spacing_2xl"),
-                ]),
-            ],
-            heading="Spacing Scale",
-        ),
-        MultiFieldPanel(
-            [
-                FieldRowPanel([
-                    FieldPanel("section_padding"),
-                    FieldPanel("container_width"),
-                ]),
-            ],
-            heading="Layout",
-        ),
-        MultiFieldPanel(
-            [
-                FieldRowPanel([
-                    FieldPanel("button_radius"),
-                    FieldPanel("card_radius"),
-                    FieldPanel("input_radius"),
-                ]),
-            ],
-            heading="Border Radius",
+            heading="Heading scale",
+            classname="ks-global-settings-group",
         ),
     ]
+
+    color_panels = [
+        MultiFieldPanel(
+            [
+                FieldRowPanel(
+                    [
+                        FieldPanel("brand_color"),
+                        FieldPanel("primary_color"),
+                    ]
+                ),
+                FieldRowPanel(
+                    [
+                        FieldPanel("secondary_color"),
+                        FieldPanel("accent_color"),
+                    ]
+                ),
+            ],
+            heading="Brand colors",
+            classname="ks-global-settings-group ks-global-color-group",
+        ),
+        MultiFieldPanel(
+            [
+                FieldRowPanel(
+                    [
+                        FieldPanel("success_color"),
+                        FieldPanel("warning_color"),
+                    ]
+                ),
+                FieldRowPanel(
+                    [
+                        FieldPanel("error_color"),
+                        FieldPanel("info_color"),
+                    ]
+                ),
+            ],
+            heading="Status colors",
+            classname="ks-global-settings-group ks-global-color-group",
+        ),
+        MultiFieldPanel(
+            [
+                FieldRowPanel(
+                    [
+                        FieldPanel("background_color"),
+                        FieldPanel("surface_color"),
+                    ]
+                ),
+                FieldRowPanel(
+                    [
+                        FieldPanel("surface_variant_color"),
+                    ]
+                ),
+            ],
+            heading="Surface colors",
+            classname="ks-global-settings-group ks-global-color-group",
+        ),
+        MultiFieldPanel(
+            [
+                FieldRowPanel(
+                    [
+                        FieldPanel("text_color"),
+                        FieldPanel("text_muted_color"),
+                    ]
+                ),
+                FieldRowPanel(
+                    [
+                        FieldPanel("text_on_brand_color"),
+                    ]
+                ),
+            ],
+            heading="Text colors",
+            classname="ks-global-settings-group ks-global-color-group",
+        ),
+    ]
+
+    layout_panels = [
+        MultiFieldPanel(
+            [
+                FieldRowPanel(
+                    [
+                        FieldPanel("spacing_xs"),
+                        FieldPanel("spacing_sm"),
+                        FieldPanel("spacing_md"),
+                    ]
+                ),
+                FieldRowPanel(
+                    [
+                        FieldPanel("spacing_lg"),
+                        FieldPanel("spacing_xl"),
+                        FieldPanel("spacing_2xl"),
+                    ]
+                ),
+            ],
+            heading="Spacing scale",
+            classname="ks-global-settings-group ks-global-settings-group--three",
+        ),
+        MultiFieldPanel(
+            [
+                FieldRowPanel(
+                    [
+                        FieldPanel("section_padding"),
+                        FieldPanel("container_width"),
+                    ]
+                ),
+            ],
+            heading="Page layout",
+            classname="ks-global-settings-group",
+        ),
+        MultiFieldPanel(
+            [
+                FieldRowPanel(
+                    [
+                        FieldPanel("button_radius"),
+                        FieldPanel("card_radius"),
+                        FieldPanel("input_radius"),
+                    ]
+                ),
+            ],
+            heading="Corner radius",
+            classname="ks-global-settings-group ks-global-settings-group--three",
+        ),
+    ]
+
+    edit_handler = TabbedInterface(
+        [
+            ObjectList(typography_panels, heading="Typography"),
+            ObjectList(color_panels, heading="Colors"),
+            ObjectList(layout_panels, heading="Layout & components"),
+        ]
+    )
+
+    class Meta:
+        verbose_name = "Global settings"
+        verbose_name_plural = "Global settings"
 
 
 class HomeClientLogo(Orderable):
@@ -356,7 +436,7 @@ class HomeFeature(Orderable):
         help_text="Short icon name or initials.",
     )
     title = models.CharField(max_length=120)
-    description = models.TextField(blank=True)
+    description = RichTextField(blank=True, features=RICH_TEXT_FEATURES)
     link_label = models.CharField(max_length=80, blank=True)
     link_url = models.CharField(max_length=255, blank=True)
 
@@ -597,7 +677,7 @@ class HomePage(Page):
     hero_announcement_link_label = models.CharField(max_length=80, blank=True)
     hero_announcement_link_url = models.CharField(max_length=255, blank=True)
     hero_title = models.CharField(max_length=180, blank=True)
-    hero_description = models.TextField(blank=True)
+    hero_description = RichTextField(blank=True, features=RICH_TEXT_FEATURES)
     hero_primary_button_label = models.CharField(max_length=80, blank=True)
     hero_primary_button_url = models.CharField(max_length=255, blank=True)
     hero_secondary_button_label = models.CharField(max_length=80, blank=True)
@@ -634,7 +714,7 @@ class HomePage(Page):
         default="center",
     )
     clients_title = models.CharField(max_length=180, blank=True)
-    clients_description = models.TextField(blank=True)
+    clients_description = RichTextField(blank=True, features=RICH_TEXT_FEATURES)
     clients_cta_text = models.CharField(max_length=180, blank=True)
     clients_cta_label = models.CharField(max_length=80, blank=True)
     clients_cta_url = models.CharField(max_length=255, blank=True)
@@ -667,7 +747,7 @@ class HomePage(Page):
     )
     features_eyebrow = models.CharField(max_length=80, blank=True)
     features_title = models.CharField(max_length=180, blank=True)
-    features_description = models.TextField(blank=True)
+    features_description = RichTextField(blank=True, features=RICH_TEXT_FEATURES)
     features_image = models.ForeignKey(
         "wagtailimages.Image",
         null=True,
@@ -678,7 +758,7 @@ class HomePage(Page):
     features_image_alt = models.CharField(max_length=120, blank=True)
     features_button_label = models.CharField(max_length=80, blank=True)
     features_button_url = models.CharField(max_length=255, blank=True)
-    features_testimonial_quote = models.TextField(blank=True)
+    features_testimonial_quote = RichTextField(blank=True, features=RICH_TEXT_FEATURES)
     features_testimonial_name = models.CharField(max_length=100, blank=True)
     features_testimonial_role = models.CharField(max_length=120, blank=True)
     features_testimonial_avatar = models.ForeignKey(
@@ -713,7 +793,7 @@ class HomePage(Page):
     )
     cta_eyebrow = models.CharField(max_length=80, blank=True)
     cta_title = models.CharField(max_length=180, blank=True)
-    cta_description = models.TextField(blank=True)
+    cta_description = RichTextField(blank=True, features=RICH_TEXT_FEATURES)
     cta_primary_button_label = models.CharField(max_length=80, blank=True)
     cta_primary_button_url = models.CharField(max_length=255, blank=True)
     cta_secondary_button_label = models.CharField(max_length=80, blank=True)
@@ -992,30 +1072,30 @@ class HomePage(Page):
     def _settings_panel(cls, prefix, heading):
         return MultiFieldPanel(
             [
-                MultiFieldPanel(
+                FieldRowPanel(
                     [
-                        FieldPanel(f"{prefix}_enabled"),
+                        FieldPanel(f"{prefix}_enabled", classname="w-field--small"),
                         FieldPanel(f"{prefix}_layout"),
                     ],
-                    heading="Settings",
-                    classname="ks-settings-grid",
-                    attrs={"data-ks-panel": f"{prefix}-settings-basic"},
+                    heading="Layout",
                 ),
-                MultiFieldPanel(
+                FieldRowPanel(
                     [
-                        FieldPanel(f"{prefix}_anchor_id"),
                         FieldPanel(f"{prefix}_section_height"),
                         FieldPanel(f"{prefix}_content_width"),
-                        FieldPanel(f"{prefix}_text_alignment"),
                     ],
-                    heading="Advanced",
-                    classname="ks-settings-grid",
-                    attrs={"data-ks-panel": f"{prefix}-settings-advanced"},
+                    heading="Spacing",
+                ),
+                FieldRowPanel(
+                    [
+                        FieldPanel(f"{prefix}_text_alignment"),
+                        FieldPanel(f"{prefix}_anchor_id"),
+                    ],
+                    heading="Alignment",
                 ),
             ],
             heading=heading,
             classname="ks-section-settings",
-            attrs={"data-ks-panel": f"{prefix}-settings"},
         )
 
     section_settings_panels = [

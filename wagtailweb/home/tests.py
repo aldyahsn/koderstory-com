@@ -89,3 +89,10 @@ class HomeTests(WagtailPageTestCase):
         )
         settings.save()
         self.assertEqual(settings.brand_color, "#123456")
+
+    def test_global_settings_editor_is_organized_into_tabs(self):
+        self.assertEqual(DesignSystemSettings._meta.verbose_name, "Global settings")
+        self.assertEqual(
+            [panel.heading for panel in DesignSystemSettings.edit_handler.children],
+            ["Typography", "Colors", "Layout & components"],
+        )

@@ -1,3 +1,4 @@
+{% load wagtailcore_tags %}
 <section id="{{ page.features_anchor_id|default:'features' }}" class="ks-section ks-height-{{ page.features_section_height }}">
     <div class="container ks-container" data-ks-width="{{ page.features_content_width }}">
         <div class="row g-5">
@@ -8,7 +9,7 @@
                     <div class="col">
                         <article class="ks-check-item">
                             <span class="ks-check">✓</span>
-                            <div><h3 class="h6 mb-2">{{ feature.title }}</h3><p class="text-secondary mb-0">{{ feature.description }}</p></div>
+                            <div><h3 class="h6 mb-2">{{ feature.title }}</h3><p class="text-secondary mb-0">{{ feature.description|richtext }}</p></div>
                         </article>
                     </div>
                     {% endfor %}

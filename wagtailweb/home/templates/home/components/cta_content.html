@@ -1,3 +1,4 @@
+{% load wagtailcore_tags %}
 {% if page.cta_eyebrow %}<p class="ks-eyebrow mb-3">{{ page.cta_eyebrow }}</p>{% endif %}
 <h2 class="display-5 mb-3">{{ page.cta_title }}</h2>
-{% if page.cta_description %}<p class="lead text-secondary mb-0">{{ page.cta_description|linebreaksbr }}</p>{% endif %}
+{% if page.cta_description %}<p class="lead text-secondary mb-0">{{ page.cta_description|richtext }}</p>{% endif %}

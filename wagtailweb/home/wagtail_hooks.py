@@ -11,8 +11,8 @@ from .models import HomePage
 @hooks.register("insert_global_admin_css")
 def global_admin_css():
     return format_html(
-        '<link rel="stylesheet" href="{}">',
-        static("admin/css/section-editor.css?v=1"),
+        '<link rel="stylesheet" href="{}?v=7">',
+        static("admin/css/section-editor.css"),
     )
 
 
@@ -36,7 +36,7 @@ def global_admin_js():
     }
     return format_html(
         '<script>window.KS_SECTION_VARIANTS = {};</script>'
-        '<script src="{}"></script>',
+        '<script src="{}?v=4"></script>',
         mark_safe(json.dumps(variants)),
-        static("admin/js/section-editor.js?v=1"),
+        static("admin/js/section-editor.js"),
     )

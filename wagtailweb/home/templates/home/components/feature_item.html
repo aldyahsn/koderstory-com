@@ -1,8 +1,9 @@
+{% load wagtailcore_tags %}
 <article class="ks-feature-item">
     {% if show_icon %}<span class="ks-feature-icon">{{ feature.icon|default:feature.title|slice:":1" }}</span>{% endif %}
     <div>
         <h3 class="h6 mb-2">{{ feature.title }}</h3>
-        {% if feature.description %}<p class="text-secondary mb-0">{{ feature.description|linebreaksbr }}</p>{% endif %}
+        {% if feature.description %}<p class="text-secondary mb-0">{{ feature.description|richtext }}</p>{% endif %}
         {% if feature.link_label %}<a class="ks-text-link" href="{{ feature.link_url|default:'#' }}">{{ feature.link_label }} <span aria-hidden="true">→</span></a>{% endif %}
     </div>
 </article>
