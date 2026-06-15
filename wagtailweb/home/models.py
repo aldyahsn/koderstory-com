@@ -1,5 +1,7 @@
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 from modelcluster.fields import ParentalKey
+from modelcluster.models import ClusterableModel
 from wagtail.admin.panels import (
     FieldPanel,
     FieldRowPanel,
@@ -9,8 +11,21 @@ from wagtail.admin.panels import (
     TabbedInterface,
 )
 from wagtail.contrib.settings.models import BaseSiteSetting, register_setting
-from wagtail.fields import RichTextField
+
+
+class ClusterableSiteSetting(BaseSiteSetting, ClusterableModel):
+    """
+    Combined base for settings models that need both @register_setting
+    compatibility (site FK, get_permission_policy, for_site) and
+    ClusterableModel (for ParentalKey / InlinePanel relationships).
+    """
+
+    class Meta:
+        abstract = True
+from wagtail.fields import RichTextField, StreamField
 from wagtail.snippets.models import register_snippet
+
+from home.blocks import FooterColumnsBlock
 
 from home.widgets import ColorInputWidget
 
@@ -245,6 +260,15 @@ class DesignSystemSettings(BaseSiteSetting):
         "feature_icon_text": "#ffffff",
         "check_color": "#f59e0b",
         "brand_glow": "#4f46e5",
+        "navbar_bg": "#ffffff",
+        "navbar_text_color": "#111827",
+        "navbar_link_color": "#667085",
+        "navbar_link_hover_color": "#4f46e5",
+        "footer_bg": "#f8f9fa",
+        "footer_text_color": "#667085",
+        "footer_heading_color": "#111827",
+        "footer_link_color": "#667085",
+        "footer_link_hover_color": "#4f46e5",
     }
 
     FIELD_TO_CSS_VAR = {
@@ -264,6 +288,15 @@ class DesignSystemSettings(BaseSiteSetting):
         "feature_icon_text": "--ks-feature-icon-text",
         "check_color": "--ks-check-color",
         "brand_glow": "--ks-brand-glow",
+        "navbar_bg": "--ks-navbar-bg",
+        "navbar_text_color": "--ks-navbar-text",
+        "navbar_link_color": "--ks-navbar-link",
+        "navbar_link_hover_color": "--ks-navbar-link-hover",
+        "footer_bg": "--ks-footer-bg",
+        "footer_text_color": "--ks-footer-text",
+        "footer_heading_color": "--ks-footer-heading",
+        "footer_link_color": "--ks-footer-link",
+        "footer_link_hover_color": "--ks-footer-link-hover",
     }
 
     def resolved_colors(self):
@@ -474,6 +507,19 @@ class ColorTheme(models.Model):
     check_color = _color_field("Checklist color", "", "Checklist checkmarks.")
     brand_glow = _color_field("Brand glow", "", "Hero centered radial gradient spot.")
 
+    # Navbar
+    navbar_bg = _color_field("Navbar background", "", "Navbar bar background.")
+    navbar_text_color = _color_field("Navbar text", "", "Navbar text and brand.")
+    navbar_link_color = _color_field("Navbar link", "", "Navbar navigation links.")
+    navbar_link_hover_color = _color_field("Navbar link hover", "", "Navbar links on hover.")
+
+    # Footer
+    footer_bg = _color_field("Footer background", "", "Footer background.")
+    footer_text_color = _color_field("Footer text", "", "Footer body text.")
+    footer_heading_color = _color_field("Footer heading", "", "Footer column headings.")
+    footer_link_color = _color_field("Footer link", "", "Footer links.")
+    footer_link_hover_color = _color_field("Footer link hover", "", "Footer links on hover.")
+
     panels = [
         FieldPanel("name"),
         MultiFieldPanel(
@@ -552,6 +598,52 @@ class ColorTheme(models.Model):
             heading="Components",
             classname="ks-global-settings-group ks-global-color-group",
         ),
+        MultiFieldPanel(
+            [
+                FieldRowPanel(
+                    [
+                        FieldPanel("navbar_bg", widget=ColorInputWidget()),
+                        FieldPanel("navbar_text_color", widget=ColorInputWidget()),
+                    ],
+                    classname="ks-color-row",
+                ),
+                FieldRowPanel(
+                    [
+                        FieldPanel("navbar_link_color", widget=ColorInputWidget()),
+                        FieldPanel("navbar_link_hover_color", widget=ColorInputWidget()),
+                    ],
+                    classname="ks-color-row",
+                ),
+            ],
+            heading="Navbar",
+            classname="ks-global-settings-group ks-global-color-group",
+        ),
+        MultiFieldPanel(
+            [
+                FieldRowPanel(
+                    [
+                        FieldPanel("footer_bg", widget=ColorInputWidget()),
+                        FieldPanel("footer_text_color", widget=ColorInputWidget()),
+                    ],
+                    classname="ks-color-row",
+                ),
+                FieldRowPanel(
+                    [
+                        FieldPanel("footer_heading_color", widget=ColorInputWidget()),
+                    ],
+                    classname="ks-color-row",
+                ),
+                FieldRowPanel(
+                    [
+                        FieldPanel("footer_link_color", widget=ColorInputWidget()),
+                        FieldPanel("footer_link_hover_color", widget=ColorInputWidget()),
+                    ],
+                    classname="ks-color-row",
+                ),
+            ],
+            heading="Footer",
+            classname="ks-global-settings-group ks-global-color-group",
+        ),
     ]
 
     class Meta:
@@ -608,6 +700,337 @@ class HomeFeature(Orderable):
         FieldPanel("description"),
         FieldRowPanel([FieldPanel("link_label"), FieldPanel("link_url")]),
     ]
+
+
+@register_setting
+class NavbarSettings(ClusterableSiteSetting):
+    logo = models.ForeignKey(
+        "wagtailimages.Image", null=True, blank=True, on_delete=models.SET_NULL,
+        related_name="+", verbose_name="Logo image",
+        help_text="Upload a logo image. If empty, logo_text is shown as text logo.",
+    )
+    logo_text = models.CharField(
+        max_length=120, blank=True, default="Site name",
+        verbose_name="Logo text",
+        help_text="Shown as text logo when no image is set.",
+    )
+    sticky = models.BooleanField(
+        default=False, verbose_name="Sticky navbar",
+        help_text="Keep the navbar fixed at the top when scrolling.",
+    )
+    cta_label = models.CharField(
+        max_length=80, blank=True, verbose_name="CTA button label",
+    )
+    cta_url = models.CharField(
+        max_length=255, blank=True, verbose_name="CTA button URL",
+    )
+    navbar_theme = models.ForeignKey(
+        ColorTheme, null=True, blank=True, on_delete=models.SET_NULL,
+        related_name="+", verbose_name="Navbar color theme",
+    )
+
+    FIELD_TO_CSS_VAR = {
+        "navbar_bg": "--ks-navbar-bg",
+        "navbar_text_color": "--ks-navbar-text",
+        "navbar_link_color": "--ks-navbar-link",
+        "navbar_link_hover_color": "--ks-navbar-link-hover",
+    }
+
+    @property
+    def navbar_style(self):
+        theme = self.navbar_theme
+        if not theme:
+            return ""
+        parts = []
+        for field_name, css_var in self.FIELD_TO_CSS_VAR.items():
+            val = getattr(theme, field_name)
+            if val is None or val == "":
+                continue
+            parts.append(f"{css_var}: {val}")
+        return "; ".join(parts)
+
+    panels = [
+        MultiFieldPanel(
+            [
+                FieldRowPanel([
+                    FieldPanel("logo"),
+                    FieldPanel("logo_text"),
+                ]),
+                FieldPanel("sticky"),
+            ],
+            heading="Brand & behavior",
+        ),
+        MultiFieldPanel(
+            [
+                InlinePanel("navbar_links", label="Navigation link"),
+            ],
+            heading="Navigation links",
+        ),
+        MultiFieldPanel(
+            [
+                FieldRowPanel([
+                    FieldPanel("cta_label"),
+                    FieldPanel("cta_url"),
+                ]),
+            ],
+            heading="CTA button (optional)",
+        ),
+        MultiFieldPanel(
+            [
+                FieldPanel("navbar_theme"),
+            ],
+            heading="Color theme",
+        ),
+    ]
+
+    class Meta:
+        verbose_name = "Navbar settings"
+        verbose_name_plural = "Navbar settings"
+
+    @classmethod
+    def for_site(cls, site):
+        return cls.objects.get_or_create(site=site)[0]
+
+
+class NavbarLink(Orderable):
+    settings = ParentalKey(
+        NavbarSettings, related_name="navbar_links", on_delete=models.CASCADE,
+    )
+    label = models.CharField(max_length=80)
+    url = models.CharField(max_length=255, blank=True)
+
+    panels = [
+        FieldRowPanel([
+            FieldPanel("label"),
+            FieldPanel("url"),
+        ]),
+    ]
+
+    def __str__(self):
+        return self.label
+
+
+@register_setting
+class FooterSettings(ClusterableSiteSetting):
+    SECTION_HEIGHT_CHOICES = [
+        ("compact", "Compact"),
+        ("normal", "Normal"),
+        ("spacious", "Spacious"),
+        ("full", "Full"),
+    ]
+    CONTENT_WIDTH_CHOICES = [
+        ("narrow", "Narrow"),
+        ("normal", "Normal"),
+        ("wide", "Wide"),
+        ("full", "Full width"),
+    ]
+    ALIGNMENT_CHOICES = [
+        ("left", "Left"),
+        ("center", "Center"),
+        ("right", "Right"),
+    ]
+    VERTICAL_ALIGNMENT_CHOICES = [
+        ("top", "Top"),
+        ("center", "Center"),
+        ("bottom", "Bottom"),
+    ]
+
+    section_height = models.CharField(
+        max_length=16, choices=SECTION_HEIGHT_CHOICES, default="normal",
+        verbose_name="Section height",
+    )
+    content_width = models.CharField(
+        max_length=16, choices=CONTENT_WIDTH_CHOICES, default="normal",
+        verbose_name="Content width",
+    )
+    text_alignment = models.CharField(
+        max_length=16, choices=ALIGNMENT_CHOICES, default="left",
+        verbose_name="Text alignment",
+    )
+    vertical_alignment = models.CharField(
+        max_length=16, choices=VERTICAL_ALIGNMENT_CHOICES, default="center",
+        verbose_name="Vertical alignment",
+    )
+    anchor_id = models.CharField(
+        max_length=40, blank=True, default="footer",
+        verbose_name="Anchor ID",
+    )
+    copyright_text = models.CharField(
+        max_length=255, blank=True, default="All rights reserved.",
+        verbose_name="Copyright text",
+    )
+    bottom_bar = models.BooleanField(
+        default=True, verbose_name="Show bottom bar",
+        help_text="Enable the copyright bar at the bottom of the footer.",
+    )
+    footer_theme = models.ForeignKey(
+        ColorTheme, null=True, blank=True, on_delete=models.SET_NULL,
+        related_name="+", verbose_name="Footer color theme",
+    )
+    columns = StreamField(
+        FooterColumnsBlock(), blank=True, use_json_field=True,
+    )
+
+    FIELD_TO_CSS_VAR = {
+        "footer_bg": "--ks-footer-bg",
+        "footer_text_color": "--ks-footer-text",
+        "footer_heading_color": "--ks-footer-heading",
+        "footer_link_color": "--ks-footer-link",
+        "footer_link_hover_color": "--ks-footer-link-hover",
+    }
+
+    # Fallback mapping — if a footer-specific field is blank, use the theme's general equivalent
+    FOOTER_FALLBACKS = {
+        "footer_bg": "page_bg",
+        "footer_text_color": "body_text_color",
+        "footer_heading_color": "heading_text_color",
+        "footer_link_color": "link_color",
+        "footer_link_hover_color": "link_hover_color",
+    }
+
+    @property
+    def footer_style(self):
+        theme = self.footer_theme
+        if not theme:
+            return ""
+        parts = []
+        for field_name, css_var in self.FIELD_TO_CSS_VAR.items():
+            val = getattr(theme, field_name)
+            if val is None or val == "":
+                fallback_field = self.FOOTER_FALLBACKS.get(field_name)
+                if fallback_field:
+                    val = getattr(theme, fallback_field, "")
+            if val is None or val == "":
+                continue
+            parts.append(f"{css_var}: {val}")
+        return "; ".join(parts)
+
+    panels = [
+        MultiFieldPanel(
+            [
+                FieldRowPanel([
+                    FieldPanel("section_height"),
+                    FieldPanel("content_width"),
+                ]),
+                FieldRowPanel([
+                    FieldPanel("text_alignment"),
+                    FieldPanel("vertical_alignment"),
+                ]),
+                FieldPanel("anchor_id"),
+            ],
+            heading="Section settings",
+        ),
+        MultiFieldPanel(
+            [
+                FieldPanel("columns"),
+            ],
+            heading="Footer columns",
+        ),
+        MultiFieldPanel(
+            [
+                FieldPanel("copyright_text"),
+                FieldPanel("bottom_bar"),
+            ],
+            heading="Bottom bar",
+        ),
+        MultiFieldPanel(
+            [
+                FieldPanel("footer_theme"),
+            ],
+            heading="Color theme",
+        ),
+    ]
+
+    class Meta:
+        verbose_name = "Footer settings"
+        verbose_name_plural = "Footer settings"
+
+    @classmethod
+    def for_site(cls, site):
+        return cls.objects.get_or_create(site=site)[0]
+
+
+@register_snippet
+class NavigationLinkGroup(ClusterableModel):
+    name = models.CharField(max_length=80, unique=True)
+
+    panels = [
+        FieldPanel("name"),
+        InlinePanel("links", label="Navigation link"),
+    ]
+
+    class Meta:
+        verbose_name = "Navigation link group"
+        verbose_name_plural = "Navigation link groups"
+        ordering = ["name"]
+
+    def __str__(self):
+        return self.name
+
+
+class NavigationLink(Orderable):
+    group = ParentalKey(
+        NavigationLinkGroup, related_name="links", on_delete=models.CASCADE,
+    )
+    label = models.CharField(max_length=80)
+    url = models.CharField(max_length=255, blank=True)
+    parent = models.ForeignKey(
+        "self", null=True, blank=True, on_delete=models.SET_NULL,
+        related_name="children",
+        help_text="Parent link for nesting. Blank = top-level.",
+    )
+
+    panels = [
+        FieldRowPanel([
+            FieldPanel("label"),
+            FieldPanel("url"),
+        ]),
+        FieldPanel("parent"),
+    ]
+
+    def __str__(self):
+        return self.label
+
+
+@register_snippet
+class SocialMediaGroup(ClusterableModel):
+    name = models.CharField(max_length=80, unique=True)
+
+    panels = [
+        FieldPanel("name"),
+        InlinePanel("links", label="Social link"),
+    ]
+
+    class Meta:
+        verbose_name = "Social media group"
+        verbose_name_plural = "Social media groups"
+        ordering = ["name"]
+
+    def __str__(self):
+        return self.name
+
+
+class SocialLink(Orderable):
+    group = ParentalKey(
+        SocialMediaGroup, related_name="links", on_delete=models.CASCADE,
+    )
+    label = models.CharField(max_length=80)
+    url = models.CharField(max_length=255, blank=True)
+    icon_class = models.CharField(
+        max_length=40, blank=True,
+        help_text="Bootstrap icon class (e.g., bi-twitter-x).",
+    )
+
+    panels = [
+        FieldRowPanel([
+            FieldPanel("label"),
+            FieldPanel("url"),
+            FieldPanel("icon_class"),
+        ]),
+    ]
+
+    def __str__(self):
+        return self.label
 
 
 class HomePage(Page):

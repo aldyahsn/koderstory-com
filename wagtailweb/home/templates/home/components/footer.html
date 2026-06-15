@@ -1,0 +1,85 @@
+{% load wagtailcore_tags wagtailimages_tags wagtailsettings_tags %}
+{% get_settings %}
+
+{% with settings.home.FooterSettings as footer_settings %}
+<footer class="ks-footer ks-section ks-height-{{ footer_settings.section_height }}" id="{{ footer_settings.anchor_id }}" data-ks-vertical="{{ footer_settings.vertical_alignment }}"{% if footer_settings.footer_style %} style="{{ footer_settings.footer_style }}"{% endif %}>
+    <div class="container" data-ks-align="{{ footer_settings.text_alignment }}" data-ks-width="{{ footer_settings.content_width }}">
+        {% if footer_settings.columns %}
+        <div class="row g-5 py-5 ks-footer-columns">
+            {% for block in footer_settings.columns %}
+            <div class="ks-footer-col{% if block.value.width == 25 %} col-lg-3{% elif block.value.width == 33 %} col-lg-4{% elif block.value.width == 50 %} col-lg-6{% elif block.value.width == 66 %} col-lg-8{% elif block.value.width == 75 %} col-lg-9{% elif block.value.width == 100 %} col-12{% endif %}">
+                {% if block.value.heading %}
+                <h6 class="ks-footer-heading mb-3">{{ block.value.heading }}</h6>
+                {% endif %}
+
+                {% if block.block_type == "navigation" %}
+                {% with block.value as val %}
+                <ul class="list-unstyled ks-footer-links mb-0">
+                    {% for link in val.nav_group.links.all %}
+                    {% if not link.parent %}
+                    <li class="mb-2">
+                        <a href="{{ link.url }}" class="ks-footer-link">{{ link.label }}</a>
+                        {% if link.children.exists %}
+                        <ul class="list-unstyled ms-3 mt-1">
+                            {% for child in link.children.all %}
+                            <li class="mb-1"><a href="{{ child.url }}" class="ks-footer-link">{{ child.label }}</a></li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </li>
+                    {% endif %}
+                    {% endfor %}
+                </ul>
+                {% endwith %}
+
+                {% elif block.block_type == "social" %}
+                {% with block.value as val %}
+                <div class="ks-social-links ks-social-links--{{ val.icon_position }} ks-social-links--{{ val.icon_size }}">
+                    {% for link in val.social_group.links.all %}
+                    <a href="{{ link.url }}" class="ks-footer-link" target="_blank" rel="noopener noreferrer">{% if link.icon_class %}<i class="{{ link.icon_class }}"></i> {% endif %}{{ link.label }}</a>
+                    {% endfor %}
+                </div>
+                {% endwith %}
+
+                {% elif block.block_type == "newsletter" %}
+                {% with block.value as val %}
+                <div class="ks-newsletter">
+                    {% if val.description %}
+                    <div class="ks-footer-text mb-3">{{ val.description|richtext }}</div>
+                    {% endif %}
+                    <form action="{{ val.button_url|default:'#' }}" method="post" class="ks-newsletter-form d-flex gap-2">
+                        <input type="email" class="form-control" placeholder="{{ val.placeholder_text|default:'Your email' }}" required>
+                        <button type="submit" class="btn btn-primary">{{ val.button_label|default:'Subscribe' }}</button>
+                    </form>
+                </div>
+                {% endwith %}
+
+                {% elif block.block_type == "text" %}
+                {% with block.value as val %}
+                <div class="ks-footer-text">
+                    {{ val.body|richtext }}
+                </div>
+                {% endwith %}
+
+                {% elif block.block_type == "image" %}
+                {% with block.value as val %}
+                {% if val.image %}
+                <div class="ks-footer-image ks-footer-image--{{ val.image_position }}"{% if val.image_height %} style="max-height: {{ val.image_height }}px;"{% endif %}>
+                    {% image val.image width-400 class="img-fluid" %}
+                </div>
+                {% endif %}
+                {% endwith %}
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% if footer_settings.bottom_bar %}
+        <div class="d-flex flex-wrap justify-content-between align-items-center py-3 border-top ks-footer-bottom">
+            <p class="mb-0 ks-footer-text small">&copy; {% now "Y" %} {{ footer_settings.copyright_text }}</p>
+        </div>
+        {% endif %}
+    </div>
+</footer>
+{% endwith %}
