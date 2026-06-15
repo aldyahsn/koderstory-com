@@ -1,4 +1,4 @@
-<section id="{{ page.hero_anchor_id|default:'hero' }}" class="ks-section ks-height-{{ page.hero_section_height }} ks-hero-centered" data-ks-vertical="{{ page.hero_vertical_alignment }}">
+<section id="{{ page.hero_anchor_id|default:'hero' }}" class="ks-section ks-height-{{ page.hero_section_height }} ks-hero-centered" data-ks-vertical="{{ page.hero_vertical_alignment }}"{% if page.hero_style %} style="{{ page.hero_style }}"{% endif %} {% if page.hero_style %} style="{{ page.hero_style }}"{% endif %}>
     <div class="container ks-container" data-ks-align="{{ page.hero_text_alignment }}" data-ks-width="{{ page.hero_content_width }}">
         <div class="ks-copy">
             {% include "home/components/hero_announcement.html" %}

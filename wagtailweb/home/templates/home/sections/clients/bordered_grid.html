@@ -1,4 +1,4 @@
-<section id="{{ page.clients_anchor_id|default:'clients' }}" class="ks-section ks-height-{{ page.clients_section_height }}" data-ks-vertical="{{ page.clients_vertical_alignment }}">
+<section id="{{ page.clients_anchor_id|default:'clients' }}" class="ks-section ks-height-{{ page.clients_section_height }}" data-ks-vertical="{{ page.clients_vertical_alignment }}" {% if page.clients_style %} style="{{ page.clients_style }}"{% endif %}>
     <div class="container ks-container" data-ks-width="{{ page.clients_content_width }}">
         <div class="row row-cols-2 row-cols-lg-3 g-0 ks-logo-grid">
             {% for client in page.client_logos.all %}<div class="col">{% include "home/components/client_logo.html" %}</div>{% endfor %}

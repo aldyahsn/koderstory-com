@@ -1,4 +1,4 @@
-<section id="{{ page.features_anchor_id|default:'features' }}" class="ks-section ks-height-{{ page.features_section_height }}" data-ks-vertical="{{ page.features_vertical_alignment }}">
+<section id="{{ page.features_anchor_id|default:'features' }}" class="ks-section ks-height-{{ page.features_section_height }}" data-ks-vertical="{{ page.features_vertical_alignment }}" {% if page.features_style %} style="{{ page.features_style }}"{% endif %}>
     <div class="container ks-container" data-ks-width="{{ page.features_content_width }}">
         <div class="row align-items-center g-5">
             <div class="col-lg-6">{% include "home/components/feature_media.html" %}</div>

@@ -54,26 +54,11 @@
                 --ks-h6-size: {{ settings.home.DesignSystemSettings.h6_size }}rem;
 
                 /* Theme Colors */
-                --ks-color-brand: {{ settings.home.DesignSystemSettings.brand_color }};
-                --ks-color-primary: {{ settings.home.DesignSystemSettings.primary_color }};
-                --ks-color-secondary: {{ settings.home.DesignSystemSettings.secondary_color }};
-                --ks-color-accent: {{ settings.home.DesignSystemSettings.accent_color }};
-
-                /* Semantic Colors */
-                --ks-color-success: {{ settings.home.DesignSystemSettings.success_color }};
-                --ks-color-warning: {{ settings.home.DesignSystemSettings.warning_color }};
-                --ks-color-error: {{ settings.home.DesignSystemSettings.error_color }};
-                --ks-color-info: {{ settings.home.DesignSystemSettings.info_color }};
-
-                /* Surface Colors */
-                --ks-color-background: {{ settings.home.DesignSystemSettings.background_color }};
-                --ks-color-surface: {{ settings.home.DesignSystemSettings.surface_color }};
-                --ks-color-surface-variant: {{ settings.home.DesignSystemSettings.surface_variant_color }};
-
-                /* Text Colors */
-                --ks-color-text: {{ settings.home.DesignSystemSettings.text_color }};
-                --ks-color-muted: {{ settings.home.DesignSystemSettings.text_muted_color }};
-                --ks-color-text-on-brand: {{ settings.home.DesignSystemSettings.text_on_brand_color }};
+                {% with colors=settings.home.DesignSystemSettings.resolved_colors %}
+                {% for css_var, value in colors.items %}
+                {{ css_var }}: {{ value }};
+                {% endfor %}
+                {% endwith %}
 
                 /* Spacing Scale */
                 --ks-spacing-xs: {{ settings.home.DesignSystemSettings.spacing_xs }}px;
@@ -94,13 +79,8 @@
 
                 /* Button */
                 --ks-button-border-width: {{ settings.home.DesignSystemSettings.button_border_width }}px;
-                --ks-button-border-color: {{ settings.home.DesignSystemSettings.button_border_color }};
                 --ks-button-padding-x: {{ settings.home.DesignSystemSettings.button_padding_x }}px;
                 --ks-button-padding-y: {{ settings.home.DesignSystemSettings.button_padding_y }}px;
-
-                /* Image Overlay */
-                --ks-overlay-color: {{ settings.home.DesignSystemSettings.overlay_color }};
-                --ks-overlay-opacity: {{ settings.home.DesignSystemSettings.overlay_opacity }}%;
             }
         </style>
         <link rel="stylesheet" type="text/css" href="{% static 'css/config.css' %}">

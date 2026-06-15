@@ -1,4 +1,4 @@
-<section id="{{ page.hero_anchor_id|default:'hero' }}" class="ks-hero-half ks-hero-angled" data-ks-align="{{ page.hero_text_alignment }}" data-ks-vertical="{{ page.hero_vertical_alignment }}">
+<section id="{{ page.hero_anchor_id|default:'hero' }}" class="ks-hero-half ks-hero-angled" data-ks-align="{{ page.hero_text_alignment }}" data-ks-vertical="{{ page.hero_vertical_alignment }}" {% if page.hero_style %} style="{{ page.hero_style }}"{% endif %}>
     <div class="row g-0 min-vh-75">
         <div class="col-lg-6 ks-vertical-content">
             <div class="p-4 p-lg-5">

@@ -1,4 +1,4 @@
-<section id="{{ page.clients_anchor_id|default:'clients' }}" class="ks-section ks-height-{{ page.clients_section_height }}" data-ks-vertical="{{ page.clients_vertical_alignment }}">
+<section id="{{ page.clients_anchor_id|default:'clients' }}" class="ks-section ks-height-{{ page.clients_section_height }}" data-ks-vertical="{{ page.clients_vertical_alignment }}" {% if page.clients_style %} style="{{ page.clients_style }}"{% endif %}>
     <div class="container ks-container" data-ks-align="{{ page.clients_text_alignment }}" data-ks-width="{{ page.clients_content_width }}">
         {% if page.clients_title %}<h2 class="h5 mb-5">{{ page.clients_title }}</h2>{% endif %}
         <div class="ks-logo-row">

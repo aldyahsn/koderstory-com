@@ -1,5 +1,5 @@
 {% load wagtailcore_tags %}
-<section id="{{ page.clients_anchor_id|default:'clients' }}" class="ks-section ks-height-{{ page.clients_section_height }}" data-ks-vertical="{{ page.clients_vertical_alignment }}" data-ks-variant="split_copy_grid">
+<section id="{{ page.clients_anchor_id|default:'clients' }}" class="ks-section ks-height-{{ page.clients_section_height }}" data-ks-vertical="{{ page.clients_vertical_alignment }}" data-ks-variant="split_copy_grid" {% if page.clients_style %} style="{{ page.clients_style }}"{% endif %}>
     <div class="container ks-container" data-ks-width="{{ page.clients_content_width }}">
         <div class="row align-items-center g-5">
             <div class="col-lg-5">

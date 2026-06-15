@@ -1,4 +1,4 @@
-<section id="{{ page.cta_anchor_id|default:'cta' }}" class="ks-section ks-height-{{ page.cta_section_height }}" data-ks-vertical="{{ page.cta_vertical_alignment }}">
+<section id="{{ page.cta_anchor_id|default:'cta' }}" class="ks-section ks-height-{{ page.cta_section_height }}" data-ks-vertical="{{ page.cta_vertical_alignment }}" {% if page.cta_style %} style="{{ page.cta_style }}"{% endif %}>
     <div class="container ks-container" data-ks-align="{{ page.cta_text_alignment }}" data-ks-width="{{ page.cta_content_width }}">
         <div class="ks-copy">
             {% include "home/components/cta_content.html" %}

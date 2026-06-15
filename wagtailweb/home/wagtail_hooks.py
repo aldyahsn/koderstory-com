@@ -115,19 +115,26 @@ def global_admin_js():
     return format_html(
         '<script>window.KS_SECTION_VARIANTS = {};</script>'
         '<script src="{}?v=4"></script>'
+        '<script src="{}?v=1"></script>'
         '<script src="{}?v=1"></script>',
         mark_safe(json.dumps(variants)),
         static("admin/js/section-editor.js"),
         static("admin/js/reset-settings.js"),
+        static("admin/js/set-default-theme.js"),
     )
 
 
 @hooks.register("register_admin_urls")
-def register_reset_url():
+def register_admin_urls():
     return [
         path(
             "settings/home/designsystemsettings/reset/<int:site_pk>/",
             views.reset_settings,
             name="reset_global_settings",
+        ),
+        path(
+            "snippets/home/colortheme/<int:theme_pk>/set-default/",
+            views.set_theme_as_default,
+            name="set_theme_as_default",
         ),
     ]

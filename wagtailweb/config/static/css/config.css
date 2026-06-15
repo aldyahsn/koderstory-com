@@ -91,7 +91,6 @@ h6 { font-size: var(--ks-h6-size); }
 .ks-section {
   display: flex;
   align-items: center;
-  min-height: 320px;
   padding-block: var(--ks-section-padding);
   background: var(--ks-color-background);
   border: 1px dashed var(--ks-color-muted); /* debug: remove when layout is confirmed */
@@ -126,21 +125,19 @@ h6 { font-size: var(--ks-h6-size); }
 }
 
 .ks-height-compact {
-  padding-block: calc(var(--ks-section-padding) * 0.6);
+  min-height: 25vh;
 }
 
 .ks-height-normal {
-  /* default - uses .ks-section padding */
+  min-height: 55vh;
 }
 
 .ks-height-spacious {
-  min-height: 560px;
-  padding-block: calc(var(--ks-section-padding) * 1.25);
+  min-height: 75vh;
 }
 
 .ks-height-full {
   min-height: 100vh;
-  padding-block: var(--ks-section-padding);
 }
 
 .ks-container {

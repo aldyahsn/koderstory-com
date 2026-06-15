@@ -10,6 +10,7 @@ from wagtail.admin.panels import (
 )
 from wagtail.contrib.settings.models import BaseSiteSetting, register_setting
 from wagtail.fields import RichTextField
+from wagtail.snippets.models import register_snippet
 
 from home.widgets import ColorInputWidget
 
@@ -145,78 +146,11 @@ class DesignSystemSettings(BaseSiteSetting):
         help_text="H6 size in rem",
     )
 
-    # Theme Colors
-    brand_color = models.CharField(
-        max_length=16, default="#4f46e5", verbose_name="Brand",
-        help_text="Brand identity color. Applied to: text links, announcement badges, hover states, and the decorative hero spotlight gradient.",
-    )
-    primary_color = models.CharField(
-        max_length=16,
-        default="#3b82f6",
-        verbose_name="Primary",
-        help_text="Primary action color. Applied to: main call-to-action buttons (btn-primary) as their background.",
-    )
-    secondary_color = models.CharField(
-        max_length=16,
-        default="#8b5cf6",
-        verbose_name="Secondary",
-        help_text="Secondary action color. Applied to: secondary/outline buttons (btn-secondary) as their border and text, and fills on hover.",
-    )
-    accent_color = models.CharField(
-        max_length=16,
-        default="#f59e0b",
-        verbose_name="Accent",
-        help_text="Accent/highlight color. Applied to: feature section icon backgrounds and checklist checkmarks.",
-    )
-
-    # Semantic Colors
-    success_color = models.CharField(
-        max_length=16, default="#10b981", verbose_name="Success",
-        help_text="Success state. Applied to: success messages, confirmation badges, and positive indicators.",
-    )
-    warning_color = models.CharField(
-        max_length=16, default="#f59e0b", verbose_name="Warning",
-        help_text="Warning state. Applied to: warning messages, alert banners, and caution indicators.",
-    )
-    error_color = models.CharField(
-        max_length=16, default="#ef4444", verbose_name="Error",
-        help_text="Error state. Applied to: error messages, validation alerts, and destructive indicators.",
-    )
-    info_color = models.CharField(
-        max_length=16, default="#3b82f6", verbose_name="Info",
-        help_text="Informational state. Applied to: info banners, notification badges, and neutral indicators.",
-    )
-
-    # Surface Colors
-    background_color = models.CharField(
-        max_length=16, default="#ffffff", verbose_name="Background",
-        help_text="Page background color. Applied to: body background and section backgrounds.",
-    )
-    surface_color = models.CharField(
-        max_length=16, default="#f8f9fa", verbose_name="Surface",
-        help_text="Surface/elevated background. Applied to: media placeholder backgrounds, card subtle fills.",
-    )
-    surface_variant_color = models.CharField(
-        max_length=16,
-        default="#e5e7eb",
-        verbose_name="Surface variant",
-        help_text="Secondary surface color. Applied to: borders, dividers, grid lines, and subtle UI accents.",
-    )
-
-    # Text Colors
-    text_color = models.CharField(
-        max_length=16, default="#111827", verbose_name="Text",
-        help_text="Primary text color. Applied to: all body copy, headings, and page text content.",
-    )
-    text_muted_color = models.CharField(
-        max_length=16, default="#667085", verbose_name="Muted",
-        help_text="Secondary/muted text color. Applied to: description paragraphs, secondary info, and helper text.",
-    )
-    text_on_brand_color = models.CharField(
-        max_length=16,
-        default="#ffffff",
-        verbose_name="On brand",
-        help_text="Text color placed on brand-colored backgrounds. Applied to: icon text on feature badges.",
+    # Global color theme
+    global_theme = models.ForeignKey(
+        "home.ColorTheme", null=True, blank=True, default=1, on_delete=models.SET_NULL, related_name="+",
+        verbose_name="Color theme",
+        help_text="Select a color theme for the entire site. Color pickers are available in Snippets → Color themes.",
     )
 
     # Spacing Scale
@@ -294,6 +228,61 @@ class DesignSystemSettings(BaseSiteSetting):
             f"display=swap"
         )
 
+    COLOR_DEFAULTS = {
+        "brand_color": "#4f46e5",
+        "primary_color": "#3b82f6",
+        "secondary_color": "#8b5cf6",
+        "accent_color": "#f59e0b",
+        "success_color": "#10b981",
+        "warning_color": "#f59e0b",
+        "error_color": "#ef4444",
+        "info_color": "#3b82f6",
+        "background_color": "#ffffff",
+        "surface_color": "#f8f9fa",
+        "surface_variant_color": "#e5e7eb",
+        "text_color": "#111827",
+        "text_muted_color": "#667085",
+        "text_on_brand_color": "#ffffff",
+        "overlay_color": "#ffffff",
+        "overlay_opacity": 75,
+        "button_border_color": "#4f46e5",
+    }
+
+    FIELD_TO_CSS_VAR = {
+        "brand_color": "--ks-color-brand",
+        "primary_color": "--ks-color-primary",
+        "secondary_color": "--ks-color-secondary",
+        "accent_color": "--ks-color-accent",
+        "success_color": "--ks-color-success",
+        "warning_color": "--ks-color-warning",
+        "error_color": "--ks-color-error",
+        "info_color": "--ks-color-info",
+        "background_color": "--ks-color-background",
+        "surface_color": "--ks-color-surface",
+        "surface_variant_color": "--ks-color-surface-variant",
+        "text_color": "--ks-color-text",
+        "text_muted_color": "--ks-color-muted",
+        "text_on_brand_color": "--ks-color-text-on-brand",
+        "overlay_color": "--ks-overlay-color",
+        "overlay_opacity": "--ks-overlay-opacity",
+        "button_border_color": "--ks-button-border-color",
+    }
+
+    def resolved_colors(self):
+        """Return a dict of CSS var → value, combining theme overrides with defaults."""
+        theme = self.global_theme
+        result = {}
+        for field_name, css_var in self.FIELD_TO_CSS_VAR.items():
+            if theme:
+                val = getattr(theme, field_name)
+                if val is not None and val != "":
+                    result[css_var] = f"{val}%" if isinstance(val, int) else val
+                    continue
+            # Fall back to default
+            dflt = self.COLOR_DEFAULTS[field_name]
+            result[css_var] = f"{dflt}%" if isinstance(dflt, int) else dflt
+        return result
+
     typography_panels = [
         MultiFieldPanel(
             [
@@ -349,59 +338,13 @@ class DesignSystemSettings(BaseSiteSetting):
             [
                 FieldRowPanel(
                     [
-                        FieldPanel("brand_color", widget=ColorInputWidget()),
-                        FieldPanel("primary_color", widget=ColorInputWidget()),
-                        FieldPanel("secondary_color", widget=ColorInputWidget()),
-                        FieldPanel("accent_color", widget=ColorInputWidget()),
-                    ],
-                    classname="ks-color-row",
+                        FieldPanel("global_theme"),
+                    ]
                 ),
             ],
-            heading="Brand colors",
-            classname="ks-global-settings-group ks-global-color-group",
-        ),
-        MultiFieldPanel(
-            [
-                FieldRowPanel(
-                    [
-                        FieldPanel("success_color", widget=ColorInputWidget()),
-                        FieldPanel("warning_color", widget=ColorInputWidget()),
-                        FieldPanel("error_color", widget=ColorInputWidget()),
-                        FieldPanel("info_color", widget=ColorInputWidget()),
-                    ],
-                    classname="ks-color-row",
-                ),
-            ],
-            heading="Status colors",
-            classname="ks-global-settings-group ks-global-color-group",
-        ),
-        MultiFieldPanel(
-            [
-                FieldRowPanel(
-                    [
-                        FieldPanel("background_color", widget=ColorInputWidget()),
-                        FieldPanel("surface_color", widget=ColorInputWidget()),
-                        FieldPanel("surface_variant_color", widget=ColorInputWidget()),
-                    ],
-                    classname="ks-color-row",
-                ),
-            ],
-            heading="Surface colors",
-            classname="ks-global-settings-group ks-global-color-group",
-        ),
-        MultiFieldPanel(
-            [
-                FieldRowPanel(
-                    [
-                        FieldPanel("text_color", widget=ColorInputWidget()),
-                        FieldPanel("text_muted_color", widget=ColorInputWidget()),
-                        FieldPanel("text_on_brand_color", widget=ColorInputWidget()),
-                    ],
-                    classname="ks-color-row",
-                ),
-            ],
-            heading="Text colors",
-            classname="ks-global-settings-group ks-global-color-group",
+            heading="Theme selection",
+            help_text="Pick a color theme for the whole site. Edit themes under Snippets → Color themes.",
+            classname="ks-global-settings-group",
         ),
     ]
 
@@ -456,29 +399,12 @@ class DesignSystemSettings(BaseSiteSetting):
                 FieldRowPanel(
                     [
                         FieldPanel("button_border_width"),
-                        FieldPanel("button_border_color", widget=ColorInputWidget()),
-                    ]
-                ),
-                FieldRowPanel(
-                    [
                         FieldPanel("button_padding_x"),
                         FieldPanel("button_padding_y"),
                     ]
                 ),
             ],
             heading="Button style",
-            classname="ks-global-settings-group",
-        ),
-        MultiFieldPanel(
-            [
-                FieldRowPanel(
-                    [
-                        FieldPanel("overlay_color", widget=ColorInputWidget()),
-                        FieldPanel("overlay_opacity"),
-                    ]
-                ),
-            ],
-            heading="Image overlay",
             classname="ks-global-settings-group",
         ),
     ]
@@ -494,6 +420,133 @@ class DesignSystemSettings(BaseSiteSetting):
     class Meta:
         verbose_name = "Global settings"
         verbose_name_plural = "Global settings"
+
+
+def _color_field(verbose_name, default="", help_text=""):
+    """Reusable color field — blank = inherit global."""
+    return models.CharField(
+        max_length=16,
+        blank=True,
+        default=default,
+        verbose_name=verbose_name,
+        help_text=help_text or f"Leave blank to inherit from global settings.",
+    )
+
+
+def _opacity_field():
+    OPACITY_CHOICES = [(i, f"{i}%") for i in range(0, 101, 5)]
+    return models.PositiveSmallIntegerField(
+        choices=OPACITY_CHOICES,
+        blank=True,
+        null=True,
+        default=None,
+        verbose_name="Overlay opacity",
+        help_text="Leave blank to inherit from global settings.",
+    )
+
+
+@register_snippet
+class ColorTheme(models.Model):
+    name = models.CharField(max_length=60, unique=True)
+    is_default = models.BooleanField(default=False, editable=False, verbose_name="Default site theme")
+
+    # Theme Colors
+    brand_color = _color_field("Brand", "", "Brand identity color.")
+    primary_color = _color_field("Primary", "", "Primary action button color.")
+    secondary_color = _color_field("Secondary", "", "Secondary button color.")
+    accent_color = _color_field("Accent", "", "Feature icons and highlights.")
+
+    # Semantic Colors
+    success_color = _color_field("Success", "")
+    warning_color = _color_field("Warning", "")
+    error_color = _color_field("Error", "")
+    info_color = _color_field("Info", "")
+
+    # Surface Colors
+    background_color = _color_field("Background", "", "Page and section background.")
+    surface_color = _color_field("Surface", "", "Media placeholders and cards.")
+    surface_variant_color = _color_field("Surface variant", "", "Borders and dividers.")
+
+    # Text Colors
+    text_color = _color_field("Text", "", "Body and heading text.")
+    text_muted_color = _color_field("Muted", "", "Secondary/description text.")
+    text_on_brand_color = _color_field("On brand", "", "Text on brand backgrounds.")
+
+    # Overlay
+    overlay_color = _color_field("Overlay color", "", "Hero background image overlay.")
+    overlay_opacity = _opacity_field()
+
+    # Button
+    button_border_color = _color_field("Button border", "", "Border color for buttons.")
+
+    panels = [
+        FieldPanel("name"),
+        MultiFieldPanel(
+            [
+                FieldRowPanel(
+                    [
+                        FieldPanel("brand_color", widget=ColorInputWidget()),
+                        FieldPanel("primary_color", widget=ColorInputWidget()),
+                        FieldPanel("secondary_color", widget=ColorInputWidget()),
+                        FieldPanel("accent_color", widget=ColorInputWidget()),
+                    ],
+                    classname="ks-color-row",
+                ),
+            ],
+            heading="Brand colors",
+            classname="ks-global-settings-group ks-global-color-group",
+        ),
+        MultiFieldPanel(
+            [
+                FieldRowPanel(
+                    [
+                        FieldPanel("background_color", widget=ColorInputWidget()),
+                        FieldPanel("surface_color", widget=ColorInputWidget()),
+                        FieldPanel("surface_variant_color", widget=ColorInputWidget()),
+                    ],
+                    classname="ks-color-row",
+                ),
+            ],
+            heading="Surface colors",
+            classname="ks-global-settings-group ks-global-color-group",
+        ),
+        MultiFieldPanel(
+            [
+                FieldRowPanel(
+                    [
+                        FieldPanel("text_color", widget=ColorInputWidget()),
+                        FieldPanel("text_muted_color", widget=ColorInputWidget()),
+                        FieldPanel("text_on_brand_color", widget=ColorInputWidget()),
+                    ],
+                    classname="ks-color-row",
+                ),
+            ],
+            heading="Text colors",
+            classname="ks-global-settings-group ks-global-color-group",
+        ),
+        MultiFieldPanel(
+            [
+                FieldRowPanel(
+                    [
+                        FieldPanel("overlay_color", widget=ColorInputWidget()),
+                        FieldPanel("overlay_opacity"),
+                    ]
+                ),
+            ],
+            heading="Image overlay",
+            classname="ks-global-settings-group",
+        ),
+    ]
+
+    class Meta:
+        verbose_name = "Color theme"
+        verbose_name_plural = "Color themes"
+
+    def __str__(self):
+        label = self.name
+        if self.is_default:
+            label += " (Default)"
+        return label
 
 
 class HomeClientLogo(Orderable):
@@ -947,6 +1000,75 @@ class HomePage(Page):
     )
     cta_image_alt = models.CharField(max_length=120, blank=True)
 
+    # Color theme overrides per section
+    hero_theme = models.ForeignKey(
+        ColorTheme, null=True, blank=True, default=1, on_delete=models.SET_NULL, related_name="+",
+        verbose_name="Hero color theme",
+    )
+    clients_theme = models.ForeignKey(
+        ColorTheme, null=True, blank=True, default=1, on_delete=models.SET_NULL, related_name="+",
+        verbose_name="Clients color theme",
+    )
+    features_theme = models.ForeignKey(
+        ColorTheme, null=True, blank=True, default=1, on_delete=models.SET_NULL, related_name="+",
+        verbose_name="Features color theme",
+    )
+    cta_theme = models.ForeignKey(
+        ColorTheme, null=True, blank=True, default=1, on_delete=models.SET_NULL, related_name="+",
+        verbose_name="CTA color theme",
+    )
+
+    FIELD_TO_CSS_VAR = {
+        "brand_color": "--ks-color-brand",
+        "primary_color": "--ks-color-primary",
+        "secondary_color": "--ks-color-secondary",
+        "accent_color": "--ks-color-accent",
+        "success_color": "--ks-color-success",
+        "warning_color": "--ks-color-warning",
+        "error_color": "--ks-color-error",
+        "info_color": "--ks-color-info",
+        "background_color": "--ks-color-background",
+        "surface_color": "--ks-color-surface",
+        "surface_variant_color": "--ks-color-surface-variant",
+        "text_color": "--ks-color-text",
+        "text_muted_color": "--ks-color-muted",
+        "text_on_brand_color": "--ks-color-text-on-brand",
+        "overlay_color": "--ks-overlay-color",
+        "overlay_opacity": "--ks-overlay-opacity",
+        "button_border_color": "--ks-button-border-color",
+    }
+
+    @staticmethod
+    def _theme_style(theme):
+        if not theme:
+            return ""
+        parts = []
+        for field_name, css_var in HomePage.FIELD_TO_CSS_VAR.items():
+            val = getattr(theme, field_name)
+            if val is None or val == "":
+                continue
+            if isinstance(val, int):
+                parts.append(f"{css_var}: {val}%")
+            else:
+                parts.append(f"{css_var}: {val}")
+        return "; ".join(parts)
+
+    @property
+    def hero_style(self):
+        return self._theme_style(self.hero_theme)
+
+    @property
+    def clients_style(self):
+        return self._theme_style(self.clients_theme)
+
+    @property
+    def features_style(self):
+        return self._theme_style(self.features_theme)
+
+    @property
+    def cta_style(self):
+        return self._theme_style(self.cta_theme)
+
     @staticmethod
     def _variant_template(variants, selected, fallback):
         return variants.get(selected, variants[fallback])["template"]
@@ -1209,7 +1331,7 @@ class HomePage(Page):
     ]
 
     @classmethod
-    def _settings_panel(cls, prefix, heading):
+    def _settings_panel(cls, prefix, heading, theme_field):
         return MultiFieldPanel(
             [
                 FieldRowPanel(
@@ -1239,16 +1361,22 @@ class HomePage(Page):
                     ],
                     heading="Advanced",
                 ),
+                FieldRowPanel(
+                    [
+                        FieldPanel(theme_field),
+                    ],
+                    heading="Color theme",
+                ),
             ],
             heading=heading,
             classname="ks-section-settings",
         )
 
     section_settings_panels = [
-        _settings_panel.__func__(None, "hero", "Hero settings"),
-        _settings_panel.__func__(None, "clients", "Client settings"),
-        _settings_panel.__func__(None, "features", "Feature settings"),
-        _settings_panel.__func__(None, "cta", "CTA settings"),
+        _settings_panel.__func__(None, "hero", "Hero settings", "hero_theme"),
+        _settings_panel.__func__(None, "clients", "Client settings", "clients_theme"),
+        _settings_panel.__func__(None, "features", "Feature settings", "features_theme"),
+        _settings_panel.__func__(None, "cta", "CTA settings", "cta_theme"),
     ]
 
     edit_handler = TabbedInterface(

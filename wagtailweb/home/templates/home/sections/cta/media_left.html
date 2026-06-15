@@ -1,4 +1,4 @@
-<section id="{{ page.cta_anchor_id|default:'cta' }}" class="ks-section ks-height-{{ page.cta_section_height }}" data-ks-vertical="{{ page.cta_vertical_alignment }}">
+<section id="{{ page.cta_anchor_id|default:'cta' }}" class="ks-section ks-height-{{ page.cta_section_height }}" data-ks-vertical="{{ page.cta_vertical_alignment }}" {% if page.cta_style %} style="{{ page.cta_style }}"{% endif %}>
     <div class="container-fluid px-0">
         <div class="row g-0 align-items-stretch">
             <div class="col-lg-6">{% include "home/components/cta_media.html" %}</div>
