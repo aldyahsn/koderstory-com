@@ -218,6 +218,28 @@ class DesignSystemSettings(BaseSiteSetting):
         help_text="Form inputs border radius",
     )
 
+    # Button style
+    button_border_width = models.PositiveSmallIntegerField(
+        default=1,
+        help_text="Button border width in pixels (0-5)",
+    )
+    button_border_color = models.CharField(
+        max_length=16,
+        default="#4f46e5",
+        verbose_name="Button border color",
+        help_text="Border color for outlined buttons",
+    )
+    button_padding_x = models.PositiveSmallIntegerField(
+        choices=SPACING_CHOICES,
+        default=24,
+        verbose_name="Button horizontal padding",
+    )
+    button_padding_y = models.PositiveSmallIntegerField(
+        choices=SPACING_CHOICES,
+        default=8,
+        verbose_name="Button vertical padding",
+    )
+
     @property
     def google_fonts_url(self):
         """Generate Google Fonts URL based on selected heading and body fonts."""
@@ -384,6 +406,28 @@ class DesignSystemSettings(BaseSiteSetting):
             ],
             heading="Corner radius",
             classname="ks-global-settings-group ks-global-settings-group--three",
+        ),
+        MultiFieldPanel(
+            [
+                FieldRowPanel(
+                    [
+                        FieldPanel("button_border_width"),
+                    ]
+                ),
+                FieldRowPanel(
+                    [
+                        FieldPanel("button_border_color", widget=ColorInputWidget()),
+                    ]
+                ),
+                FieldRowPanel(
+                    [
+                        FieldPanel("button_padding_x"),
+                        FieldPanel("button_padding_y"),
+                    ]
+                ),
+            ],
+            heading="Button style",
+            classname="ks-global-settings-group",
         ),
     ]
 
@@ -1145,3 +1189,94 @@ class HomePage(Page):
 
     class Meta:
         verbose_name = "Home page"
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if not self.pk:
+            # Only populate dummy content when no explicit section data is provided
+            has_content = any(kwargs.get(f) for f in [
+                "hero_title", "clients_title", "features_title", "cta_title",
+            ])
+            if not has_content:
+                self._populate_dummy_content()
+
+    def _populate_dummy_content(self):
+        self.hero_announcement = "Announcing our next product update"
+        self.hero_announcement_link_label = "Read more"
+        self.hero_announcement_link_url = "#"
+        self.hero_title = "Build a better digital experience"
+        self.hero_description = (
+            "Create clear, maintainable websites with fixed sections, flexible "
+            "layouts, and an editor your team can understand."
+        )
+        self.hero_primary_button_label = "Get started"
+        self.hero_primary_button_url = "#"
+        self.hero_secondary_button_label = "Learn more"
+        self.hero_secondary_button_url = "#"
+
+        self.clients_title = "Trusted by innovative teams"
+        self.clients_description = (
+            "A reusable client section with several layout options."
+        )
+        self.clients_cta_text = "Join teams building clearer digital products."
+        self.clients_cta_label = "Read customer stories"
+        self.clients_cta_url = "#"
+        self.clients_primary_button_label = "Create account"
+        self.clients_primary_button_url = "#"
+        self.clients_secondary_button_label = "Contact us"
+        self.clients_secondary_button_url = "#"
+
+        self.features_eyebrow = "Deploy faster"
+        self.features_title = "Everything you need to build with confidence"
+        self.features_description = (
+            "Choose a feature layout that matches the components your story needs."
+        )
+        self.features_button_label = "Get started"
+        self.features_button_url = "#"
+        self.features_testimonial_quote = (
+            "The fixed-section editor gives our team flexibility without losing structure."
+        )
+        self.features_testimonial_name = "Maria Hill"
+        self.features_testimonial_role = "Product Manager"
+
+        self.cta_eyebrow = "Start today"
+        self.cta_title = "Ready to build your next Wagtail website?"
+        self.cta_description = (
+            "Use global design settings and section layouts to move quickly."
+        )
+        self.cta_primary_button_label = "Get started"
+        self.cta_primary_button_url = "/admin/"
+        self.cta_secondary_button_label = "View features"
+        self.cta_secondary_button_url = "#"
+
+    def save(self, *args, **kwargs):
+        is_new = self.pk is None
+        if is_new:
+            self._populate_dummy_content()
+        super().save(*args, **kwargs)
+        if is_new:
+            self._create_dummy_related()
+
+    def _create_dummy_related(self):
+        if not self.client_logos.exists():
+            for name in ["Transistor", "Reform", "Tuple", "SavvyCal", "Statamic", "Laravel"]:
+                HomeClientLogo.objects.create(page=self, name=name)
+
+        if not self.features.exists():
+            feature_data = [
+                ("PD", "Push to deploy", "Publish confidently with a clear workflow."),
+                ("SC", "SSL certificates", "Keep every environment protected."),
+                ("SQ", "Simple queues", "Run background work without extra complexity."),
+                ("AS", "Advanced security", "Apply practical controls across the platform."),
+                ("API", "Powerful API", "Connect the tools your business already uses."),
+                ("DB", "Database backups", "Protect important data with reliable backups."),
+            ]
+            for icon, title, description in feature_data:
+                HomeFeature.objects.create(
+                    page=self,
+                    icon=icon,
+                    title=title,
+                    description=description,
+                    link_label="Learn more",
+                    link_url="#cta",
+                )

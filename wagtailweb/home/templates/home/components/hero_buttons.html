@@ -4,7 +4,7 @@
     <a class="btn btn-primary" href="{{ page.hero_primary_button_url|default:'#' }}">{{ page.hero_primary_button_label }}</a>
     {% endif %}
     {% if page.hero_secondary_button_label %}
-    <a class="btn btn-link text-decoration-none" href="{{ page.hero_secondary_button_url|default:'#' }}">{{ page.hero_secondary_button_label }} <span aria-hidden="true">→</span></a>
+    <a class="btn btn-secondary" href="{{ page.hero_secondary_button_url|default:'#' }}">{{ page.hero_secondary_button_label }} <span aria-hidden="true">→</span></a>
     {% endif %}
 </div>
 {% endif %}
