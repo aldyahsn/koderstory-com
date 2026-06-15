@@ -1,6 +1,7 @@
+{% load wagtailimages_tags %}
 <div class="ks-media-frame ks-feature-media">
     {% if page.features_image %}
-    <img src="{{ page.features_image.url }}" alt="{{ page.features_image_alt|default:page.features_title }}">
+    {% image page.features_image width-1200 class="w-100 h-100" alt=page.features_image_alt|default:page.features_title %}
     {% else %}
     <div class="ks-media-placeholder" role="img" aria-label="Feature image placeholder">
         <span>Feature media</span>

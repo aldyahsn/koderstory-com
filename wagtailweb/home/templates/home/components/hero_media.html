@@ -1,6 +1,7 @@
+{% load wagtailimages_tags %}
 <div class="ks-media-frame">
     {% if page.hero_image %}
-    <img src="{{ page.hero_image.url }}" alt="{{ page.hero_image_alt|default:page.hero_title }}">
+    {% image page.hero_image width-1200 class="w-100 h-100" alt=page.hero_image_alt|default:page.hero_title %}
     {% else %}
     <div class="ks-media-placeholder" role="img" aria-label="Hero image placeholder">
         <span>Hero media</span>

@@ -146,50 +146,77 @@ class DesignSystemSettings(BaseSiteSetting):
     )
 
     # Theme Colors
-    brand_color = models.CharField(max_length=16, default="#4f46e5", verbose_name="Brand")
+    brand_color = models.CharField(
+        max_length=16, default="#4f46e5", verbose_name="Brand",
+        help_text="Brand identity color. Applied to: text links, announcement badges, hover states, and the decorative hero spotlight gradient.",
+    )
     primary_color = models.CharField(
         max_length=16,
         default="#3b82f6",
         verbose_name="Primary",
-        help_text="Primary action color",
+        help_text="Primary action color. Applied to: main call-to-action buttons (btn-primary) as their background.",
     )
     secondary_color = models.CharField(
         max_length=16,
         default="#8b5cf6",
         verbose_name="Secondary",
-        help_text="Secondary accent color",
+        help_text="Secondary action color. Applied to: secondary/outline buttons (btn-secondary) as their border and text, and fills on hover.",
     )
     accent_color = models.CharField(
         max_length=16,
         default="#f59e0b",
         verbose_name="Accent",
-        help_text="Accent/highlight color",
+        help_text="Accent/highlight color. Applied to: feature section icon backgrounds and checklist checkmarks.",
     )
 
     # Semantic Colors
-    success_color = models.CharField(max_length=16, default="#10b981", verbose_name="Success")
-    warning_color = models.CharField(max_length=16, default="#f59e0b", verbose_name="Warning")
-    error_color = models.CharField(max_length=16, default="#ef4444", verbose_name="Error")
-    info_color = models.CharField(max_length=16, default="#3b82f6", verbose_name="Info")
+    success_color = models.CharField(
+        max_length=16, default="#10b981", verbose_name="Success",
+        help_text="Success state. Applied to: success messages, confirmation badges, and positive indicators.",
+    )
+    warning_color = models.CharField(
+        max_length=16, default="#f59e0b", verbose_name="Warning",
+        help_text="Warning state. Applied to: warning messages, alert banners, and caution indicators.",
+    )
+    error_color = models.CharField(
+        max_length=16, default="#ef4444", verbose_name="Error",
+        help_text="Error state. Applied to: error messages, validation alerts, and destructive indicators.",
+    )
+    info_color = models.CharField(
+        max_length=16, default="#3b82f6", verbose_name="Info",
+        help_text="Informational state. Applied to: info banners, notification badges, and neutral indicators.",
+    )
 
     # Surface Colors
-    background_color = models.CharField(max_length=16, default="#ffffff", verbose_name="Background")
-    surface_color = models.CharField(max_length=16, default="#f8f9fa", verbose_name="Surface")
+    background_color = models.CharField(
+        max_length=16, default="#ffffff", verbose_name="Background",
+        help_text="Page background color. Applied to: body background and section backgrounds.",
+    )
+    surface_color = models.CharField(
+        max_length=16, default="#f8f9fa", verbose_name="Surface",
+        help_text="Surface/elevated background. Applied to: media placeholder backgrounds, card subtle fills.",
+    )
     surface_variant_color = models.CharField(
         max_length=16,
         default="#e5e7eb",
         verbose_name="Surface variant",
-        help_text="Secondary surface color",
+        help_text="Secondary surface color. Applied to: borders, dividers, grid lines, and subtle UI accents.",
     )
 
     # Text Colors
-    text_color = models.CharField(max_length=16, default="#111827", verbose_name="Text")
-    text_muted_color = models.CharField(max_length=16, default="#667085", verbose_name="Muted")
+    text_color = models.CharField(
+        max_length=16, default="#111827", verbose_name="Text",
+        help_text="Primary text color. Applied to: all body copy, headings, and page text content.",
+    )
+    text_muted_color = models.CharField(
+        max_length=16, default="#667085", verbose_name="Muted",
+        help_text="Secondary/muted text color. Applied to: description paragraphs, secondary info, and helper text.",
+    )
     text_on_brand_color = models.CharField(
         max_length=16,
         default="#ffffff",
         verbose_name="On brand",
-        help_text="Text color on brand/primary backgrounds",
+        help_text="Text color placed on brand-colored backgrounds. Applied to: icon text on feature badges.",
     )
 
     # Spacing Scale
@@ -219,7 +246,9 @@ class DesignSystemSettings(BaseSiteSetting):
     )
 
     # Button style
+    BUTTON_BORDER_CHOICES = [(i, f"{i}px") for i in range(6)]
     button_border_width = models.PositiveSmallIntegerField(
+        choices=BUTTON_BORDER_CHOICES,
         default=1,
         help_text="Button border width in pixels (0-5)",
     )
@@ -238,6 +267,21 @@ class DesignSystemSettings(BaseSiteSetting):
         choices=SPACING_CHOICES,
         default=8,
         verbose_name="Button vertical padding",
+    )
+
+    # Image overlay
+    OVERLAY_OPACITY_CHOICES = [(i, f"{i}%") for i in range(0, 101, 5)]
+    overlay_color = models.CharField(
+        max_length=16,
+        default="#ffffff",
+        verbose_name="Overlay color",
+        help_text="Color for the image overlay. Applied to: hero background image overlay.",
+    )
+    overlay_opacity = models.PositiveSmallIntegerField(
+        choices=OVERLAY_OPACITY_CHOICES,
+        default=75,
+        verbose_name="Overlay opacity",
+        help_text="Opacity percentage for the image overlay (0 = transparent, 100 = solid).",
     )
 
     @property
@@ -412,10 +456,6 @@ class DesignSystemSettings(BaseSiteSetting):
                 FieldRowPanel(
                     [
                         FieldPanel("button_border_width"),
-                    ]
-                ),
-                FieldRowPanel(
-                    [
                         FieldPanel("button_border_color", widget=ColorInputWidget()),
                     ]
                 ),
@@ -427,6 +467,18 @@ class DesignSystemSettings(BaseSiteSetting):
                 ),
             ],
             heading="Button style",
+            classname="ks-global-settings-group",
+        ),
+        MultiFieldPanel(
+            [
+                FieldRowPanel(
+                    [
+                        FieldPanel("overlay_color", widget=ColorInputWidget()),
+                        FieldPanel("overlay_opacity"),
+                    ]
+                ),
+            ],
+            heading="Image overlay",
             classname="ks-global-settings-group",
         ),
     ]
@@ -493,7 +545,8 @@ class HomePage(Page):
     SECTION_HEIGHT_CHOICES = [
         ("compact", "Compact"),
         ("normal", "Normal"),
-        ("large", "Large"),
+        ("spacious", "Spacious"),
+        ("full", "Full"),
     ]
     CONTENT_WIDTH_CHOICES = [
         ("narrow", "Narrow"),
@@ -698,32 +751,37 @@ class HomePage(Page):
         (key, value["label"]) for key, value in CTA_VARIANTS.items()
     ]
 
-    hero_enabled = models.BooleanField(default=True)
+    hero_enabled = models.BooleanField(default=True, verbose_name="Section enabled")
     hero_layout = models.CharField(
         max_length=40,
         choices=HERO_LAYOUT_CHOICES,
         default=HERO_CENTERED_SIMPLE,
+        verbose_name="Layout",
     )
-    hero_anchor_id = models.CharField(max_length=40, blank=True, default="hero")
+    hero_anchor_id = models.CharField(max_length=40, blank=True, default="hero", verbose_name="Anchor ID")
     hero_section_height = models.CharField(
         max_length=16,
         choices=SECTION_HEIGHT_CHOICES,
-        default="large",
+        default="normal",
+        verbose_name="Section height",
     )
     hero_content_width = models.CharField(
         max_length=16,
         choices=CONTENT_WIDTH_CHOICES,
         default="normal",
+        verbose_name="Section width",
     )
     hero_text_alignment = models.CharField(
         max_length=16,
         choices=ALIGNMENT_CHOICES,
         default="center",
+        verbose_name="Horizontal alignment",
     )
     hero_vertical_alignment = models.CharField(
         max_length=16,
         choices=VERTICAL_ALIGNMENT_CHOICES,
         default="center",
+        verbose_name="Vertical alignment",
     )
     hero_announcement = models.CharField(max_length=160, blank=True)
     hero_announcement_link_label = models.CharField(max_length=80, blank=True)
@@ -743,32 +801,37 @@ class HomePage(Page):
     )
     hero_image_alt = models.CharField(max_length=120, blank=True)
 
-    clients_enabled = models.BooleanField(default=True)
+    clients_enabled = models.BooleanField(default=True, verbose_name="Section enabled")
     clients_layout = models.CharField(
         max_length=40,
         choices=CLIENTS_LAYOUT_CHOICES,
         default=CLIENTS_CENTERED_HEADING_ROW,
+        verbose_name="Layout",
     )
-    clients_anchor_id = models.CharField(max_length=40, blank=True, default="clients")
+    clients_anchor_id = models.CharField(max_length=40, blank=True, default="clients", verbose_name="Anchor ID")
     clients_section_height = models.CharField(
         max_length=16,
         choices=SECTION_HEIGHT_CHOICES,
         default="normal",
+        verbose_name="Section height",
     )
     clients_content_width = models.CharField(
         max_length=16,
         choices=CONTENT_WIDTH_CHOICES,
         default="normal",
+        verbose_name="Section width",
     )
     clients_text_alignment = models.CharField(
         max_length=16,
         choices=ALIGNMENT_CHOICES,
         default="center",
+        verbose_name="Horizontal alignment",
     )
     clients_vertical_alignment = models.CharField(
         max_length=16,
         choices=VERTICAL_ALIGNMENT_CHOICES,
         default="center",
+        verbose_name="Vertical alignment",
     )
     clients_title = models.CharField(max_length=180, blank=True)
     clients_description = RichTextField(blank=True, features=RICH_TEXT_FEATURES)
@@ -780,32 +843,37 @@ class HomePage(Page):
     clients_secondary_button_label = models.CharField(max_length=80, blank=True)
     clients_secondary_button_url = models.CharField(max_length=255, blank=True)
 
-    features_enabled = models.BooleanField(default=True)
+    features_enabled = models.BooleanField(default=True, verbose_name="Section enabled")
     features_layout = models.CharField(
         max_length=40,
         choices=FEATURES_LAYOUT_CHOICES,
         default=FEATURES_LIST_MEDIA_RIGHT,
+        verbose_name="Layout",
     )
-    features_anchor_id = models.CharField(max_length=40, blank=True, default="features")
+    features_anchor_id = models.CharField(max_length=40, blank=True, default="features", verbose_name="Anchor ID")
     features_section_height = models.CharField(
         max_length=16,
         choices=SECTION_HEIGHT_CHOICES,
-        default="large",
+        default="normal",
+        verbose_name="Section height",
     )
     features_content_width = models.CharField(
         max_length=16,
         choices=CONTENT_WIDTH_CHOICES,
         default="normal",
+        verbose_name="Section width",
     )
     features_text_alignment = models.CharField(
         max_length=16,
         choices=ALIGNMENT_CHOICES,
         default="left",
+        verbose_name="Horizontal alignment",
     )
     features_vertical_alignment = models.CharField(
         max_length=16,
         choices=VERTICAL_ALIGNMENT_CHOICES,
         default="center",
+        verbose_name="Vertical alignment",
     )
     features_eyebrow = models.CharField(max_length=80, blank=True)
     features_title = models.CharField(max_length=180, blank=True)
@@ -831,32 +899,37 @@ class HomePage(Page):
         related_name="+",
     )
 
-    cta_enabled = models.BooleanField(default=True)
+    cta_enabled = models.BooleanField(default=True, verbose_name="Section enabled")
     cta_layout = models.CharField(
         max_length=40,
         choices=CTA_LAYOUT_CHOICES,
         default=CTA_LEFT_STACK,
+        verbose_name="Layout",
     )
-    cta_anchor_id = models.CharField(max_length=40, blank=True, default="cta")
+    cta_anchor_id = models.CharField(max_length=40, blank=True, default="cta", verbose_name="Anchor ID")
     cta_section_height = models.CharField(
         max_length=16,
         choices=SECTION_HEIGHT_CHOICES,
         default="normal",
+        verbose_name="Section height",
     )
     cta_content_width = models.CharField(
         max_length=16,
         choices=CONTENT_WIDTH_CHOICES,
         default="normal",
+        verbose_name="Section width",
     )
     cta_text_alignment = models.CharField(
         max_length=16,
         choices=ALIGNMENT_CHOICES,
         default="left",
+        verbose_name="Horizontal alignment",
     )
     cta_vertical_alignment = models.CharField(
         max_length=16,
         choices=VERTICAL_ALIGNMENT_CHOICES,
         default="center",
+        verbose_name="Vertical alignment",
     )
     cta_eyebrow = models.CharField(max_length=80, blank=True)
     cta_title = models.CharField(max_length=180, blank=True)

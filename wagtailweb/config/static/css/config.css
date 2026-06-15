@@ -94,6 +94,7 @@ h6 { font-size: var(--ks-h6-size); }
   min-height: 320px;
   padding-block: var(--ks-section-padding);
   background: var(--ks-color-background);
+  border: 1px dashed var(--ks-color-muted); /* debug: remove when layout is confirmed */
 }
 
 .ks-section[data-ks-vertical="top"] {
@@ -128,9 +129,18 @@ h6 { font-size: var(--ks-h6-size); }
   padding-block: calc(var(--ks-section-padding) * 0.6);
 }
 
-.ks-height-large {
+.ks-height-normal {
+  /* default - uses .ks-section padding */
+}
+
+.ks-height-spacious {
   min-height: 560px;
   padding-block: calc(var(--ks-section-padding) * 1.25);
+}
+
+.ks-height-full {
+  min-height: 100vh;
+  padding-block: var(--ks-section-padding);
 }
 
 .ks-container {
@@ -261,7 +271,7 @@ h6 { font-size: var(--ks-h6-size); }
 }
 
 .ks-background-overlay {
-  background: color-mix(in srgb, var(--ks-color-background) 76%, transparent);
+  background: color-mix(in srgb, var(--ks-overlay-color) var(--ks-overlay-opacity), transparent);
 }
 
 .min-vh-75 {
@@ -408,7 +418,8 @@ h6 { font-size: var(--ks-h6-size); }
 
 @media (max-width: 991.98px) {
   .ks-section,
-  .ks-height-large {
+  .ks-height-spacious,
+  .ks-height-full {
     min-height: auto;
   }
 

@@ -1,6 +1,7 @@
 import json
 
 from django.templatetags.static import static
+from django.urls import path
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
@@ -10,6 +11,7 @@ from wagtail.admin.rich_text.converters.html_to_contentstate import (
 )
 from wagtail.admin.rich_text.editors.draftail import features as draftail_features
 
+from . import views
 from .models import HomePage
 
 
@@ -85,8 +87,10 @@ def register_rich_text_alignment(features):
 @hooks.register("insert_global_admin_css")
 def global_admin_css():
     return format_html(
-        '<link rel="stylesheet" href="{}?v=11">',
+        '<link rel="stylesheet" href="{}?v=11">'
+        '<link rel="stylesheet" href="{}?v=1">',
         static("admin/css/section-editor.css"),
+        static("admin/css/reset-settings.css"),
     )
 
 
@@ -110,7 +114,20 @@ def global_admin_js():
     }
     return format_html(
         '<script>window.KS_SECTION_VARIANTS = {};</script>'
-        '<script src="{}?v=4"></script>',
+        '<script src="{}?v=4"></script>'
+        '<script src="{}?v=1"></script>',
         mark_safe(json.dumps(variants)),
         static("admin/js/section-editor.js"),
+        static("admin/js/reset-settings.js"),
     )
+
+
+@hooks.register("register_admin_urls")
+def register_reset_url():
+    return [
+        path(
+            "settings/home/designsystemsettings/reset/<int:site_pk>/",
+            views.reset_settings,
+            name="reset_global_settings",
+        ),
+    ]
