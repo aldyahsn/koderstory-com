@@ -6,3 +6,5 @@
 - For vertical-axis properties like section height, use names that describe vertical dimension (e.g., compact, tall) rather than horizontal terms (e.g., narrow, wide). Confidence: 0.72
 - Manage snippet data (like color themes) inline on the settings/edit page rather than via a separate button linking to the snippet list. Confidence: 0.75
 - Always pick the first ColorTheme as the default global theme (always set a default, don't leave it nullable/unset). Confidence: 0.78
+- Section-specific overlay/shade color and opacity fields belong in each section's content panel (not in global color theme settings or section settings tab). Confidence: 0.70
+- Design global color settings around concrete component-level CSS properties (button bg, button hover, heading colors, paragraph text, link colors, page background) rather than abstract semantic tokens (brand, primary, secondary). Confidence: 0.78

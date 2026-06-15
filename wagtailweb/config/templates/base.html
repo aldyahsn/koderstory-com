@@ -53,7 +53,7 @@
                 --ks-h5-size: {{ settings.home.DesignSystemSettings.h5_size }}rem;
                 --ks-h6-size: {{ settings.home.DesignSystemSettings.h6_size }}rem;
 
-                /* Theme Colors */
+                /* Component Colors */
                 {% with colors=settings.home.DesignSystemSettings.resolved_colors %}
                 {% for css_var, value in colors.items %}
                 {{ css_var }}: {{ value }};

@@ -229,43 +229,41 @@ class DesignSystemSettings(BaseSiteSetting):
         )
 
     COLOR_DEFAULTS = {
-        "brand_color": "#4f46e5",
-        "primary_color": "#3b82f6",
-        "secondary_color": "#8b5cf6",
-        "accent_color": "#f59e0b",
-        "success_color": "#10b981",
-        "warning_color": "#f59e0b",
-        "error_color": "#ef4444",
-        "info_color": "#3b82f6",
-        "background_color": "#ffffff",
-        "surface_color": "#f8f9fa",
-        "surface_variant_color": "#e5e7eb",
-        "text_color": "#111827",
-        "text_muted_color": "#667085",
-        "text_on_brand_color": "#ffffff",
-        "overlay_color": "#ffffff",
-        "overlay_opacity": 75,
-        "button_border_color": "#4f46e5",
+        "body_text_color": "#111827",
+        "heading_text_color": "#111827",
+        "muted_text_color": "#667085",
+        "link_color": "#4f46e5",
+        "link_hover_color": "#4338ca",
+        "button_primary_bg": "#4f46e5",
+        "button_primary_hover": "#4338ca",
+        "button_secondary_border": "#4f46e5",
+        "button_secondary_hover_bg": "#4f46e5",
+        "page_bg": "#ffffff",
+        "surface_bg": "#f8f9fa",
+        "surface_border": "#e5e7eb",
+        "feature_icon_bg": "#f59e0b",
+        "feature_icon_text": "#ffffff",
+        "check_color": "#f59e0b",
+        "brand_glow": "#4f46e5",
     }
 
     FIELD_TO_CSS_VAR = {
-        "brand_color": "--ks-color-brand",
-        "primary_color": "--ks-color-primary",
-        "secondary_color": "--ks-color-secondary",
-        "accent_color": "--ks-color-accent",
-        "success_color": "--ks-color-success",
-        "warning_color": "--ks-color-warning",
-        "error_color": "--ks-color-error",
-        "info_color": "--ks-color-info",
-        "background_color": "--ks-color-background",
-        "surface_color": "--ks-color-surface",
-        "surface_variant_color": "--ks-color-surface-variant",
-        "text_color": "--ks-color-text",
-        "text_muted_color": "--ks-color-muted",
-        "text_on_brand_color": "--ks-color-text-on-brand",
-        "overlay_color": "--ks-overlay-color",
-        "overlay_opacity": "--ks-overlay-opacity",
-        "button_border_color": "--ks-button-border-color",
+        "body_text_color": "--ks-body-text",
+        "heading_text_color": "--ks-heading-text",
+        "muted_text_color": "--ks-muted-text",
+        "link_color": "--ks-link-text",
+        "link_hover_color": "--ks-link-hover",
+        "button_primary_bg": "--ks-btn-primary-bg",
+        "button_primary_hover": "--ks-btn-primary-hover",
+        "button_secondary_border": "--ks-btn-secondary-border",
+        "button_secondary_hover_bg": "--ks-btn-secondary-hover-bg",
+        "page_bg": "--ks-body-bg",
+        "surface_bg": "--ks-surface-bg",
+        "surface_border": "--ks-surface-border",
+        "feature_icon_bg": "--ks-feature-icon-bg",
+        "feature_icon_text": "--ks-feature-icon-text",
+        "check_color": "--ks-check-color",
+        "brand_glow": "--ks-brand-glow",
     }
 
     def resolved_colors(self):
@@ -450,34 +448,31 @@ class ColorTheme(models.Model):
     name = models.CharField(max_length=60, unique=True)
     is_default = models.BooleanField(default=False, editable=False, verbose_name="Default site theme")
 
-    # Theme Colors
-    brand_color = _color_field("Brand", "", "Brand identity color.")
-    primary_color = _color_field("Primary", "", "Primary action button color.")
-    secondary_color = _color_field("Secondary", "", "Secondary button color.")
-    accent_color = _color_field("Accent", "", "Feature icons and highlights.")
+    # Typography
+    body_text_color = _color_field("Body text", "", "Paragraphs, copy, and general body content.")
+    heading_text_color = _color_field("Heading text", "", "H1–H6 and display headings.")
+    muted_text_color = _color_field("Muted text", "", "Secondary paragraphs, lead text, announcements.")
 
-    # Semantic Colors
-    success_color = _color_field("Success", "")
-    warning_color = _color_field("Warning", "")
-    error_color = _color_field("Error", "")
-    info_color = _color_field("Info", "")
+    # Links
+    link_color = _color_field("Link text", "", "Text links, announcement links, eyebrow links.")
+    link_hover_color = _color_field("Link hover", "", "Link text on hover.")
 
-    # Surface Colors
-    background_color = _color_field("Background", "", "Page and section background.")
-    surface_color = _color_field("Surface", "", "Media placeholders and cards.")
-    surface_variant_color = _color_field("Surface variant", "", "Borders and dividers.")
+    # Buttons
+    button_primary_bg = _color_field("Primary button", "", "Main call-to-action button background.")
+    button_primary_hover = _color_field("Primary button hover", "", "Primary button on hover.")
+    button_secondary_border = _color_field("Secondary button", "", "Secondary outline button border and text.")
+    button_secondary_hover_bg = _color_field("Secondary button hover bg", "", "Secondary button fill on hover.")
 
-    # Text Colors
-    text_color = _color_field("Text", "", "Body and heading text.")
-    text_muted_color = _color_field("Muted", "", "Secondary/description text.")
-    text_on_brand_color = _color_field("On brand", "", "Text on brand backgrounds.")
+    # Surfaces
+    page_bg = _color_field("Page background", "", "Body and section background.")
+    surface_bg = _color_field("Surface background", "", "Media placeholders, card fills.")
+    surface_border = _color_field("Surface border", "", "Card borders, grid lines, dividers, media frames.")
 
-    # Overlay
-    overlay_color = _color_field("Overlay color", "", "Hero background image overlay.")
-    overlay_opacity = _opacity_field()
-
-    # Button
-    button_border_color = _color_field("Button border", "", "Border color for buttons.")
+    # Components
+    feature_icon_bg = _color_field("Feature icon bg", "", "Feature section icon backgrounds.")
+    feature_icon_text = _color_field("Feature icon text", "", "Text inside feature icons.")
+    check_color = _color_field("Checklist color", "", "Checklist checkmarks.")
+    brand_glow = _color_field("Brand glow", "", "Hero centered radial gradient spot.")
 
     panels = [
         FieldPanel("name"),
@@ -485,56 +480,77 @@ class ColorTheme(models.Model):
             [
                 FieldRowPanel(
                     [
-                        FieldPanel("brand_color", widget=ColorInputWidget()),
-                        FieldPanel("primary_color", widget=ColorInputWidget()),
-                        FieldPanel("secondary_color", widget=ColorInputWidget()),
-                        FieldPanel("accent_color", widget=ColorInputWidget()),
+                        FieldPanel("body_text_color", widget=ColorInputWidget()),
+                        FieldPanel("heading_text_color", widget=ColorInputWidget()),
+                        FieldPanel("muted_text_color", widget=ColorInputWidget()),
                     ],
                     classname="ks-color-row",
                 ),
             ],
-            heading="Brand colors",
+            heading="Typography",
             classname="ks-global-settings-group ks-global-color-group",
         ),
         MultiFieldPanel(
             [
                 FieldRowPanel(
                     [
-                        FieldPanel("background_color", widget=ColorInputWidget()),
-                        FieldPanel("surface_color", widget=ColorInputWidget()),
-                        FieldPanel("surface_variant_color", widget=ColorInputWidget()),
+                        FieldPanel("link_color", widget=ColorInputWidget()),
+                        FieldPanel("link_hover_color", widget=ColorInputWidget()),
                     ],
                     classname="ks-color-row",
                 ),
             ],
-            heading="Surface colors",
+            heading="Links",
             classname="ks-global-settings-group ks-global-color-group",
         ),
         MultiFieldPanel(
             [
                 FieldRowPanel(
                     [
-                        FieldPanel("text_color", widget=ColorInputWidget()),
-                        FieldPanel("text_muted_color", widget=ColorInputWidget()),
-                        FieldPanel("text_on_brand_color", widget=ColorInputWidget()),
+                        FieldPanel("button_primary_bg", widget=ColorInputWidget()),
+                        FieldPanel("button_primary_hover", widget=ColorInputWidget()),
+                    ],
+                    classname="ks-color-row",
+                ),
+                FieldRowPanel(
+                    [
+                        FieldPanel("button_secondary_border", widget=ColorInputWidget()),
+                        FieldPanel("button_secondary_hover_bg", widget=ColorInputWidget()),
                     ],
                     classname="ks-color-row",
                 ),
             ],
-            heading="Text colors",
+            heading="Buttons",
             classname="ks-global-settings-group ks-global-color-group",
         ),
         MultiFieldPanel(
             [
                 FieldRowPanel(
                     [
-                        FieldPanel("overlay_color", widget=ColorInputWidget()),
-                        FieldPanel("overlay_opacity"),
-                    ]
+                        FieldPanel("page_bg", widget=ColorInputWidget()),
+                        FieldPanel("surface_bg", widget=ColorInputWidget()),
+                        FieldPanel("surface_border", widget=ColorInputWidget()),
+                    ],
+                    classname="ks-color-row",
                 ),
             ],
-            heading="Image overlay",
-            classname="ks-global-settings-group",
+            heading="Surfaces",
+            classname="ks-global-settings-group ks-global-color-group",
+        ),
+        MultiFieldPanel(
+            [
+                FieldRowPanel(
+                    [
+                        FieldPanel("feature_icon_bg", widget=ColorInputWidget()),
+                        FieldPanel("feature_icon_text", widget=ColorInputWidget()),
+                        FieldPanel("check_color", widget=ColorInputWidget()),
+                        FieldPanel("brand_glow", widget=ColorInputWidget()),
+                    ],
+                    classname="ks-color-row",
+                ),
+            ],
+            heading="Components",
+            classname="ks-global-settings-group ks-global-color-group",
         ),
     ]
 
@@ -853,6 +869,16 @@ class HomePage(Page):
         related_name="+",
     )
     hero_image_alt = models.CharField(max_length=120, blank=True)
+    hero_overlay_color = models.CharField(
+        max_length=16, blank=True, default="#0f172a", verbose_name="Overlay color",
+        help_text="Color tint for the background image overlay.",
+    )
+    OVERLAY_OPACITY_CHOICES = [(i, f"{i}%") for i in range(0, 101, 5)]
+    hero_overlay_opacity = models.PositiveSmallIntegerField(
+        choices=OVERLAY_OPACITY_CHOICES, blank=True, null=True, default=70,
+        verbose_name="Overlay opacity",
+        help_text="Transparency of the overlay (0 = transparent, 100 = solid).",
+    )
 
     clients_enabled = models.BooleanField(default=True, verbose_name="Section enabled")
     clients_layout = models.CharField(
@@ -1019,23 +1045,22 @@ class HomePage(Page):
     )
 
     FIELD_TO_CSS_VAR = {
-        "brand_color": "--ks-color-brand",
-        "primary_color": "--ks-color-primary",
-        "secondary_color": "--ks-color-secondary",
-        "accent_color": "--ks-color-accent",
-        "success_color": "--ks-color-success",
-        "warning_color": "--ks-color-warning",
-        "error_color": "--ks-color-error",
-        "info_color": "--ks-color-info",
-        "background_color": "--ks-color-background",
-        "surface_color": "--ks-color-surface",
-        "surface_variant_color": "--ks-color-surface-variant",
-        "text_color": "--ks-color-text",
-        "text_muted_color": "--ks-color-muted",
-        "text_on_brand_color": "--ks-color-text-on-brand",
-        "overlay_color": "--ks-overlay-color",
-        "overlay_opacity": "--ks-overlay-opacity",
-        "button_border_color": "--ks-button-border-color",
+        "body_text_color": "--ks-body-text",
+        "heading_text_color": "--ks-heading-text",
+        "muted_text_color": "--ks-muted-text",
+        "link_color": "--ks-link-text",
+        "link_hover_color": "--ks-link-hover",
+        "button_primary_bg": "--ks-btn-primary-bg",
+        "button_primary_hover": "--ks-btn-primary-hover",
+        "button_secondary_border": "--ks-btn-secondary-border",
+        "button_secondary_hover_bg": "--ks-btn-secondary-hover-bg",
+        "page_bg": "--ks-body-bg",
+        "surface_bg": "--ks-surface-bg",
+        "surface_border": "--ks-surface-border",
+        "feature_icon_bg": "--ks-feature-icon-bg",
+        "feature_icon_text": "--ks-feature-icon-text",
+        "check_color": "--ks-check-color",
+        "brand_glow": "--ks-brand-glow",
     }
 
     @staticmethod
@@ -1160,6 +1185,20 @@ class HomePage(Page):
                         )
                     ],
                     heading="Media",
+                    classname="ks-component-group",
+                    attrs={"data-section": "hero", "data-component": "media"},
+                ),
+                MultiFieldPanel(
+                    [
+                        FieldRowPanel(
+                            [
+                                FieldPanel("hero_overlay_color", widget=ColorInputWidget()),
+                                FieldPanel("hero_overlay_opacity"),
+                            ]
+                        ),
+                    ],
+                    heading="Image overlay",
+                    help_text="Color and transparency for the background image overlay (only visible on 'Background media' layout).",
                     classname="ks-component-group",
                     attrs={"data-section": "hero", "data-component": "media"},
                 ),
