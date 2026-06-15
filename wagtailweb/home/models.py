@@ -704,6 +704,78 @@ class HomeFeature(Orderable):
 
 @register_setting
 class NavbarSettings(ClusterableSiteSetting):
+    LOGO_LEFT_CENTER = "logo_left_center"
+    LOGO_CENTERED = "logo_centered"
+    LOGO_LEFT_SPLIT = "logo_left_split"
+    LOGO_LEFT_CENTER_BELOW = "logo_left_center_below"
+    LOGO_MINIMAL = "logo_minimal"
+    VARIANTS = {
+        LOGO_LEFT_CENTER: {
+            "label": "Logo left, nav center",
+            "template": "home/components/navbar/logo_left_center.html",
+        },
+        LOGO_CENTERED: {
+            "label": "Logo centered, nav below",
+            "template": "home/components/navbar/logo_centered.html",
+        },
+        LOGO_LEFT_SPLIT: {
+            "label": "Logo left, CTA right, nav center",
+            "template": "home/components/navbar/logo_left_split.html",
+        },
+        LOGO_LEFT_CENTER_BELOW: {
+            "label": "Logo left, nav center below",
+            "template": "home/components/navbar/logo_left_center_below.html",
+        },
+        LOGO_MINIMAL: {
+            "label": "Minimal (hamburger default)",
+            "template": "home/components/navbar/logo_minimal.html",
+        },
+    }
+    LAYOUT_CHOICES = [(key, value["label"]) for key, value in VARIANTS.items()]
+
+    CONTENT_WIDTH_CHOICES = [
+        ("narrow", "Narrow"),
+        ("normal", "Normal"),
+        ("wide", "Wide"),
+        ("full", "Full width"),
+    ]
+    ALIGNMENT_CHOICES = [
+        ("left", "Left"),
+        ("center", "Center"),
+        ("right", "Right"),
+    ]
+    VERTICAL_ALIGNMENT_CHOICES = [
+        ("top", "Top"),
+        ("center", "Center"),
+        ("bottom", "Bottom"),
+    ]
+
+    layout = models.CharField(
+        max_length=40,
+        choices=LAYOUT_CHOICES,
+        default=LOGO_LEFT_CENTER,
+        verbose_name="Layout",
+    )
+    section_height = models.PositiveIntegerField(
+        default=60, verbose_name="Section height (px)",
+        help_text="Height of the navbar in pixels.",
+    )
+    content_width = models.CharField(
+        max_length=16, choices=CONTENT_WIDTH_CHOICES, default="normal",
+        verbose_name="Content width",
+    )
+    text_alignment = models.CharField(
+        max_length=16, choices=ALIGNMENT_CHOICES, default="left",
+        verbose_name="Text alignment",
+    )
+    vertical_alignment = models.CharField(
+        max_length=16, choices=VERTICAL_ALIGNMENT_CHOICES, default="center",
+        verbose_name="Vertical alignment",
+    )
+    anchor_id = models.CharField(
+        max_length=40, blank=True, default="header",
+        verbose_name="Anchor ID",
+    )
     logo = models.ForeignKey(
         "wagtailimages.Image", null=True, blank=True, on_delete=models.SET_NULL,
         related_name="+", verbose_name="Logo image",
@@ -718,11 +790,30 @@ class NavbarSettings(ClusterableSiteSetting):
         default=False, verbose_name="Sticky navbar",
         help_text="Keep the navbar fixed at the top when scrolling.",
     )
+    nav_transparent = models.BooleanField(
+        default=False, verbose_name="Transparent navbar",
+        help_text="When enabled, the navbar starts transparent and gains its background color when scrolled.",
+    )
+    SCROLL_ANIMATION_CHOICES = [
+        ("none", "None"),
+        ("shrink", "Shrink"),
+        ("reveal", "Reveal on scroll up"),
+    ]
+    nav_scroll_animation = models.CharField(
+        max_length=20, choices=SCROLL_ANIMATION_CHOICES, default="none",
+        verbose_name="Scroll animation",
+        help_text="Animate the navbar when scrolling.",
+    )
     cta_label = models.CharField(
         max_length=80, blank=True, verbose_name="CTA button label",
     )
     cta_url = models.CharField(
         max_length=255, blank=True, verbose_name="CTA button URL",
+    )
+    nav_group = models.ForeignKey(
+        "home.NavigationLinkGroup", null=True, blank=True,
+        on_delete=models.SET_NULL, related_name="+",
+        verbose_name="Navigation links",
     )
     navbar_theme = models.ForeignKey(
         ColorTheme, null=True, blank=True, on_delete=models.SET_NULL,
@@ -736,6 +827,13 @@ class NavbarSettings(ClusterableSiteSetting):
         "navbar_link_hover_color": "--ks-navbar-link-hover",
     }
 
+    NAVBAR_FALLBACKS = {
+        "navbar_bg": "page_bg",
+        "navbar_text_color": "heading_text_color",
+        "navbar_link_color": "link_color",
+        "navbar_link_hover_color": "link_hover_color",
+    }
+
     @property
     def navbar_style(self):
         theme = self.navbar_theme
@@ -745,11 +843,34 @@ class NavbarSettings(ClusterableSiteSetting):
         for field_name, css_var in self.FIELD_TO_CSS_VAR.items():
             val = getattr(theme, field_name)
             if val is None or val == "":
+                fallback_field = self.NAVBAR_FALLBACKS.get(field_name)
+                if fallback_field:
+                    val = getattr(theme, fallback_field, "")
+            if val is None or val == "":
                 continue
             parts.append(f"{css_var}: {val}")
         return "; ".join(parts)
 
+    @property
+    def navbar_template_name(self):
+        return self.VARIANTS[self.layout]["template"]
+
     panels = [
+        MultiFieldPanel(
+            [
+                FieldPanel("layout"),
+                FieldRowPanel([
+                    FieldPanel("section_height"),
+                    FieldPanel("content_width"),
+                ]),
+                FieldRowPanel([
+                    FieldPanel("text_alignment"),
+                    FieldPanel("vertical_alignment"),
+                ]),
+                FieldPanel("anchor_id"),
+            ],
+            heading="Section settings",
+        ),
         MultiFieldPanel(
             [
                 FieldRowPanel([
@@ -757,12 +878,14 @@ class NavbarSettings(ClusterableSiteSetting):
                     FieldPanel("logo_text"),
                 ]),
                 FieldPanel("sticky"),
+                FieldPanel("nav_transparent"),
+                FieldPanel("nav_scroll_animation"),
             ],
             heading="Brand & behavior",
         ),
         MultiFieldPanel(
             [
-                InlinePanel("navbar_links", label="Navigation link"),
+                FieldPanel("nav_group"),
             ],
             heading="Navigation links",
         ),
@@ -790,24 +913,6 @@ class NavbarSettings(ClusterableSiteSetting):
     @classmethod
     def for_site(cls, site):
         return cls.objects.get_or_create(site=site)[0]
-
-
-class NavbarLink(Orderable):
-    settings = ParentalKey(
-        NavbarSettings, related_name="navbar_links", on_delete=models.CASCADE,
-    )
-    label = models.CharField(max_length=80)
-    url = models.CharField(max_length=255, blank=True)
-
-    panels = [
-        FieldRowPanel([
-            FieldPanel("label"),
-            FieldPanel("url"),
-        ]),
-    ]
-
-    def __str__(self):
-        return self.label
 
 
 @register_setting

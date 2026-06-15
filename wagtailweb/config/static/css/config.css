@@ -2,6 +2,43 @@ html {
   font-size: var(--ks-base-font-size);
 }
 
+/* ============================
+   Navbar transparent
+   ============================ */
+.ks-navbar-transparent {
+  background: transparent !important;
+  border-bottom-color: transparent !important;
+  transition: background 0.35s ease, border-bottom-color 0.35s ease;
+}
+
+.ks-navbar-transparent.ks-navbar-scrolled {
+  background: var(--ks-navbar-bg) !important;
+  border-bottom-color: var(--ks-surface-border) !important;
+}
+
+/* ============================
+   Navbar shrink animation
+   ============================ */
+.ks-navbar-anim-shrink {
+  transition: padding-block 0.35s ease, min-height 0.35s ease, box-shadow 0.35s ease;
+}
+
+.ks-navbar-anim-shrink.ks-navbar-scrolled {
+  padding-block: 0.35rem !important;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+}
+
+/* ============================
+   Navbar reveal animation
+   ============================ */
+.ks-navbar-anim-reveal {
+  transition: transform 0.35s ease;
+}
+
+.ks-navbar-anim-reveal.ks-navbar-hidden {
+  transform: translateY(-100%);
+}
+
 body {
   margin: 0;
   color: var(--ks-body-text);
@@ -592,6 +629,22 @@ h6 { font-size: var(--ks-h6-size); }
   .ks-footer-col:last-child {
     margin-bottom: 0;
   }
+}
+
+/* Navbar centered layout */
+.ks-navbar-centered .navbar-nav {
+  justify-content: center;
+  width: 100%;
+}
+
+/* Navbar minimal layout */
+.ks-navbar-minimal {
+  padding-block: 0.5rem;
+}
+
+/* Logo left, split layout */
+.ks-navbar-split .navbar-collapse {
+  border-top: 1px solid var(--ks-surface-border);
 }
 
 /* ============================

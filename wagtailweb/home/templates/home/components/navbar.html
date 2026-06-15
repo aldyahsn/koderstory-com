@@ -16,11 +16,22 @@
         </button>
         <div class="collapse navbar-collapse" id="ksNavbarNav">
             <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2">
-                {% for link in nav.navbar_links.all %}
+                {% if nav.nav_group %}
+                {% for link in nav.nav_group.links.all %}
+                {% if not link.parent %}
                 <li class="nav-item">
                     <a class="nav-link ks-nav-link px-3 py-2" href="{{ link.url }}">{{ link.label }}</a>
+                    {% if link.children.exists %}
+                    <ul class="list-unstyled ms-3 mt-1">
+                        {% for child in link.children.all %}
+                        <li class="nav-item"><a class="nav-link ks-nav-link px-3 py-2" href="{{ child.url }}">{{ child.label }}</a></li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
                 </li>
+                {% endif %}
                 {% endfor %}
+                {% endif %}
                 {% if nav.cta_label %}
                 <li class="nav-item ms-lg-2">
                     <a class="btn btn-primary" href="{{ nav.cta_url|default:'#' }}">{{ nav.cta_label }}</a>
