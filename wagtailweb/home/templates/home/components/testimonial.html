@@ -4,7 +4,7 @@
     <blockquote class="mb-3">{{ page.features_testimonial_quote|richtext }}</blockquote>
     <figcaption class="d-flex align-items-center gap-3">
         {% if page.features_testimonial_avatar %}
-        <img src="{{ page.features_testimonial_avatar.url }}" alt="{{ page.features_testimonial_name }}">
+        {% image page.features_testimonial_avatar width-72 class="rounded-circle" alt=page.features_testimonial_name %}
         {% endif %}
         <span><strong>{{ page.features_testimonial_name }}</strong>{% if page.features_testimonial_role %} — {{ page.features_testimonial_role }}{% endif %}</span>
     </figcaption>
