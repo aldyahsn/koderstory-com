@@ -130,7 +130,6 @@ h6 { font-size: var(--ks-h6-size); }
   align-items: center;
   padding-block: var(--ks-section-padding);
   background: var(--ks-body-bg);
-  border: 1px dashed var(--ks-muted-text); /* debug: remove when layout is confirmed */
 }
 
 .ks-section[data-ks-vertical="top"] {
@@ -212,7 +211,15 @@ h6 { font-size: var(--ks-h6-size); }
   justify-content: center;
 }
 
+[data-ks-align="center"] .ks-buttons {
+  justify-content: center;
+}
+
 [data-ks-align="right"] .ks-button-group {
+  justify-content: flex-end;
+}
+
+[data-ks-align="right"] .ks-buttons {
   justify-content: flex-end;
 }
 
@@ -306,6 +313,11 @@ h6 { font-size: var(--ks-h6-size); }
 
 .min-vh-75 {
   min-height: 75vh;
+}
+
+.ks-hero-half {
+  background: var(--ks-body-bg);
+  color: var(--ks-body-text);
 }
 
 .ks-hero-half .ks-media-frame,

@@ -163,7 +163,7 @@ class DesignSystemSettings(BaseSiteSetting):
 
     # Global color theme
     global_theme = models.ForeignKey(
-        "home.ColorTheme", null=True, blank=True, default=1, on_delete=models.SET_NULL, related_name="+",
+        "home.ColorTheme", null=True, blank=True, on_delete=models.SET_NULL, related_name="+",
         verbose_name="Color theme",
         help_text="Select a color theme for the entire site. Color pickers are available in Snippets → Color themes.",
     )
@@ -301,7 +301,7 @@ class DesignSystemSettings(BaseSiteSetting):
 
     def resolved_colors(self):
         """Return a dict of CSS var → value, combining theme overrides with defaults."""
-        theme = self.global_theme
+        theme = self.global_theme or ColorTheme.default_theme()
         result = {}
         for field_name, css_var in self.FIELD_TO_CSS_VAR.items():
             if theme:
@@ -656,6 +656,10 @@ class ColorTheme(models.Model):
             label += " (Default)"
         return label
 
+    @classmethod
+    def default_theme(cls):
+        return cls.objects.filter(is_default=True).first()
+
 
 class HomeClientLogo(Orderable):
     page = ParentalKey(
@@ -870,6 +874,7 @@ class NavbarSettings(ClusterableSiteSetting):
                 FieldPanel("anchor_id"),
             ],
             heading="Section settings",
+            classname="ks-navbar-settings-group",
         ),
         MultiFieldPanel(
             [
@@ -882,12 +887,14 @@ class NavbarSettings(ClusterableSiteSetting):
                 FieldPanel("nav_scroll_animation"),
             ],
             heading="Brand & behavior",
+            classname="ks-navbar-settings-group",
         ),
         MultiFieldPanel(
             [
                 FieldPanel("nav_group"),
             ],
             heading="Navigation links",
+            classname="ks-navbar-settings-group",
         ),
         MultiFieldPanel(
             [
@@ -897,12 +904,14 @@ class NavbarSettings(ClusterableSiteSetting):
                 ]),
             ],
             heading="CTA button (optional)",
+            classname="ks-navbar-settings-group",
         ),
         MultiFieldPanel(
             [
                 FieldPanel("navbar_theme"),
             ],
             heading="Color theme",
+            classname="ks-navbar-settings-group",
         ),
     ]
 
@@ -1024,12 +1033,14 @@ class FooterSettings(ClusterableSiteSetting):
                 FieldPanel("anchor_id"),
             ],
             heading="Section settings",
+            classname="ks-footer-settings-group",
         ),
         MultiFieldPanel(
             [
                 FieldPanel("columns"),
             ],
             heading="Footer columns",
+            classname="ks-footer-settings-group",
         ),
         MultiFieldPanel(
             [
@@ -1037,12 +1048,14 @@ class FooterSettings(ClusterableSiteSetting):
                 FieldPanel("bottom_bar"),
             ],
             heading="Bottom bar",
+            classname="ks-footer-settings-group",
         ),
         MultiFieldPanel(
             [
                 FieldPanel("footer_theme"),
             ],
             heading="Color theme",
+            classname="ks-footer-settings-group",
         ),
     ]
 
@@ -1136,14 +1149,12 @@ class SocialLink(Orderable):
             ("telegram", "Telegram"),
             ("reddit", "Reddit"),
             ("pinterest", "Pinterest"),
-            ("quora", "Quora"),
             ("discord", "Discord"),
             ("twitch", "Twitch"),
             ("line", "LINE"),
             ("tumblr", "Tumblr"),
             ("medium", "Medium"),
             ("github", "GitHub"),
-            ("substack", "Substack"),
         ],
         default="github",
         verbose_name="Platform",
@@ -1588,19 +1599,19 @@ class HomePage(Page):
 
     # Color theme overrides per section
     hero_theme = models.ForeignKey(
-        ColorTheme, null=True, blank=True, default=1, on_delete=models.SET_NULL, related_name="+",
+        ColorTheme, null=True, blank=True, on_delete=models.SET_NULL, related_name="+",
         verbose_name="Hero color theme",
     )
     clients_theme = models.ForeignKey(
-        ColorTheme, null=True, blank=True, default=1, on_delete=models.SET_NULL, related_name="+",
+        ColorTheme, null=True, blank=True, on_delete=models.SET_NULL, related_name="+",
         verbose_name="Clients color theme",
     )
     features_theme = models.ForeignKey(
-        ColorTheme, null=True, blank=True, default=1, on_delete=models.SET_NULL, related_name="+",
+        ColorTheme, null=True, blank=True, on_delete=models.SET_NULL, related_name="+",
         verbose_name="Features color theme",
     )
     cta_theme = models.ForeignKey(
-        ColorTheme, null=True, blank=True, default=1, on_delete=models.SET_NULL, related_name="+",
+        ColorTheme, null=True, blank=True, on_delete=models.SET_NULL, related_name="+",
         verbose_name="CTA color theme",
     )
 

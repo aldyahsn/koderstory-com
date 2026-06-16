@@ -104,7 +104,7 @@ def register_rich_text_alignment(features):
 @hooks.register("insert_global_admin_css")
 def global_admin_css():
     return format_html(
-        '<link rel="stylesheet" href="{}?v=11">'
+        '<link rel="stylesheet" href="{}?v=13">'
         '<link rel="stylesheet" href="{}?v=1">',
         static("admin/css/section-editor.css"),
         static("admin/css/reset-settings.css"),

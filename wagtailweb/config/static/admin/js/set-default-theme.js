@@ -5,7 +5,6 @@
   if (!match) return;
 
   var themePk = parseInt(match[1], 10);
-  if (themePk === 1) return; // never show on "Default"
 
   var observer = new MutationObserver(function () {
     var nav = document.querySelector("nav.actions--primary.footer__container");

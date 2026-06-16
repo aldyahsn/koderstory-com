@@ -30,15 +30,13 @@ def reset_settings(request, site_pk):
 
 
 def set_theme_as_default(request, theme_pk):
-    """Replace one theme with Default across all sections, skipping sections that use other themes."""
+    """Make a color theme the site default and clear matching section overrides."""
     theme = get_object_or_404(ColorTheme, pk=theme_pk)
-    if theme_pk == 1:
-        messages.warning(request, _("Default theme cannot be replaced."))
-        return redirect("wagtailsnippets_home_colortheme:edit", theme_pk)
 
     # Clear previous default and set new one
     ColorTheme.objects.filter(is_default=True).update(is_default=False)
     ColorTheme.objects.filter(pk=theme_pk).update(is_default=True)
+    DesignSystemSettings.objects.update(global_theme=theme)
 
     fields = ["hero_theme", "clients_theme", "features_theme", "cta_theme"]
     fk_fields = [f.replace("_theme", "_theme_id") for f in fields]
@@ -47,7 +45,7 @@ def set_theme_as_default(request, theme_pk):
         has_match = False
         for fk in fk_fields:
             if getattr(page, fk) == int(theme_pk):
-                setattr(page, fk, 1)
+                setattr(page, fk, None)
                 has_match = True
         if has_match:
             page.save(update_fields=fk_fields)
