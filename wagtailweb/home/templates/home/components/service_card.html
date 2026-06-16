@@ -1,0 +1,14 @@
+{% load wagtailcore_tags wagtailimages_tags %}
+<article class="ks-service-card h-100">
+    {% if service.image %}
+    <div class="ks-service-card-media">
+        {% image service.image fill-640x420 alt=service.image_alt|default:service.title %}
+    </div>
+    {% endif %}
+    <div class="ks-service-card-body">
+        {% if service.subtitle %}<p class="ks-eyebrow mb-2">{{ service.subtitle }}</p>{% endif %}
+        <h3 class="h5 mb-3">{{ service.title }}</h3>
+        {% if service.description %}<div class="text-secondary mb-0">{{ service.description|richtext }}</div>{% endif %}
+        {% if service.link_label %}<a class="ks-text-link" href="{{ service.link_url|default:'#' }}">{{ service.link_label }} <span aria-hidden="true">&rarr;</span></a>{% endif %}
+    </div>
+</article>

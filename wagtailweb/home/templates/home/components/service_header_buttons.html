@@ -1,0 +1,10 @@
+{% if page.header_primary_button_label or page.header_secondary_button_label %}
+<div class="d-flex flex-wrap gap-3 mt-4 ks-buttons">
+    {% if page.header_primary_button_label %}
+    <a class="btn btn-primary" href="{{ page.header_primary_button_url|default:'#' }}">{{ page.header_primary_button_label }}</a>
+    {% endif %}
+    {% if page.header_secondary_button_label %}
+    <a class="btn btn-secondary" href="{{ page.header_secondary_button_url|default:'#' }}">{{ page.header_secondary_button_label }} <span aria-hidden="true">&rarr;</span></a>
+    {% endif %}
+</div>
+{% endif %}

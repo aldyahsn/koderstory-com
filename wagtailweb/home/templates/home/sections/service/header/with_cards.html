@@ -1,0 +1,17 @@
+<section id="{{ page.header_anchor_id|default:'service-header' }}" class="ks-section ks-height-{{ page.header_section_height }}" data-ks-vertical="{{ page.header_vertical_alignment }}"{% if page.header_style %} style="{{ page.header_style }}"{% endif %}>
+    <div class="container ks-container" data-ks-width="{{ page.header_content_width }}">
+        <div class="row g-5 align-items-center">
+            <div class="col-lg-5">
+                {% include "home/components/service_header_copy.html" %}
+                {% include "home/components/service_header_buttons.html" %}
+            </div>
+            <div class="col-lg-7">
+                <div class="row g-4">
+                    {% for service in page.service_items.all|slice:":3" %}
+                    <div class="col-md-6">{% include "home/components/service_card.html" %}</div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

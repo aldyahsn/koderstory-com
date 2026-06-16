@@ -1,0 +1,12 @@
+{% load wagtailcore_tags %}
+{% if page.content_testimonial_quote %}
+<figure class="ks-testimonial ks-service-testimonial">
+    <blockquote>{{ page.content_testimonial_quote|richtext }}</blockquote>
+    {% if page.content_testimonial_name %}
+    <figcaption>
+        <strong>{{ page.content_testimonial_name }}</strong>
+        {% if page.content_testimonial_role %}<span>{{ page.content_testimonial_role }}</span>{% endif %}
+    </figcaption>
+    {% endif %}
+</figure>
+{% endif %}

@@ -1,0 +1,6 @@
+{% load wagtailcore_tags %}
+<div class="ks-copy mb-5">
+    {% if page.services_eyebrow %}<p class="ks-eyebrow mb-3">{{ page.services_eyebrow }}</p>{% endif %}
+    {% if page.services_title %}<h2 class="display-5 mb-3">{{ page.services_title }}</h2>{% endif %}
+    {% if page.services_description %}<div class="lead text-secondary mb-0">{{ page.services_description|richtext }}</div>{% endif %}
+</div>

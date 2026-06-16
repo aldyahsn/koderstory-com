@@ -1,0 +1,8 @@
+{% load wagtailimages_tags %}
+<div class="ks-media-frame">
+    {% if page.content_image %}
+    {% image page.content_image width-1200 class="w-100 h-100" alt=page.content_image_alt|default:page.content_title %}
+    {% else %}
+    <div class="ks-media-placeholder">Content image</div>
+    {% endif %}
+</div>

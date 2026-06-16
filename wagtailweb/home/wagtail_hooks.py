@@ -11,7 +11,7 @@ from wagtail.admin.rich_text.converters.html_to_contentstate import (
 )
 from wagtail.admin.rich_text.editors.draftail import features as draftail_features
 from . import views
-from .models import HomePage
+from .models import HomePage, ServicePage
 
 
 RICH_TEXT_ALIGNMENT_FEATURES = [
@@ -127,6 +127,18 @@ def global_admin_js():
         },
         "cta": {
             key: value["components"] for key, value in HomePage.CTA_VARIANTS.items()
+        },
+        "header": {
+            key: value["components"]
+            for key, value in ServicePage.HEADER_VARIANTS.items()
+        },
+        "content": {
+            key: value["components"]
+            for key, value in ServicePage.CONTENT_VARIANTS.items()
+        },
+        "services": {
+            key: value["components"]
+            for key, value in ServicePage.SERVICES_VARIANTS.items()
         },
     }
     return format_html(

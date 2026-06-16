@@ -1,0 +1,8 @@
+<section id="{{ page.header_anchor_id|default:'service-header' }}" class="ks-section ks-height-{{ page.header_section_height }}" data-ks-vertical="{{ page.header_vertical_alignment }}"{% if page.header_style %} style="{{ page.header_style }}"{% endif %}>
+    <div class="container ks-container" data-ks-width="{{ page.header_content_width }}">
+        <div class="ks-copy" data-ks-align="{{ page.header_text_alignment }}">
+            {% include "home/components/service_header_copy.html" %}
+            {% include "home/components/service_header_buttons.html" %}
+        </div>
+    </div>
+</section>

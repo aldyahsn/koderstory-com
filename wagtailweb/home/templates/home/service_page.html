@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block body_class %}template-servicepage{% endblock %}
+
+{% block content %}
+<main>
+    {% if page.header_enabled %}{% include page.header_template_name %}{% endif %}
+    {% if page.content_enabled %}{% include page.content_template_name %}{% endif %}
+    {% if page.services_enabled %}{% include page.services_template_name %}{% endif %}
+</main>
+{% endblock %}

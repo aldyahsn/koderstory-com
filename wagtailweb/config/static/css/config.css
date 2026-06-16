@@ -452,6 +452,117 @@ h6 { font-size: var(--ks-h6-size); }
   object-fit: cover;
 }
 
+.ks-richtext {
+  color: var(--ks-body-text);
+}
+
+.ks-richtext p:last-child {
+  margin-bottom: 0;
+}
+
+.ks-service-header {
+  background:
+    radial-gradient(circle at 80% 10%, color-mix(in srgb, var(--ks-brand-glow) 10%, transparent), transparent 35%),
+    var(--ks-body-bg);
+}
+
+.ks-service-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+}
+
+.ks-service-stat {
+  padding: 1.25rem;
+  border: 1px solid var(--ks-surface-border);
+  border-radius: var(--ks-card-radius);
+  background: var(--ks-surface-bg);
+  text-align: left;
+}
+
+.ks-service-stat strong {
+  display: block;
+  color: var(--ks-heading-text);
+  font-family: var(--ks-font-heading);
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.ks-service-stat span {
+  display: block;
+  margin-top: 0.75rem;
+  color: var(--ks-body-text);
+  font-weight: 700;
+}
+
+.ks-service-stat p {
+  margin: 0.5rem 0 0;
+  color: var(--ks-muted-text);
+  font-size: 0.95rem;
+}
+
+.ks-service-card {
+  overflow: hidden;
+  border: 1px solid var(--ks-surface-border);
+  border-radius: var(--ks-card-radius);
+  background: var(--ks-surface-bg);
+}
+
+.ks-service-card-media {
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  background: var(--ks-body-bg);
+}
+
+.ks-service-card-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.ks-service-card-body {
+  padding: 1.5rem;
+}
+
+.ks-service-card .ks-text-link {
+  display: inline-block;
+  margin-top: 1rem;
+}
+
+.ks-service-list {
+  display: grid;
+  gap: 1rem;
+}
+
+.ks-service-list .ks-service-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.ks-service-testimonial {
+  padding: 1.5rem;
+  border: 1px solid var(--ks-surface-border);
+  border-left: 4px solid var(--ks-link-text);
+  border-radius: var(--ks-card-radius);
+  background: var(--ks-surface-bg);
+}
+
+.ks-service-testimonial blockquote,
+.ks-service-testimonial blockquote p {
+  margin-bottom: 0;
+}
+
+.ks-service-testimonial figcaption {
+  display: grid;
+  gap: 0.15rem;
+  margin-top: 1rem;
+  color: var(--ks-body-text);
+}
+
+.ks-service-testimonial figcaption span {
+  color: var(--ks-muted-text);
+}
+
 .ks-cta-media {
   height: 100%;
   min-height: 480px;

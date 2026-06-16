@@ -1,0 +1,11 @@
+{% load wagtailimages_tags %}
+<section id="{{ page.header_anchor_id|default:'service-header' }}" class="ks-section ks-height-{{ page.header_section_height }} ks-hero-background" data-ks-vertical="{{ page.header_vertical_alignment }}"{% if page.header_style %} style="{{ page.header_style }}"{% endif %}>
+    {% if page.header_image %}{% image page.header_image width-1920 class="ks-background-image" alt=page.header_image_alt|default:page.header_title %}{% endif %}
+    <div class="ks-background-overlay" style="background: color-mix(in srgb, {{ page.header_overlay_color|default:'#0f172a' }} {{ page.header_overlay_opacity|default:70 }}%, transparent);"></div>
+    <div class="container ks-container position-relative" data-ks-align="{{ page.header_text_alignment }}" data-ks-width="{{ page.header_content_width }}">
+        <div class="ks-copy">
+            {% include "home/components/service_header_copy.html" %}
+            {% include "home/components/service_header_buttons.html" %}
+        </div>
+    </div>
+</section>

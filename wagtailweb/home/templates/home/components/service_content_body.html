@@ -1,0 +1,4 @@
+{% load wagtailcore_tags %}
+{% if page.content_body %}
+<div class="ks-richtext">{{ page.content_body|richtext }}</div>
+{% endif %}

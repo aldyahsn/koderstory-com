@@ -1,0 +1,4 @@
+{% load wagtailcore_tags %}
+{% if page.header_eyebrow %}<p class="ks-eyebrow mb-3">{{ page.header_eyebrow }}</p>{% endif %}
+{% if page.header_title %}<h1 class="display-3 mb-4">{{ page.header_title }}</h1>{% endif %}
+{% if page.header_description %}<div class="lead text-secondary mb-0">{{ page.header_description|richtext }}</div>{% endif %}

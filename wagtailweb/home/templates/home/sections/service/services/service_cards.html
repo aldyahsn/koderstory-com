@@ -1,0 +1,10 @@
+<section id="{{ page.services_anchor_id|default:'services' }}" class="ks-section ks-height-{{ page.services_section_height }}" data-ks-vertical="{{ page.services_vertical_alignment }}"{% if page.services_style %} style="{{ page.services_style }}"{% endif %}>
+    <div class="container ks-container" data-ks-align="{{ page.services_text_alignment }}" data-ks-width="{{ page.services_content_width }}">
+        {% include "home/components/service_section_heading.html" %}
+        <div class="row row-cols-1 row-cols-md-2 g-4">
+            {% for service in page.service_items.all %}
+            <div class="col">{% include "home/components/service_card.html" %}</div>
+            {% endfor %}
+        </div>
+    </div>
+</section>

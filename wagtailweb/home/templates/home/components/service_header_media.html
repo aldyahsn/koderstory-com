@@ -1,0 +1,8 @@
+{% load wagtailimages_tags %}
+<div class="ks-media-frame">
+    {% if page.header_image %}
+    {% image page.header_image width-1200 class="w-100 h-100" alt=page.header_image_alt|default:page.header_title %}
+    {% else %}
+    <div class="ks-media-placeholder">Service image</div>
+    {% endif %}
+</div>

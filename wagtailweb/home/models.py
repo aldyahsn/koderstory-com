@@ -2091,3 +2091,342 @@ class HomePage(Page):
                     link_label="Learn more",
                     link_url="#cta",
                 )
+
+
+class ServicePage(Page):
+    SECTION_HEIGHT_CHOICES = HomePage.SECTION_HEIGHT_CHOICES
+    CONTENT_WIDTH_CHOICES = HomePage.CONTENT_WIDTH_CHOICES
+    ALIGNMENT_CHOICES = HomePage.ALIGNMENT_CHOICES
+    VERTICAL_ALIGNMENT_CHOICES = HomePage.VERTICAL_ALIGNMENT_CHOICES
+
+    HEADER_CENTERED = "centered"
+    HEADER_SIMPLE = "simple"
+    HEADER_WITH_STATS = "with_stats"
+    HEADER_WITH_CARDS = "with_cards"
+    HEADER_BACKGROUND_IMAGE = "background_image"
+    HEADER_VARIANTS = {
+        HEADER_CENTERED: {"label": "Centered", "template": "home/sections/service/header/centered.html", "components": ["copy", "buttons"]},
+        HEADER_SIMPLE: {"label": "Simple", "template": "home/sections/service/header/simple.html", "components": ["copy", "buttons"]},
+        HEADER_WITH_STATS: {"label": "With stats", "template": "home/sections/service/header/with_stats.html", "components": ["copy", "buttons", "stats"]},
+        HEADER_WITH_CARDS: {"label": "With cards", "template": "home/sections/service/header/with_cards.html", "components": ["copy", "buttons", "services"]},
+        HEADER_BACKGROUND_IMAGE: {"label": "Background image", "template": "home/sections/service/header/background_image.html", "components": ["copy", "buttons", "media"]},
+    }
+    HEADER_LAYOUT_CHOICES = [(key, value["label"]) for key, value in HEADER_VARIANTS.items()]
+
+    CONTENT_CENTERED = "centered"
+    CONTENT_SPLIT_IMAGE = "split_image"
+    CONTENT_TWO_COLUMN = "two_column"
+    CONTENT_WITH_TESTIMONIAL = "with_testimonial"
+    CONTENT_WITH_STATS = "with_stats"
+    CONTENT_VARIANTS = {
+        CONTENT_CENTERED: {"label": "Centered", "template": "home/sections/service/content/centered.html", "components": ["copy"]},
+        CONTENT_SPLIT_IMAGE: {"label": "Split with image", "template": "home/sections/service/content/split_image.html", "components": ["copy", "media"]},
+        CONTENT_TWO_COLUMN: {"label": "Two columns", "template": "home/sections/service/content/two_column.html", "components": ["copy"]},
+        CONTENT_WITH_TESTIMONIAL: {"label": "With testimonial", "template": "home/sections/service/content/with_testimonial.html", "components": ["copy", "testimonial"]},
+        CONTENT_WITH_STATS: {"label": "With stats", "template": "home/sections/service/content/with_stats.html", "components": ["copy", "stats"]},
+    }
+    CONTENT_LAYOUT_CHOICES = [(key, value["label"]) for key, value in CONTENT_VARIANTS.items()]
+
+    SERVICES_GRID = "service_grid"
+    SERVICES_CARDS = "service_cards"
+    SERVICES_PROFILES = "service_profiles"
+    SERVICES_SPLIT_LIST = "split_service_list"
+    SERVICES_VARIANTS = {
+        SERVICES_GRID: {"label": "Service grid", "template": "home/sections/service/services/service_grid.html", "components": ["copy", "services"]},
+        SERVICES_CARDS: {"label": "Service cards", "template": "home/sections/service/services/service_cards.html", "components": ["copy", "services"]},
+        SERVICES_PROFILES: {"label": "Profile cards", "template": "home/sections/service/services/service_profiles.html", "components": ["copy", "services"]},
+        SERVICES_SPLIT_LIST: {"label": "Split service list", "template": "home/sections/service/services/split_service_list.html", "components": ["copy", "services"]},
+    }
+    SERVICES_LAYOUT_CHOICES = [(key, value["label"]) for key, value in SERVICES_VARIANTS.items()]
+
+    header_enabled = models.BooleanField(default=True, verbose_name="Section enabled")
+    header_layout = models.CharField(max_length=40, choices=HEADER_LAYOUT_CHOICES, default=HEADER_CENTERED, verbose_name="Layout")
+    header_anchor_id = models.CharField(max_length=40, blank=True, default="service-header", verbose_name="Anchor ID")
+    header_section_height = models.CharField(max_length=16, choices=SECTION_HEIGHT_CHOICES, default="spacious", verbose_name="Section height")
+    header_content_width = models.CharField(max_length=16, choices=CONTENT_WIDTH_CHOICES, default="normal", verbose_name="Section width")
+    header_text_alignment = models.CharField(max_length=16, choices=ALIGNMENT_CHOICES, default="center", verbose_name="Horizontal alignment")
+    header_vertical_alignment = models.CharField(max_length=16, choices=VERTICAL_ALIGNMENT_CHOICES, default="center", verbose_name="Vertical alignment")
+    header_eyebrow = models.CharField(max_length=80, blank=True)
+    header_title = models.CharField(max_length=180, blank=True)
+    header_description = RichTextField(blank=True, features=RICH_TEXT_FEATURES)
+    header_primary_button_label = models.CharField(max_length=80, blank=True)
+    header_primary_button_url = models.CharField(max_length=255, blank=True)
+    header_secondary_button_label = models.CharField(max_length=80, blank=True)
+    header_secondary_button_url = models.CharField(max_length=255, blank=True)
+    header_image = models.ForeignKey("wagtailimages.Image", null=True, blank=True, on_delete=models.SET_NULL, related_name="+")
+    header_image_alt = models.CharField(max_length=120, blank=True)
+    header_overlay_color = models.CharField(max_length=16, blank=True, default="#0f172a", verbose_name="Overlay color")
+    header_overlay_opacity = models.PositiveSmallIntegerField(choices=HomePage.OVERLAY_OPACITY_CHOICES, blank=True, null=True, default=70, verbose_name="Overlay opacity")
+
+    content_enabled = models.BooleanField(default=True, verbose_name="Section enabled")
+    content_layout = models.CharField(max_length=40, choices=CONTENT_LAYOUT_CHOICES, default=CONTENT_SPLIT_IMAGE, verbose_name="Layout")
+    content_anchor_id = models.CharField(max_length=40, blank=True, default="service-content", verbose_name="Anchor ID")
+    content_section_height = models.CharField(max_length=16, choices=SECTION_HEIGHT_CHOICES, default="normal", verbose_name="Section height")
+    content_content_width = models.CharField(max_length=16, choices=CONTENT_WIDTH_CHOICES, default="normal", verbose_name="Section width")
+    content_text_alignment = models.CharField(max_length=16, choices=ALIGNMENT_CHOICES, default="left", verbose_name="Horizontal alignment")
+    content_vertical_alignment = models.CharField(max_length=16, choices=VERTICAL_ALIGNMENT_CHOICES, default="center", verbose_name="Vertical alignment")
+    content_eyebrow = models.CharField(max_length=80, blank=True)
+    content_title = models.CharField(max_length=180, blank=True)
+    content_description = RichTextField(blank=True, features=RICH_TEXT_FEATURES)
+    content_body = RichTextField(blank=True, features=RICH_TEXT_FEATURES)
+    content_image = models.ForeignKey("wagtailimages.Image", null=True, blank=True, on_delete=models.SET_NULL, related_name="+")
+    content_image_alt = models.CharField(max_length=120, blank=True)
+    content_testimonial_quote = RichTextField(blank=True, features=RICH_TEXT_FEATURES)
+    content_testimonial_name = models.CharField(max_length=100, blank=True)
+    content_testimonial_role = models.CharField(max_length=120, blank=True)
+
+    services_enabled = models.BooleanField(default=True, verbose_name="Section enabled")
+    services_layout = models.CharField(max_length=40, choices=SERVICES_LAYOUT_CHOICES, default=SERVICES_GRID, verbose_name="Layout")
+    services_anchor_id = models.CharField(max_length=40, blank=True, default="services", verbose_name="Anchor ID")
+    services_section_height = models.CharField(max_length=16, choices=SECTION_HEIGHT_CHOICES, default="normal", verbose_name="Section height")
+    services_content_width = models.CharField(max_length=16, choices=CONTENT_WIDTH_CHOICES, default="wide", verbose_name="Section width")
+    services_text_alignment = models.CharField(max_length=16, choices=ALIGNMENT_CHOICES, default="center", verbose_name="Horizontal alignment")
+    services_vertical_alignment = models.CharField(max_length=16, choices=VERTICAL_ALIGNMENT_CHOICES, default="center", verbose_name="Vertical alignment")
+    services_eyebrow = models.CharField(max_length=80, blank=True)
+    services_title = models.CharField(max_length=180, blank=True)
+    services_description = RichTextField(blank=True, features=RICH_TEXT_FEATURES)
+
+    header_theme = models.ForeignKey(ColorTheme, null=True, blank=True, on_delete=models.SET_NULL, related_name="+", verbose_name="Header color theme")
+    content_theme = models.ForeignKey(ColorTheme, null=True, blank=True, on_delete=models.SET_NULL, related_name="+", verbose_name="Content color theme")
+    services_theme = models.ForeignKey(ColorTheme, null=True, blank=True, on_delete=models.SET_NULL, related_name="+", verbose_name="Services color theme")
+
+    @staticmethod
+    def _theme_style(theme):
+        return HomePage._theme_style(theme)
+
+    @property
+    def header_style(self):
+        return self._theme_style(self.header_theme)
+
+    @property
+    def content_style(self):
+        return self._theme_style(self.content_theme)
+
+    @property
+    def services_style(self):
+        return self._theme_style(self.services_theme)
+
+    @staticmethod
+    def _variant_template(variants, selected, fallback):
+        return variants.get(selected, variants[fallback])["template"]
+
+    @property
+    def header_template_name(self):
+        return self._variant_template(self.HEADER_VARIANTS, self.header_layout, self.HEADER_CENTERED)
+
+    @property
+    def content_template_name(self):
+        return self._variant_template(self.CONTENT_VARIANTS, self.content_layout, self.CONTENT_SPLIT_IMAGE)
+
+    @property
+    def services_template_name(self):
+        return self._variant_template(self.SERVICES_VARIANTS, self.services_layout, self.SERVICES_GRID)
+
+    content_panels = Page.content_panels + [
+        MultiFieldPanel(
+            [
+                MultiFieldPanel(
+                    [FieldPanel("header_eyebrow"), FieldPanel("header_title"), FieldPanel("header_description")],
+                    heading="Content",
+                    classname="ks-component-group",
+                    attrs={"data-section": "header", "data-component": "copy"},
+                ),
+                MultiFieldPanel(
+                    [
+                        FieldRowPanel([FieldPanel("header_primary_button_label"), FieldPanel("header_primary_button_url")]),
+                        FieldRowPanel([FieldPanel("header_secondary_button_label"), FieldPanel("header_secondary_button_url")]),
+                    ],
+                    heading="Buttons",
+                    classname="ks-component-group",
+                    attrs={"data-section": "header", "data-component": "buttons"},
+                ),
+                MultiFieldPanel(
+                    [
+                        FieldRowPanel([FieldPanel("header_image"), FieldPanel("header_image_alt")]),
+                        FieldRowPanel([FieldPanel("header_overlay_color", widget=ColorInputWidget()), FieldPanel("header_overlay_opacity")]),
+                    ],
+                    heading="Media",
+                    classname="ks-component-group",
+                    attrs={"data-section": "header", "data-component": "media"},
+                ),
+            ],
+            heading="Header section",
+        ),
+        MultiFieldPanel(
+            [
+                MultiFieldPanel(
+                    [FieldPanel("content_eyebrow"), FieldPanel("content_title"), FieldPanel("content_description"), FieldPanel("content_body")],
+                    heading="Content",
+                    classname="ks-component-group",
+                    attrs={"data-section": "content", "data-component": "copy"},
+                ),
+                MultiFieldPanel(
+                    [FieldRowPanel([FieldPanel("content_image"), FieldPanel("content_image_alt")])],
+                    heading="Media",
+                    classname="ks-component-group",
+                    attrs={"data-section": "content", "data-component": "media"},
+                ),
+                MultiFieldPanel(
+                    [
+                        FieldPanel("content_testimonial_quote"),
+                        FieldRowPanel([FieldPanel("content_testimonial_name"), FieldPanel("content_testimonial_role")]),
+                    ],
+                    heading="Testimonial",
+                    classname="ks-component-group",
+                    attrs={"data-section": "content", "data-component": "testimonial"},
+                ),
+                MultiFieldPanel(
+                    [InlinePanel("stats", label="Stat")],
+                    heading="Stats",
+                    classname="ks-component-group",
+                    attrs={"data-section": "content", "data-component": "stats"},
+                ),
+            ],
+            heading="Content section",
+        ),
+        MultiFieldPanel(
+            [
+                MultiFieldPanel(
+                    [FieldPanel("services_eyebrow"), FieldPanel("services_title"), FieldPanel("services_description")],
+                    heading="Content",
+                    classname="ks-component-group",
+                    attrs={"data-section": "services", "data-component": "copy"},
+                ),
+                MultiFieldPanel(
+                    [InlinePanel("service_items", label="Service")],
+                    heading="Services",
+                    classname="ks-component-group",
+                    attrs={"data-section": "services", "data-component": "services"},
+                ),
+            ],
+            heading="Service section",
+        ),
+    ]
+
+    @classmethod
+    def _settings_panel(cls, prefix, heading, theme_field):
+        return MultiFieldPanel(
+            [
+                FieldRowPanel([FieldPanel(f"{prefix}_enabled", classname="w-field--small"), FieldPanel(f"{prefix}_layout")], heading="Layout"),
+                FieldRowPanel([FieldPanel(f"{prefix}_section_height"), FieldPanel(f"{prefix}_content_width")], heading="Spacing"),
+                FieldRowPanel([FieldPanel(f"{prefix}_text_alignment"), FieldPanel(f"{prefix}_vertical_alignment")], heading="Alignment"),
+                FieldRowPanel([FieldPanel(f"{prefix}_anchor_id")], heading="Advanced"),
+                FieldRowPanel([FieldPanel(theme_field)], heading="Color theme"),
+            ],
+            heading=heading,
+            classname="ks-section-settings",
+        )
+
+    section_settings_panels = [
+        _settings_panel.__func__(None, "header", "Header settings", "header_theme"),
+        _settings_panel.__func__(None, "content", "Content settings", "content_theme"),
+        _settings_panel.__func__(None, "services", "Service settings", "services_theme"),
+    ]
+
+    edit_handler = TabbedInterface(
+        [
+            ObjectList(content_panels, heading="Content"),
+            ObjectList(section_settings_panels, heading="Section settings"),
+            ObjectList(Page.promote_panels, heading="Promote"),
+            ObjectList(Page.settings_panels, heading="Settings"),
+        ]
+    )
+
+    class Meta:
+        verbose_name = "Service page"
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if not self.pk:
+            has_content = any(kwargs.get(f) for f in ["header_title", "content_title", "services_title"])
+            if not has_content:
+                self._populate_dummy_content()
+
+    def _populate_dummy_content(self):
+        self.header_eyebrow = "Services"
+        self.header_title = "Practical digital systems for growing teams"
+        self.header_description = "Explore focused service packages for websites, internal tools, automation, and long-term product support."
+        self.header_primary_button_label = "Start a project"
+        self.header_primary_button_url = "#contact"
+        self.header_secondary_button_label = "View services"
+        self.header_secondary_button_url = "#services"
+        self.header_image_alt = "Service planning workspace"
+        self.content_eyebrow = "How we work"
+        self.content_title = "Clear scope, durable implementation, and support after launch"
+        self.content_description = "Each engagement starts with the business outcome, then turns that into a practical technical plan your team can maintain."
+        self.content_body = "<p>Use this section to explain your process, decision making, and what clients can expect from the first conversation through delivery.</p>"
+        self.content_image_alt = "Project strategy and delivery process"
+        self.content_testimonial_quote = "Koderstory helped us move from scattered requirements to a system our team can actually operate."
+        self.content_testimonial_name = "Client partner"
+        self.content_testimonial_role = "Operations lead"
+        self.services_eyebrow = "Service catalog"
+        self.services_title = "Choose the support that matches your next move"
+        self.services_description = "These service cards can point to future detail pages when you add them."
+
+    def save(self, *args, **kwargs):
+        is_new = self.pk is None
+        if is_new:
+            self._populate_dummy_content()
+        super().save(*args, **kwargs)
+        if is_new:
+            self._create_dummy_related()
+
+    def _create_dummy_related(self):
+        if not self.stats.exists():
+            for value, label, description in [
+                ("01", "Discovery", "Clarify the business problem and constraints."),
+                ("02", "Build", "Ship focused features with clean editorial controls."),
+                ("03", "Support", "Keep the system stable as requirements evolve."),
+            ]:
+                ServicePageStat.objects.create(page=self, value=value, label=label, description=description)
+        if not self.service_items.exists():
+            for title, subtitle in [
+                ("Custom Web Applications", "Operational tools"),
+                ("Wagtail Websites", "Editorial publishing"),
+                ("Automation Systems", "Workflow efficiency"),
+                ("Product Support", "Long-term improvement"),
+            ]:
+                ServicePageServiceItem.objects.create(
+                    page=self,
+                    title=title,
+                    subtitle=subtitle,
+                    description="Describe who this service is for, the outcome it creates, and what the engagement includes.",
+                    link_label="Learn more",
+                    link_url="#",
+                )
+
+
+class ServicePageStat(Orderable):
+    page = ParentalKey("home.ServicePage", on_delete=models.CASCADE, related_name="stats")
+    value = models.CharField(max_length=32)
+    label = models.CharField(max_length=80)
+    description = models.CharField(max_length=180, blank=True)
+
+    panels = [
+        FieldRowPanel([FieldPanel("value"), FieldPanel("label")]),
+        FieldPanel("description"),
+    ]
+
+    def __str__(self):
+        return self.label
+
+
+class ServicePageServiceItem(Orderable):
+    page = ParentalKey("home.ServicePage", on_delete=models.CASCADE, related_name="service_items")
+    title = models.CharField(max_length=120)
+    subtitle = models.CharField(max_length=120, blank=True)
+    description = RichTextField(blank=True, features=RICH_TEXT_FEATURES)
+    image = models.ForeignKey("wagtailimages.Image", null=True, blank=True, on_delete=models.SET_NULL, related_name="+")
+    image_alt = models.CharField(max_length=120, blank=True)
+    link_label = models.CharField(max_length=80, blank=True)
+    link_url = models.CharField(max_length=255, blank=True)
+
+    panels = [
+        FieldRowPanel([FieldPanel("title"), FieldPanel("subtitle")]),
+        FieldPanel("description"),
+        FieldRowPanel([FieldPanel("image"), FieldPanel("image_alt")]),
+        FieldRowPanel([FieldPanel("link_label"), FieldPanel("link_url")]),
+    ]
+
+    def __str__(self):
+        return self.title

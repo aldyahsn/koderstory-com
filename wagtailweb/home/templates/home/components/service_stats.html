@@ -1,0 +1,11 @@
+{% if page.stats.all %}
+<div class="ks-service-stats">
+    {% for stat in page.stats.all %}
+    <div class="ks-service-stat">
+        <strong>{{ stat.value }}</strong>
+        <span>{{ stat.label }}</span>
+        {% if stat.description %}<p>{{ stat.description }}</p>{% endif %}
+    </div>
+    {% endfor %}
+</div>
+{% endif %}

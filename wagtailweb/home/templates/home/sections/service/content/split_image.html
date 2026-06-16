@@ -1,0 +1,11 @@
+<section id="{{ page.content_anchor_id|default:'service-content' }}" class="ks-section ks-height-{{ page.content_section_height }}" data-ks-vertical="{{ page.content_vertical_alignment }}"{% if page.content_style %} style="{{ page.content_style }}"{% endif %}>
+    <div class="container ks-container" data-ks-width="{{ page.content_content_width }}">
+        <div class="row g-5 align-items-center">
+            <div class="col-lg-6">
+                {% include "home/components/service_content_copy.html" %}
+                <div class="mt-4">{% include "home/components/service_content_body.html" %}</div>
+            </div>
+            <div class="col-lg-6">{% include "home/components/service_content_media.html" %}</div>
+        </div>
+    </div>
+</section>
