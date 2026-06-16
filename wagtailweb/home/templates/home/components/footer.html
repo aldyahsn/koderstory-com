@@ -1,4 +1,4 @@
-{% load wagtailcore_tags wagtailimages_tags wagtailsettings_tags %}
+{% load wagtailcore_tags wagtailimages_tags wagtailsettings_tags social_icons %}
 {% get_settings %}
 
 {% with settings.home.FooterSettings as footer_settings %}
@@ -36,7 +36,11 @@
                 {% with block.value as val %}
                 <div class="ks-social-links ks-social-links--{{ val.icon_position }} ks-social-links--{{ val.icon_size }}">
                     {% for link in val.social_group.links.all %}
-                    <a href="{{ link.url }}" class="ks-footer-link" target="_blank" rel="noopener noreferrer">{% if link.icon_class %}<i class="{{ link.icon_class }}"></i> {% endif %}{{ link.label }}</a>
+                    {% if link.url %}
+                    <a href="{{ link.url }}" class="ks-footer-link ks-social-icon-link" target="_blank" rel="noopener noreferrer" title="{{ link.label }}">
+                        {% social_icon link.platform link.icon_variant 24 %}
+                    </a>
+                    {% endif %}
                     {% endfor %}
                 </div>
                 {% endwith %}

@@ -44,7 +44,7 @@ RICH_TEXT_FEATURES = [
 from wagtail.models import Orderable, Page
 
 
-@register_setting
+@register_setting(icon="sliders")
 class DesignSystemSettings(BaseSiteSetting):
     # Google Fonts choices
     FONT_CHOICES = [
@@ -702,7 +702,7 @@ class HomeFeature(Orderable):
     ]
 
 
-@register_setting
+@register_setting(icon="bars")
 class NavbarSettings(ClusterableSiteSetting):
     LOGO_LEFT_CENTER = "logo_left_center"
     LOGO_CENTERED = "logo_centered"
@@ -915,7 +915,7 @@ class NavbarSettings(ClusterableSiteSetting):
         return cls.objects.get_or_create(site=site)[0]
 
 
-@register_setting
+@register_setting(icon="collapse-down")
 class FooterSettings(ClusterableSiteSetting):
     SECTION_HEIGHT_CHOICES = [
         ("compact", "Compact"),
@@ -1121,16 +1121,48 @@ class SocialLink(Orderable):
     )
     label = models.CharField(max_length=80)
     url = models.CharField(max_length=255, blank=True)
-    icon_class = models.CharField(
-        max_length=40, blank=True,
-        help_text="Bootstrap icon class (e.g., bi-twitter-x).",
+    platform = models.CharField(
+        max_length=20,
+        choices=[
+            ("facebook", "Facebook"),
+            ("linkedin", "LinkedIn"),
+            ("x", "X"),
+            ("threads", "Threads"),
+            ("instagram", "Instagram"),
+            ("youtube", "YouTube"),
+            ("tiktok", "TikTok"),
+            ("whatsapp", "WhatsApp"),
+            ("wechat", "WeChat"),
+            ("telegram", "Telegram"),
+            ("reddit", "Reddit"),
+            ("pinterest", "Pinterest"),
+            ("quora", "Quora"),
+            ("discord", "Discord"),
+            ("twitch", "Twitch"),
+            ("line", "LINE"),
+            ("tumblr", "Tumblr"),
+            ("medium", "Medium"),
+            ("github", "GitHub"),
+            ("substack", "Substack"),
+        ],
+        default="github",
+        verbose_name="Platform",
+    )
+    icon_variant = models.CharField(
+        max_length=10,
+        choices=[("filled", "Filled"), ("outline", "Outline")],
+        default="filled",
+        verbose_name="Icon style",
     )
 
     panels = [
         FieldRowPanel([
+            FieldPanel("platform"),
+            FieldPanel("icon_variant"),
+        ]),
+        FieldRowPanel([
             FieldPanel("label"),
             FieldPanel("url"),
-            FieldPanel("icon_class"),
         ]),
     ]
 

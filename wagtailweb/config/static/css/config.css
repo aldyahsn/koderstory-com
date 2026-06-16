@@ -584,13 +584,33 @@ h6 { font-size: var(--ks-h6-size); }
   gap: 1rem;
 }
 
+.ks-social-icon-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+
+.ks-social-icon-link:hover {
+  opacity: 0.75;
+}
+
+.ks-social-icon {
+  display: block;
+  flex-shrink: 0;
+}
+
 .ks-social-links--left { justify-content: flex-start; }
 .ks-social-links--center { justify-content: center; }
 .ks-social-links--right { justify-content: flex-end; }
 
-.ks-social-links--small { gap: 0.5rem; font-size: 0.875rem; }
-.ks-social-links--medium { gap: 1rem; font-size: 1rem; }
-.ks-social-links--large { gap: 1.25rem; font-size: 1.25rem; }
+.ks-social-links--small { gap: 0.5rem; }
+.ks-social-links--small .ks-social-icon { width: 18px; height: 18px; }
+.ks-social-links--medium { gap: 1rem; }
+.ks-social-links--medium .ks-social-icon { width: 24px; height: 24px; }
+.ks-social-links--large { gap: 1.25rem; }
+.ks-social-links--large .ks-social-icon { width: 32px; height: 32px; }
 
 /* Newsletter */
 .ks-newsletter-form .form-control {

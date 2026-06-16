@@ -4,14 +4,20 @@ from wagtail.models import Site
 
 from home.models import (
     DesignSystemSettings,
+    FooterSettings,
     HomeClientLogo,
     HomeFeature,
     HomePage,
+    NavigationLink,
+    NavigationLinkGroup,
+    NavbarSettings,
+    SocialLink,
+    SocialMediaGroup,
 )
 
 
 class Command(BaseCommand):
-    help = "Set up demo homepage content and a local admin account."
+    help = "Set up demo homepage content, navbar, footer, and a local admin account."
 
     def handle(self, *args, **options):
         homepage = HomePage.objects.first()
@@ -92,9 +98,90 @@ class Command(BaseCommand):
                 )
 
         site = Site.objects.filter(is_default_site=True).first() or Site.objects.first()
-        if site:
-            DesignSystemSettings.objects.get_or_create(site=site)
+        if not site:
+            self.stdout.write(self.style.ERROR("No site found."))
+            return
 
+        DesignSystemSettings.objects.get_or_create(site=site)
+
+        # ── Clear existing navbar + footer seed data ──
+        NavbarSettings.objects.filter(site=site).delete()
+        FooterSettings.objects.filter(site=site).delete()
+        NavigationLink.objects.all().delete()
+        NavigationLinkGroup.objects.all().delete()
+        SocialLink.objects.all().delete()
+        SocialMediaGroup.objects.all().delete()
+
+        # ── Seed navigation link group ──
+        nav_group = NavigationLinkGroup.objects.create(name="Main navigation")
+        nav_links = [
+            ("Home", "/"),
+            ("Features", "#features"),
+            ("Pricing", "#cta"),
+            ("About", "#"),
+        ]
+        for i, (label, url) in enumerate(nav_links, start=1):
+            NavigationLink.objects.create(group=nav_group, label=label, url=url, sort_order=i)
+
+        # ── Seed social media groups ──
+        social_group = SocialMediaGroup.objects.create(name="Social media")
+        social_links = [
+            ("X", "https://x.com", "x", "filled"),
+            ("GitHub", "https://github.com", "github", "filled"),
+            ("LinkedIn", "https://linkedin.com", "linkedin", "filled"),
+            ("YouTube", "https://youtube.com", "youtube", "outline"),
+        ]
+        for i, (label, url, platform, variant) in enumerate(social_links, start=1):
+            SocialLink.objects.create(group=social_group, label=label, url=url, platform=platform, icon_variant=variant, sort_order=i)
+
+        # ── Seed navbar settings ──
+        NavbarSettings.objects.create(
+            site=site,
+            layout="logo_left_center",
+            section_height=60,
+            logo_text="KoderStory",
+            sticky=True,
+            nav_group=nav_group,
+            cta_label="Get started",
+            cta_url="#cta",
+        )
+
+        # ── Seed footer settings with StreamField columns ──
+        FooterSettings.objects.create(
+            site=site,
+            section_height="compact",
+            copyright_text="© 2026 KoderStory. All rights reserved.",
+            bottom_bar=True,
+            columns=[
+                ("navigation", {
+                    "width": 25,
+                    "heading": "Links",
+                    "nav_group": nav_group,
+                }),
+                ("social", {
+                    "width": 25,
+                    "heading": "Follow us",
+                    "social_group": social_group,
+                    "icon_size": "medium",
+                    "icon_position": "left",
+                }),
+                ("newsletter", {
+                    "width": 25,
+                    "heading": "Stay updated",
+                    "description": "<p>Get the latest news and updates.</p>",
+                    "placeholder_text": "Your email",
+                    "button_label": "Subscribe",
+                    "button_url": "#",
+                }),
+                ("text", {
+                    "width": 25,
+                    "heading": "About",
+                    "body": "<p>Building clear, maintainable websites with Wagtail.</p>",
+                }),
+            ],
+        )
+
+        # ── Admin user ──
         user_model = get_user_model()
         admin, created = user_model.objects.get_or_create(
             username="admin",
@@ -110,4 +197,4 @@ class Command(BaseCommand):
         admin.save()
 
         status = "created" if created else "updated"
-        self.stdout.write(self.style.SUCCESS(f"Demo content ready; admin user {status}."))
+        self.stdout.write(self.style.SUCCESS(f"Demo content + navbar + footer ready; admin user {status}."))
