@@ -133,11 +133,13 @@ def global_admin_js():
         '<script>window.KS_SECTION_VARIANTS = {};</script>'
         '<script src="{}?v=4"></script>'
         '<script src="{}?v=1"></script>'
-        '<script src="{}?v=1"></script>',
+        '<script src="{}?v=1"></script>'
+        '<script src="{}?v=2"></script>',
         mark_safe(json.dumps(variants)),
         static("admin/js/section-editor.js"),
         static("admin/js/reset-settings.js"),
         static("admin/js/set-default-theme.js"),
+        static("admin/js/page-explorer-link-swap.js"),
     )
 
 
