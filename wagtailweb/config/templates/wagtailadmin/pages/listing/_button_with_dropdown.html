@@ -1,0 +1,12 @@
+{% load wagtailadmin_tags %}
+{% dropdown attrs=button.base_attrs_string toggle_icon=icon_name|default:"arrow-down" toggle_label=label toggle_aria_label=title toggle_classname=toggle_classname %}
+    {% block content %}
+        {% for button in buttons %}
+            {% if button.icon_name == "edit" and button.label == "Edit" %}
+                {# Skip default Edit button — replaced by custom hook #}
+            {% else %}
+                {% component button %}
+            {% endif %}
+        {% endfor %}
+    {% endblock %}
+{% enddropdown %}
