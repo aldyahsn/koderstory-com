@@ -1,0 +1,20 @@
+{% load wagtailimages_tags %}
+
+<section id="{{ page.clients_anchor_id }}" class="ks-dark-section ks-dark-section--panel ks-dark-clients ks-height-{{ page.clients_section_height }}" data-ks-vertical="{{ page.clients_vertical_alignment }}"{% if page.clients_style %} style="{{ page.clients_style }}"{% endif %}>
+    <div class="container" data-ks-width="{{ page.clients_content_width }}" data-ks-align="{{ page.clients_text_alignment }}">
+        {% if page.clients_heading %}<p class="small text-center ks-dark-muted mb-4">{{ page.clients_heading }}</p>{% endif %}
+        <div class="row g-3 text-center">
+            {% for block in page.clients %}
+            <div class="col-6 col-md">
+                {% if block.value.url %}<a href="{{ block.value.url }}" class="ks-dark-client d-block text-decoration-none">{% else %}<div class="ks-dark-client">{% endif %}
+                    {% if block.value.image %}
+                        {% image block.value.image max-220x80 class="ks-dark-client-logo" alt=block.value.image_alt %}
+                    {% elif block.value.fallback_image_url %}
+                        <img src="{{ block.value.fallback_image_url }}" class="ks-dark-client-logo" alt="{{ block.value.image_alt }}">
+                    {% endif %}
+                {% if block.value.url %}</a>{% else %}</div>{% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>

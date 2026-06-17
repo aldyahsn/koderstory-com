@@ -1,0 +1,38 @@
+{% load wagtailcore_tags wagtailimages_tags %}
+
+<section id="{{ page.content_anchor_id }}" class="ks-dark-section ks-dark-section--panel ks-height-{{ page.content_section_height }}" data-ks-vertical="{{ page.content_vertical_alignment }}"{% if page.content_style %} style="{{ page.content_style }}"{% endif %}>
+    <div class="container" data-ks-width="{{ page.content_content_width }}" data-ks-align="{{ page.content_text_alignment }}">
+        <div class="row g-5">
+            <div class="col-lg-5">
+                {% if page.content_eyebrow %}<p class="small ks-dark-accent mb-3">{{ page.content_eyebrow }}</p>{% endif %}
+                {% if page.content_title %}<h2 class="display-6 mb-4">{{ page.content_title }}</h2>{% endif %}
+                {% if page.content_description %}<div class="ks-dark-muted">{{ page.content_description|richtext }}</div>{% endif %}
+            </div>
+            <div class="col-lg-7">
+                {% if form %}
+                <form action="{% pageurl page %}" method="post" class="ks-dark-card p-4 p-lg-5">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit" class="btn btn-success rounded-pill px-4">Send message</button>
+                </form>
+                {% endif %}
+                {% for block in page.body_blocks %}
+                    {% if block.block_type == "section" %}
+                    <div class="ks-dark-copy-block mb-5">
+                        {% if block.value.eyebrow %}<p class="small ks-dark-accent mb-3">{{ block.value.eyebrow }}</p>{% endif %}
+                        {% if block.value.heading %}<h3 class="h3 mb-3">{{ block.value.heading }}</h3>{% endif %}
+                        {% if block.value.body %}<div class="ks-dark-muted">{{ block.value.body|richtext }}</div>{% endif %}
+                        {% if block.value.image %}
+                            {% image block.value.image fill-1000x650 class="img-fluid ks-dark-img mt-4" alt=block.value.image_alt %}
+                        {% elif block.value.fallback_image_url %}
+                            <img src="{{ block.value.fallback_image_url }}" class="img-fluid ks-dark-img mt-4" alt="{{ block.value.image_alt }}">
+                        {% endif %}
+                    </div>
+                    {% elif block.block_type == "card" %}
+                    {% include "home/dark/components/card.html" with card=block.value %}
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>

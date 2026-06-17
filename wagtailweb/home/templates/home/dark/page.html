@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block body_class %}template-koderstory-dark{% endblock %}
+
+{% block content %}
+<main class="ks-dark-page">
+    {% if page.header_enabled %}{% include "home/dark/sections/header.html" %}{% endif %}
+    {% if page.clients_enabled %}{% include "home/dark/sections/clients.html" %}{% endif %}
+    {% if page.content_enabled %}{% include "home/dark/sections/content.html" %}{% endif %}
+    {% if page.listing_enabled %}{% include "home/dark/sections/cards.html" %}{% endif %}
+    {% if page.cta_enabled %}{% include "home/dark/sections/cta.html" %}{% endif %}
+</main>
+{% endblock %}

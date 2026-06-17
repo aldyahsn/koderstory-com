@@ -2,13 +2,14 @@
 {% get_settings %}
 
 {% with settings.home.NavbarSettings as nav %}
-<nav class="navbar navbar-expand-lg{% if nav.sticky %} sticky-top{% endif %} ks-navbar"{% if nav.navbar_style %} style="{{ nav.navbar_style }}"{% endif %}>
-    <div class="container">
+<nav class="navbar navbar-expand-lg navbar-dark{% if nav.sticky %} fixed-top{% endif %} ks-navbar{% if nav.nav_transparent %} ks-navbar-transparent{% endif %}{% if nav.nav_scroll_animation == 'shrink' %} ks-navbar-anim-shrink{% elif nav.nav_scroll_animation == 'reveal' %} ks-navbar-anim-reveal{% endif %}"{% if nav.navbar_style %} style="{{ nav.navbar_style }}"{% endif %}>
+    <div class="container py-3">
         <a class="navbar-brand ks-navbar-brand fw-semibold" href="/">
             {% if nav.logo %}
             {% image nav.logo width-200 class="ks-navbar-logo" alt="{{ nav.logo_text|default:'Home' }}" %}
             {% else %}
-            {{ nav.logo_text|default:"Home" }}
+            <span class="badge text-bg-success rounded-circle p-2 me-2">K</span>
+            <span>{{ nav.logo_text|default:"Koderstory" }}</span>
             {% endif %}
         </a>
         <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#ksNavbarNav" aria-controls="ksNavbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -34,7 +35,7 @@
                 {% endif %}
                 {% if nav.cta_label %}
                 <li class="nav-item ms-lg-2">
-                    <a class="btn btn-primary" href="{{ nav.cta_url|default:'#' }}">{{ nav.cta_label }}</a>
+                    <a class="btn btn-success rounded-pill px-4" href="{{ nav.cta_url|default:'#' }}">{{ nav.cta_label }}</a>
                 </li>
                 {% endif %}
             </ul>

@@ -10,6 +10,8 @@ from wagtail.admin.panels import (
     ObjectList,
     TabbedInterface,
 )
+from wagtail.contrib.forms.models import AbstractEmailForm, AbstractFormField
+from wagtail.contrib.forms.panels import FormSubmissionsPanel
 from wagtail.contrib.settings.models import BaseSiteSetting, register_setting
 
 
@@ -25,7 +27,12 @@ class ClusterableSiteSetting(BaseSiteSetting, ClusterableModel):
 from wagtail.fields import RichTextField, StreamField
 from wagtail.snippets.models import register_snippet
 
-from home.blocks import FooterColumnsBlock
+from home.blocks import (
+    DarkFlatBodyBlock,
+    DarkFlatCardListBlock,
+    DarkFlatClientListBlock,
+    FooterColumnsBlock,
+)
 
 from home.widgets import ColorInputWidget
 
@@ -55,6 +62,7 @@ class DesignSystemSettings(BaseSiteSetting):
         ("Montserrat", "Montserrat"),
         ("Poppins", "Poppins"),
         ("Nunito", "Nunito"),
+        ("Nunito Sans", "Nunito Sans"),
         ("Playfair Display", "Playfair Display"),
         ("Merriweather", "Merriweather"),
         ("Source Sans Pro", "Source Sans Pro"),
@@ -107,7 +115,7 @@ class DesignSystemSettings(BaseSiteSetting):
     body_font = models.CharField(
         max_length=120,
         choices=FONT_CHOICES,
-        default="Nunito",
+        default="Nunito Sans",
     )
     base_font_size = models.PositiveSmallIntegerField(
         choices=FONT_SIZE_CHOICES,
@@ -238,37 +246,37 @@ class DesignSystemSettings(BaseSiteSetting):
         """Generate Google Fonts URL based on selected heading and body fonts."""
         return (
             f"https://fonts.googleapis.com/css2?"
-            f"family={self.heading_font}:wght@500;600&"
-            f"family={self.body_font}:wght@400;600&"
+            f"family={self.heading_font}:wght@500;600;700&"
+            f"family={self.body_font}:wght@400;600;700&"
             f"display=swap"
         )
 
     COLOR_DEFAULTS = {
-        "body_text_color": "#111827",
-        "heading_text_color": "#111827",
-        "muted_text_color": "#667085",
-        "link_color": "#4f46e5",
-        "link_hover_color": "#4338ca",
-        "button_primary_bg": "#4f46e5",
-        "button_primary_hover": "#4338ca",
-        "button_secondary_border": "#4f46e5",
-        "button_secondary_hover_bg": "#4f46e5",
-        "page_bg": "#ffffff",
-        "surface_bg": "#f8f9fa",
-        "surface_border": "#e5e7eb",
-        "feature_icon_bg": "#f59e0b",
-        "feature_icon_text": "#ffffff",
-        "check_color": "#f59e0b",
-        "brand_glow": "#4f46e5",
-        "navbar_bg": "#ffffff",
-        "navbar_text_color": "#111827",
-        "navbar_link_color": "#667085",
-        "navbar_link_hover_color": "#4f46e5",
-        "footer_bg": "#f8f9fa",
-        "footer_text_color": "#667085",
-        "footer_heading_color": "#111827",
-        "footer_link_color": "#667085",
-        "footer_link_hover_color": "#4f46e5",
+        "body_text_color": "#ffffff",
+        "heading_text_color": "#ffffff",
+        "muted_text_color": "#ffffffad",
+        "link_color": "#00c49a",
+        "link_hover_color": "#ffffff",
+        "button_primary_bg": "#00c49a",
+        "button_primary_hover": "#ffffff",
+        "button_secondary_border": "#ffffff38",
+        "button_secondary_hover_bg": "#ffffff",
+        "page_bg": "#05070d",
+        "surface_bg": "#0b0f19",
+        "surface_border": "#ffffff24",
+        "feature_icon_bg": "#00c49a",
+        "feature_icon_text": "#03110e",
+        "check_color": "#00c49a",
+        "brand_glow": "#00c49a",
+        "navbar_bg": "#05070d",
+        "navbar_text_color": "#ffffff",
+        "navbar_link_color": "#ffffffad",
+        "navbar_link_hover_color": "#ffffff",
+        "footer_bg": "#05070d",
+        "footer_text_color": "#ffffffad",
+        "footer_heading_color": "#ffffff",
+        "footer_link_color": "#ffffff",
+        "footer_link_hover_color": "#00c49a",
     }
 
     FIELD_TO_CSS_VAR = {
@@ -3210,3 +3218,826 @@ class BlogIndexItem(Orderable):
 
     def __str__(self):
         return self.title
+
+
+DARK_FLAT_LAYOUT = "bootstrap_dark_flat"
+DARK_FLAT_LAYOUT_CHOICES = [(DARK_FLAT_LAYOUT, "Bootstrap dark flat")]
+
+DARK_FLAT_BASE_SEED = {
+    "header_eyebrow": "Koderstory",
+    "header_title": "Digital systems for clearer business workflows.",
+    "header_description": "<p>Use this page to explain the problem, show the available paths, and guide visitors toward the next practical step.</p>",
+    "header_primary_button_label": "Start a conversation",
+    "header_primary_button_url": "/contact/",
+    "header_secondary_button_label": "Explore services",
+    "header_secondary_button_url": "/services/",
+    "header_fallback_image_url": "https://picsum.photos/seed/koderstory-dark-flat-default-cover/1800/1000",
+    "header_image_alt": "Koderstory digital workflow interface",
+    "content_eyebrow": "Overview",
+    "content_title": "A practical section for the page's main explanation.",
+    "content_description": "<p>This section gives editors a ready starting point for describing context, process, value, or supporting information without leaving the page blank.</p>",
+    "body_blocks": [
+        ("section", {
+            "eyebrow": "01",
+            "heading": "Understand the workflow",
+            "body": "<p>Start by mapping the existing process, the people involved, and the places where information gets repeated or lost.</p>",
+        }),
+        ("section", {
+            "eyebrow": "02",
+            "heading": "Build the useful first version",
+            "body": "<p>Focus the first release on the workflows that need structure most, then improve it from real operational use.</p>",
+        }),
+    ],
+    "listing_eyebrow": "Highlights",
+    "listing_title": "Useful starting cards for this page.",
+    "listing_description": "<p>These cards are seeded so every new page has visible, editable content in the list section from the first save.</p>",
+    "cards": [
+        ("card", {
+            "eyebrow": "Workflow",
+            "title": "Clearer process",
+            "description": "<p>Make daily work easier to follow with defined steps, ownership, and status.</p>",
+            "icon": "01",
+            "fallback_image_url": "https://picsum.photos/seed/koderstory-card-workflow/900/600",
+            "image_alt": "Structured workflow dashboard",
+            "link_label": "Learn more",
+            "link_url": "#",
+        }),
+        ("card", {
+            "eyebrow": "Data",
+            "title": "Cleaner information",
+            "description": "<p>Keep important records in one reliable place so reports and decisions are easier to trust.</p>",
+            "icon": "02",
+            "fallback_image_url": "https://picsum.photos/seed/koderstory-card-data/900/600",
+            "image_alt": "Organized business data",
+            "link_label": "Learn more",
+            "link_url": "#",
+        }),
+        ("card", {
+            "eyebrow": "Growth",
+            "title": "Room to scale",
+            "description": "<p>Prepare the system so new modules, integrations, and teams can be added gradually.</p>",
+            "icon": "03",
+            "fallback_image_url": "https://picsum.photos/seed/koderstory-card-scale/900/600",
+            "image_alt": "Scalable system planning",
+            "link_label": "Learn more",
+            "link_url": "#",
+        }),
+    ],
+    "cta_eyebrow": "Next step",
+    "cta_title": "Need a system that fits the way your team actually works?",
+    "cta_description": "<p>Share the workflow you want to improve and we will help identify the smallest useful starting point.</p>",
+    "cta_primary_button_label": "Contact Koderstory",
+    "cta_primary_button_url": "/contact/",
+    "cta_secondary_button_label": "View services",
+    "cta_secondary_button_url": "/services/",
+}
+
+
+def _dark_section_settings_panel(prefix, heading, theme_field):
+    return MultiFieldPanel(
+        [
+            FieldRowPanel(
+                [
+                    FieldPanel(f"{prefix}_enabled", classname="w-field--small"),
+                    FieldPanel(f"{prefix}_layout"),
+                ],
+                heading="Layout",
+            ),
+            FieldRowPanel(
+                [
+                    FieldPanel(f"{prefix}_section_height"),
+                    FieldPanel(f"{prefix}_content_width"),
+                ],
+                heading="Spacing",
+            ),
+            FieldRowPanel(
+                [
+                    FieldPanel(f"{prefix}_text_alignment"),
+                    FieldPanel(f"{prefix}_vertical_alignment"),
+                ],
+                heading="Alignment",
+            ),
+            FieldRowPanel([FieldPanel(f"{prefix}_anchor_id")], heading="Advanced"),
+            FieldRowPanel([FieldPanel(theme_field)], heading="Color theme"),
+        ],
+        heading=heading,
+        classname="ks-section-settings",
+    )
+
+
+def _dark_content_panels(include_form=False):
+    panels = [
+        MultiFieldPanel(
+            [
+                MultiFieldPanel(
+                    [
+                        FieldPanel("header_eyebrow"),
+                        FieldPanel("header_title"),
+                        FieldPanel("header_description"),
+                    ],
+                    heading="Content",
+                    classname="ks-component-group",
+                    attrs={"data-section": "header", "data-component": "copy"},
+                ),
+                MultiFieldPanel(
+                    [
+                        FieldRowPanel(
+                            [
+                                FieldPanel("header_primary_button_label"),
+                                FieldPanel("header_primary_button_url"),
+                            ]
+                        ),
+                        FieldRowPanel(
+                            [
+                                FieldPanel("header_secondary_button_label"),
+                                FieldPanel("header_secondary_button_url"),
+                            ]
+                        ),
+                    ],
+                    heading="Buttons",
+                    classname="ks-component-group",
+                    attrs={"data-section": "header", "data-component": "buttons"},
+                ),
+                MultiFieldPanel(
+                    [
+                        FieldRowPanel(
+                            [
+                                FieldPanel("header_image"),
+                                FieldPanel("header_image_alt"),
+                            ]
+                        ),
+                        FieldPanel("header_fallback_image_url"),
+                    ],
+                    heading="Media",
+                    classname="ks-component-group",
+                    attrs={"data-section": "header", "data-component": "media"},
+                ),
+            ],
+            heading="Header section",
+        ),
+        MultiFieldPanel(
+            [
+                MultiFieldPanel(
+                    [
+                        FieldPanel("content_eyebrow"),
+                        FieldPanel("content_title"),
+                        FieldPanel("content_description"),
+                        FieldPanel("body_blocks"),
+                    ],
+                    heading="Content",
+                    classname="ks-component-group",
+                    attrs={"data-section": "content", "data-component": "copy"},
+                ),
+            ],
+            heading="Content section",
+        ),
+        MultiFieldPanel(
+            [
+                MultiFieldPanel(
+                    [
+                        FieldPanel("listing_eyebrow"),
+                        FieldPanel("listing_title"),
+                        FieldPanel("listing_description"),
+                        FieldPanel("cards"),
+                    ],
+                    heading="Cards",
+                    classname="ks-component-group",
+                    attrs={"data-section": "listing", "data-component": "cards"},
+                ),
+            ],
+            heading="Cards/list section",
+        ),
+        MultiFieldPanel(
+            [
+                MultiFieldPanel(
+                    [
+                        FieldPanel("cta_eyebrow"),
+                        FieldPanel("cta_title"),
+                        FieldPanel("cta_description"),
+                    ],
+                    heading="Content",
+                    classname="ks-component-group",
+                    attrs={"data-section": "cta", "data-component": "copy"},
+                ),
+                MultiFieldPanel(
+                    [
+                        FieldRowPanel(
+                            [
+                                FieldPanel("cta_primary_button_label"),
+                                FieldPanel("cta_primary_button_url"),
+                            ]
+                        ),
+                        FieldRowPanel(
+                            [
+                                FieldPanel("cta_secondary_button_label"),
+                                FieldPanel("cta_secondary_button_url"),
+                            ]
+                        ),
+                    ],
+                    heading="Buttons",
+                    classname="ks-component-group",
+                    attrs={"data-section": "cta", "data-component": "buttons"},
+                ),
+            ],
+            heading="CTA section",
+        ),
+    ]
+    if include_form:
+        panels.insert(
+            3,
+            MultiFieldPanel(
+                [InlinePanel("form_fields", label="Form field")],
+                heading="Contact form",
+                classname="ks-component-group",
+            ),
+        )
+    return panels
+
+
+def _dark_home_content_panels():
+    panels = _dark_content_panels()
+    panels.insert(
+        1,
+        MultiFieldPanel(
+            [
+                MultiFieldPanel(
+                    [
+                        FieldPanel("clients_heading"),
+                        FieldPanel("clients"),
+                    ],
+                    heading="Clients",
+                    classname="ks-component-group",
+                    attrs={"data-section": "clients", "data-component": "logos"},
+                ),
+            ],
+            heading="Client section",
+        ),
+    )
+    return panels
+
+
+def _dark_section_settings_panels():
+    return [
+        _dark_section_settings_panel("header", "Header settings", "header_theme"),
+        _dark_section_settings_panel("content", "Content settings", "content_theme"),
+        _dark_section_settings_panel("listing", "Cards/list settings", "listing_theme"),
+        _dark_section_settings_panel("cta", "CTA settings", "cta_theme"),
+    ]
+
+
+def _dark_home_section_settings_panels():
+    panels = _dark_section_settings_panels()
+    panels.insert(
+        1,
+        _dark_section_settings_panel("clients", "Client settings", "clients_theme"),
+    )
+    return panels
+
+
+class DarkFlatPageMixin(models.Model):
+    template = "home/dark/page.html"
+
+    SECTION_HEIGHT_CHOICES = HomePage.SECTION_HEIGHT_CHOICES
+    CONTENT_WIDTH_CHOICES = HomePage.CONTENT_WIDTH_CHOICES
+    ALIGNMENT_CHOICES = HomePage.ALIGNMENT_CHOICES
+    VERTICAL_ALIGNMENT_CHOICES = HomePage.VERTICAL_ALIGNMENT_CHOICES
+
+    header_enabled = models.BooleanField(default=True, verbose_name="Section enabled")
+    header_layout = models.CharField(max_length=40, choices=DARK_FLAT_LAYOUT_CHOICES, default=DARK_FLAT_LAYOUT, verbose_name="Layout")
+    header_anchor_id = models.CharField(max_length=40, blank=True, default="hero", verbose_name="Anchor ID")
+    header_section_height = models.CharField(max_length=16, choices=SECTION_HEIGHT_CHOICES, default="spacious", verbose_name="Section height")
+    header_content_width = models.CharField(max_length=16, choices=CONTENT_WIDTH_CHOICES, default="normal", verbose_name="Section width")
+    header_text_alignment = models.CharField(max_length=16, choices=ALIGNMENT_CHOICES, default="left", verbose_name="Horizontal alignment")
+    header_vertical_alignment = models.CharField(max_length=16, choices=VERTICAL_ALIGNMENT_CHOICES, default="center", verbose_name="Vertical alignment")
+    header_eyebrow = models.CharField(max_length=120, blank=True)
+    header_title = models.CharField(max_length=220, blank=True)
+    header_description = RichTextField(blank=True, features=RICH_TEXT_FEATURES)
+    header_primary_button_label = models.CharField(max_length=80, blank=True)
+    header_primary_button_url = models.CharField(max_length=255, blank=True)
+    header_secondary_button_label = models.CharField(max_length=80, blank=True)
+    header_secondary_button_url = models.CharField(max_length=255, blank=True)
+    header_image = models.ForeignKey("wagtailimages.Image", null=True, blank=True, on_delete=models.SET_NULL, related_name="+")
+    header_image_alt = models.CharField(max_length=140, blank=True)
+    header_fallback_image_url = models.URLField(blank=True, max_length=500)
+
+    content_enabled = models.BooleanField(default=True, verbose_name="Section enabled")
+    content_layout = models.CharField(max_length=40, choices=DARK_FLAT_LAYOUT_CHOICES, default=DARK_FLAT_LAYOUT, verbose_name="Layout")
+    content_anchor_id = models.CharField(max_length=40, blank=True, default="content", verbose_name="Anchor ID")
+    content_section_height = models.CharField(max_length=16, choices=SECTION_HEIGHT_CHOICES, default="normal", verbose_name="Section height")
+    content_content_width = models.CharField(max_length=16, choices=CONTENT_WIDTH_CHOICES, default="normal", verbose_name="Section width")
+    content_text_alignment = models.CharField(max_length=16, choices=ALIGNMENT_CHOICES, default="left", verbose_name="Horizontal alignment")
+    content_vertical_alignment = models.CharField(max_length=16, choices=VERTICAL_ALIGNMENT_CHOICES, default="center", verbose_name="Vertical alignment")
+    content_eyebrow = models.CharField(max_length=120, blank=True)
+    content_title = models.CharField(max_length=220, blank=True)
+    content_description = RichTextField(blank=True, features=RICH_TEXT_FEATURES)
+    body_blocks = StreamField(DarkFlatBodyBlock(), blank=True, use_json_field=True)
+
+    listing_enabled = models.BooleanField(default=True, verbose_name="Section enabled")
+    listing_layout = models.CharField(max_length=40, choices=DARK_FLAT_LAYOUT_CHOICES, default=DARK_FLAT_LAYOUT, verbose_name="Layout")
+    listing_anchor_id = models.CharField(max_length=40, blank=True, default="list", verbose_name="Anchor ID")
+    listing_section_height = models.CharField(max_length=16, choices=SECTION_HEIGHT_CHOICES, default="normal", verbose_name="Section height")
+    listing_content_width = models.CharField(max_length=16, choices=CONTENT_WIDTH_CHOICES, default="wide", verbose_name="Section width")
+    listing_text_alignment = models.CharField(max_length=16, choices=ALIGNMENT_CHOICES, default="left", verbose_name="Horizontal alignment")
+    listing_vertical_alignment = models.CharField(max_length=16, choices=VERTICAL_ALIGNMENT_CHOICES, default="center", verbose_name="Vertical alignment")
+    listing_eyebrow = models.CharField(max_length=120, blank=True)
+    listing_title = models.CharField(max_length=220, blank=True)
+    listing_description = RichTextField(blank=True, features=RICH_TEXT_FEATURES)
+    cards = StreamField(DarkFlatCardListBlock(), blank=True, use_json_field=True)
+
+    cta_enabled = models.BooleanField(default=True, verbose_name="Section enabled")
+    cta_layout = models.CharField(max_length=40, choices=DARK_FLAT_LAYOUT_CHOICES, default=DARK_FLAT_LAYOUT, verbose_name="Layout")
+    cta_anchor_id = models.CharField(max_length=40, blank=True, default="next-step", verbose_name="Anchor ID")
+    cta_section_height = models.CharField(max_length=16, choices=SECTION_HEIGHT_CHOICES, default="compact", verbose_name="Section height")
+    cta_content_width = models.CharField(max_length=16, choices=CONTENT_WIDTH_CHOICES, default="normal", verbose_name="Section width")
+    cta_text_alignment = models.CharField(max_length=16, choices=ALIGNMENT_CHOICES, default="left", verbose_name="Horizontal alignment")
+    cta_vertical_alignment = models.CharField(max_length=16, choices=VERTICAL_ALIGNMENT_CHOICES, default="center", verbose_name="Vertical alignment")
+    cta_eyebrow = models.CharField(max_length=120, blank=True)
+    cta_title = models.CharField(max_length=220, blank=True)
+    cta_description = RichTextField(blank=True, features=RICH_TEXT_FEATURES)
+    cta_primary_button_label = models.CharField(max_length=80, blank=True)
+    cta_primary_button_url = models.CharField(max_length=255, blank=True)
+    cta_secondary_button_label = models.CharField(max_length=80, blank=True)
+    cta_secondary_button_url = models.CharField(max_length=255, blank=True)
+
+    header_theme = models.ForeignKey(ColorTheme, null=True, blank=True, on_delete=models.SET_NULL, related_name="+", verbose_name="Header color theme")
+    content_theme = models.ForeignKey(ColorTheme, null=True, blank=True, on_delete=models.SET_NULL, related_name="+", verbose_name="Content color theme")
+    listing_theme = models.ForeignKey(ColorTheme, null=True, blank=True, on_delete=models.SET_NULL, related_name="+", verbose_name="Cards/list color theme")
+    cta_theme = models.ForeignKey(ColorTheme, null=True, blank=True, on_delete=models.SET_NULL, related_name="+", verbose_name="CTA color theme")
+
+    class Meta:
+        abstract = True
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.pk is None:
+            page_title = getattr(self, "DARK_FLAT_PAGE_TITLE", "")
+            page_slug = getattr(self, "DARK_FLAT_PAGE_SLUG", "")
+            if page_title and not self.title:
+                self.title = page_title
+            if page_title and not self.draft_title:
+                self.draft_title = page_title
+            if page_slug and not self.slug:
+                self.slug = page_slug
+            self._populate_dark_content(apply_boolean_seed=True)
+
+    @staticmethod
+    def _theme_style(theme):
+        return HomePage._theme_style(theme)
+
+    @property
+    def header_style(self):
+        return self._theme_style(self.header_theme)
+
+    @property
+    def content_style(self):
+        return self._theme_style(self.content_theme)
+
+    @property
+    def listing_style(self):
+        return self._theme_style(self.listing_theme)
+
+    @property
+    def cta_style(self):
+        return self._theme_style(self.cta_theme)
+
+    def _populate_dark_content(self, apply_boolean_seed=False):
+        seed = {**DARK_FLAT_BASE_SEED, **getattr(self, "DARK_FLAT_SEED", {})}
+        for field_name, value in seed.items():
+            if isinstance(value, bool):
+                if apply_boolean_seed:
+                    setattr(self, field_name, value)
+                continue
+            if not getattr(self, field_name):
+                setattr(self, field_name, value)
+
+    def save(self, *args, **kwargs):
+        if self.pk is None:
+            self._populate_dark_content(apply_boolean_seed=True)
+        super().save(*args, **kwargs)
+
+
+class KoderstoryHomePage(DarkFlatPageMixin, Page):
+    template = "home/dark/page.html"
+    DARK_FLAT_PAGE_TITLE = "Home"
+    DARK_FLAT_PAGE_SLUG = "home"
+    parent_page_types = ["wagtailcore.Page"]
+    subpage_types = [
+        "home.AboutPage", "home.ContactPage", "home.KoderstoryServicePage",
+        "home.KoderstoryServiceDetailPage", "home.IndustryIndexPage",
+        "home.ResourceIndexPage", "home.WorkIndexPage", "home.PrivacyPolicyPage",
+    ]
+
+    clients_enabled = models.BooleanField(default=True, verbose_name="Section enabled")
+    clients_layout = models.CharField(max_length=40, choices=DARK_FLAT_LAYOUT_CHOICES, default=DARK_FLAT_LAYOUT, verbose_name="Layout")
+    clients_anchor_id = models.CharField(max_length=40, blank=True, default="clients", verbose_name="Anchor ID")
+    clients_section_height = models.CharField(max_length=16, choices=DarkFlatPageMixin.SECTION_HEIGHT_CHOICES, default="compact", verbose_name="Section height")
+    clients_content_width = models.CharField(max_length=16, choices=DarkFlatPageMixin.CONTENT_WIDTH_CHOICES, default="normal", verbose_name="Section width")
+    clients_text_alignment = models.CharField(max_length=16, choices=DarkFlatPageMixin.ALIGNMENT_CHOICES, default="center", verbose_name="Horizontal alignment")
+    clients_vertical_alignment = models.CharField(max_length=16, choices=DarkFlatPageMixin.VERTICAL_ALIGNMENT_CHOICES, default="center", verbose_name="Vertical alignment")
+    clients_heading = models.CharField(max_length=180, blank=True)
+    clients = StreamField(DarkFlatClientListBlock(), blank=True, use_json_field=True)
+    clients_theme = models.ForeignKey(ColorTheme, null=True, blank=True, on_delete=models.SET_NULL, related_name="+", verbose_name="Client color theme")
+
+    @property
+    def clients_style(self):
+        return self._theme_style(self.clients_theme)
+
+    DARK_FLAT_SEED = {
+        "header_eyebrow": "Digital System · Workflow · ERP · CMS",
+        "header_title": "Digital System untuk Workflow Bisnis yang Lebih Efisien dan Scalable",
+        "header_description": "<p>Spreadsheet membantu bisnis bergerak cepat. Namun ketika operasional semakin kompleks, perusahaan membutuhkan sistem yang lebih tertata untuk mengelola data, proses, dan workflow antar tim.</p>",
+        "header_primary_button_label": "Konsultasikan Kebutuhan Sistem",
+        "header_primary_button_url": "/contact/",
+        "header_secondary_button_label": "Lihat Services",
+        "header_secondary_button_url": "/services/",
+        "header_fallback_image_url": "https://picsum.photos/seed/index-main-1/1280/820",
+        "header_image_alt": "Koderstory system preview",
+        "content_enabled": False,
+        "clients_heading": "Pengalaman kami terbentuk dari berbagai project dan lingkungan bisnis.",
+        "clients": [
+            ("client", {"fallback_image_url": "https://dummyimage.com/220x80/101624/ffffff.png&text=Company+1", "image_alt": "Company 1 logo"}),
+            ("client", {"fallback_image_url": "https://dummyimage.com/220x80/101624/ffffff.png&text=Company+2", "image_alt": "Company 2 logo"}),
+            ("client", {"fallback_image_url": "https://dummyimage.com/220x80/101624/ffffff.png&text=Company+3", "image_alt": "Company 3 logo"}),
+            ("client", {"fallback_image_url": "https://dummyimage.com/220x80/101624/ffffff.png&text=Company+4", "image_alt": "Company 4 logo"}),
+            ("client", {"fallback_image_url": "https://dummyimage.com/220x80/101624/ffffff.png&text=Company+5", "image_alt": "Company 5 logo"}),
+        ],
+        "body_blocks": [
+            ("section", {"eyebrow": "01", "heading": "Baca workflow bisnisnya dulu", "body": "<p>Kami mulai dari proses yang berjalan hari ini: siapa menginput data, siapa menyetujui, dan bagian mana yang sering tercecer.</p>"}),
+            ("section", {"eyebrow": "02", "heading": "Bangun sistem yang bisa dipakai operasional", "body": "<p>Rilis awal dibuat cukup jelas untuk dipakai tim, lalu dikembangkan dari kebutuhan nyata setelah proses mulai berjalan.</p>"}),
+        ],
+        "listing_eyebrow": "Services",
+        "listing_title": "Tiga layanan inti untuk merapikan workflow bisnis.",
+        "listing_description": "<p>Visitor langsung melihat masalah, pilihan solusi, dan jalur diskusi tanpa banyak dekorasi.</p>",
+        "cards": [
+            ("card", {"eyebrow": "Website & CMS Development", "title": "Website, CMS & Online Store yang Mudah Dikelola", "description": "<p>Bangun rumah digital untuk brand Anda, lengkap dengan website profesional, katalog produk, dan toko online yang bisa dikelola sendiri.</p>", "icon": "01", "fallback_image_url": "https://picsum.photos/seed/home-service-website/900/600", "image_alt": "Website and CMS", "link_label": "Cari tahu", "link_url": "/services/website-cms-online-store/"}),
+            ("card", {"eyebrow": "Custom Business System", "title": "Workflow Bisnis yang Lebih Rapi dan Mudah Dikembangkan", "description": "<p>Ubah proses manual berbasis Excel, dokumen, dan chat menjadi sistem digital yang lebih terstruktur, terukur, dan scalable.</p>", "icon": "02", "fallback_image_url": "https://picsum.photos/seed/home-service-custom-system/900/600", "image_alt": "Custom business system", "link_label": "Cari tahu", "link_url": "/services/custom-business-system/"}),
+            ("card", {"eyebrow": "ERP & Workflow Automation", "title": "Operasional Bisnis yang Lebih Terintegrasi dan Terukur", "description": "<p>Kelola sales, inventory, invoice, purchase, CRM, dan workflow perusahaan dalam satu sistem yang lebih rapi dan mudah dipantau.</p>", "icon": "03", "fallback_image_url": "https://picsum.photos/seed/home-service-erp/900/600", "image_alt": "ERP and workflow automation", "link_label": "Cari tahu", "link_url": "/services/erp-workflow-automation/"}),
+        ],
+        "cta_title": "Mulai dari workflow yang paling perlu dirapikan.",
+        "cta_description": "<p>Ceritakan proses manual yang paling sering membuat tim lambat, lalu kita petakan opsi sistem yang masuk akal untuk dibangun lebih dulu.</p>",
+    }
+
+    content_panels = Page.content_panels + _dark_home_content_panels()
+    section_settings_panels = _dark_home_section_settings_panels()
+    edit_handler = TabbedInterface([ObjectList(content_panels, heading="Content"), ObjectList(section_settings_panels, heading="Section settings"), ObjectList(Page.promote_panels, heading="Promote"), ObjectList(Page.settings_panels, heading="Settings")])
+
+    class Meta:
+        verbose_name = "Koderstory home / index page"
+
+
+class AboutPage(DarkFlatPageMixin, Page):
+    template = "home/dark/page.html"
+    DARK_FLAT_PAGE_TITLE = "About"
+    DARK_FLAT_PAGE_SLUG = "about"
+    parent_page_types = ["home.KoderstoryHomePage", "home.HomePage"]
+    subpage_types = []
+    DARK_FLAT_SEED = {
+        "header_eyebrow": "About Koderstory",
+        "header_title": "Membantu Bisnis Membangun Sistem Digital yang Lebih Rapi, Efisien, dan Scalable",
+        "header_description": "<p>Koderstory hadir untuk membantu bisnis bertransformasi dari workflow manual berbasis Excel, dokumen, chat, atau tools yang terpisah menjadi sistem digital yang lebih terstruktur.</p>",
+        "header_fallback_image_url": "https://picsum.photos/seed/koderstory-about-cover/1800/1000",
+        "content_title": "Kami percaya sistem yang baik dimulai dari workflow bisnis yang jelas.",
+        "content_description": "<p>Kami tidak mulai dari fitur sebanyak mungkin. Kami mulai dari alur kerja, keputusan harian, dan data yang perlu dijaga agar bisnis bisa bergerak lebih rapi.</p>",
+        "body_blocks": [
+            ("section", {"eyebrow": "Mindset", "heading": "Bukan sekadar membuat software", "body": "<p>Kami membantu membaca pola kerja bisnis, lalu menerjemahkannya menjadi sistem yang jelas untuk editor, admin, dan pengguna harian.</p>"}),
+            ("section", {"eyebrow": "Approach", "heading": "Dibuat bertahap dan mudah dipahami", "body": "<p>Setiap halaman, modul, dan dashboard disusun agar dapat dipakai, dievaluasi, dan dikembangkan tanpa kehilangan struktur awal.</p>"}),
+        ],
+        "listing_title": "Nilai kerja yang membantu sistem tetap praktis dan mudah dikembangkan.",
+        "listing_description": "<p>Prinsip ini menjaga project tetap fokus pada hasil operasional, bukan hanya tampilan atau daftar fitur.</p>",
+        "cards": [("card", {"title": title, "description": f"<p>{desc}</p>", "icon": icon}) for icon, title, desc in [
+            ("01", "Practical", "Solusi dibuat untuk dipakai dalam operasional harian."),
+            ("02", "Structured", "Data, alur, dan hak akses disusun jelas sejak awal."),
+            ("03", "Scalable", "Sistem disiapkan agar bisa tumbuh bertahap."),
+            ("04", "Maintainable", "Implementasi dijaga tetap mudah dirawat."),
+        ]],
+        "cta_title": "Punya workflow yang mulai sulit dikelola manual?",
+        "cta_description": "<p>Kami bisa bantu membaca masalah awal dan menyarankan bentuk sistem yang paling praktis untuk dimulai.</p>",
+    }
+    content_panels = Page.content_panels + _dark_content_panels()
+    section_settings_panels = _dark_section_settings_panels()
+    edit_handler = TabbedInterface([ObjectList(content_panels, heading="Content"), ObjectList(section_settings_panels, heading="Section settings"), ObjectList(Page.promote_panels, heading="Promote"), ObjectList(Page.settings_panels, heading="Settings")])
+
+
+class KoderstoryServicePage(DarkFlatPageMixin, Page):
+    template = "home/dark/page.html"
+    DARK_FLAT_PAGE_TITLE = "Services"
+    DARK_FLAT_PAGE_SLUG = "services"
+    parent_page_types = ["home.KoderstoryHomePage", "home.HomePage"]
+    subpage_types = []
+    DARK_FLAT_SEED = {
+        "header_eyebrow": "Services",
+        "header_title": "Layanan digital yang sederhana, flat, dan fokus pada workflow bisnis.",
+        "header_description": "<p>Pilih berdasarkan masalah utama: butuh rumah digital, sistem custom untuk workflow unik, atau ERP untuk operasional yang lebih terintegrasi.</p>",
+        "header_fallback_image_url": "https://picsum.photos/seed/koderstory-services-cover/1800/1000",
+        "content_title": "Mulai kecil, lalu dikembangkan bertahap.",
+        "content_description": "<p>Kami membantu memetakan kebutuhan, membangun rilis pertama yang jelas, lalu memperbaiki sistem berdasarkan penggunaan nyata.</p>",
+        "body_blocks": [
+            ("section", {"eyebrow": "Discover", "heading": "Petakan proses yang paling sering menghambat tim", "body": "<p>Kami mengurai kebutuhan dari workflow, data, approval, dan laporan yang sudah berjalan di bisnis Anda.</p>"}),
+            ("section", {"eyebrow": "Delivery", "heading": "Bangun modul awal yang bisa dipakai", "body": "<p>Scope pertama dibuat fokus agar cepat diuji oleh tim dan tetap mudah dikembangkan setelah penggunaan nyata.</p>"}),
+        ],
+        "listing_title": "Tiga layanan utama Koderstory",
+        "listing_description": "<p>Pilih layanan dari kebutuhan bisnis paling dekat: website, sistem custom, atau otomasi operasional.</p>",
+        "cards": KoderstoryHomePage.DARK_FLAT_SEED["cards"],
+        "cta_title": "Belum yakin layanan mana yang paling tepat?",
+        "cta_description": "<p>Kirim gambaran workflow Anda. Kami bantu pisahkan mana kebutuhan website, sistem custom, ERP, atau integrasi.</p>",
+    }
+    content_panels = Page.content_panels + _dark_content_panels()
+    section_settings_panels = _dark_section_settings_panels()
+    edit_handler = TabbedInterface([ObjectList(content_panels, heading="Content"), ObjectList(section_settings_panels, heading="Section settings"), ObjectList(Page.promote_panels, heading="Promote"), ObjectList(Page.settings_panels, heading="Settings")])
+
+
+class KoderstoryServiceDetailPage(DarkFlatPageMixin, Page):
+    template = "home/dark/page.html"
+    DARK_FLAT_PAGE_TITLE = "Custom Business System"
+    DARK_FLAT_PAGE_SLUG = "custom-business-system"
+    parent_page_types = ["home.KoderstoryHomePage", "home.HomePage"]
+    subpage_types = []
+    DARK_FLAT_SEED = {
+        "header_eyebrow": "Custom Business System",
+        "header_title": "Workflow Bisnis yang Lebih Rapi dan Mudah Dikembangkan",
+        "header_description": "<p>Ubah proses manual berbasis Excel, dokumen, dan chat menjadi sistem digital yang lebih terstruktur, terukur, dan scalable.</p>",
+        "header_primary_button_label": "Diskusikan Scope",
+        "header_primary_button_url": "/contact/",
+        "header_fallback_image_url": "https://picsum.photos/seed/service-custom-system-main/1280/820",
+        "content_eyebrow": "Problem & Approach",
+        "content_title": "Masalah yang sering terjadi dan solusi yang kami bangun",
+        "content_description": "<p>Data tersebar, approval manual, status pekerjaan tidak terlihat, dan laporan dibuat ulang. Sistem custom membantu merapikan alur itu ke satu tempat kerja yang lebih jelas.</p>",
+        "body_blocks": [
+            ("section", {"eyebrow": "Problem", "heading": "Workflow sudah berjalan, tetapi terlalu banyak bagian manual", "body": "<p>Tim memakai spreadsheet, dokumen, chat, atau tools terpisah untuk menyelesaikan proses yang sebenarnya saling berhubungan.</p>"}),
+            ("section", {"eyebrow": "Solution", "heading": "Sistem dibuat mengikuti alur kerja bisnis", "body": "<p>Koderstory membangun modul, role, status, dan laporan yang sesuai dengan cara tim mengambil keputusan setiap hari.</p>"}),
+        ],
+        "listing_title": "Checklist solusi yang bisa dibangun.",
+        "listing_description": "<p>Gunakan daftar ini sebagai titik awal untuk menyusun scope layanan detail sesuai kebutuhan bisnis.</p>",
+        "cards": [("card", {"title": title, "description": "<p>Bagian solusi yang dapat disesuaikan dengan workflow dan kebutuhan bisnis.</p>", "icon": "✓"}) for title in ["Company Profile Website", "CMS-Based Website", "Online Store Website", "Product Catalog Website", "Landing Page Development", "Website Integration"]],
+        "cta_title": "Siap merapikan workflow manual menjadi sistem?",
+        "cta_description": "<p>Kita bisa mulai dari audit alur kerja singkat, lalu menentukan modul pertama yang paling berdampak.</p>",
+    }
+    content_panels = Page.content_panels + _dark_content_panels()
+    section_settings_panels = _dark_section_settings_panels()
+    edit_handler = TabbedInterface([ObjectList(content_panels, heading="Content"), ObjectList(section_settings_panels, heading="Section settings"), ObjectList(Page.promote_panels, heading="Promote"), ObjectList(Page.settings_panels, heading="Settings")])
+
+
+class IndustryIndexPage(DarkFlatPageMixin, Page):
+    template = "home/dark/page.html"
+    DARK_FLAT_PAGE_TITLE = "Industries"
+    DARK_FLAT_PAGE_SLUG = "industries"
+    parent_page_types = ["home.KoderstoryHomePage", "home.HomePage"]
+    subpage_types = ["home.IndustryDetailPage"]
+    DARK_FLAT_SEED = {
+        "header_eyebrow": "Industries",
+        "header_title": "Solusi digital untuk industri yang ingin merapikan workflow.",
+        "header_description": "<p>Koderstory membantu berbagai jenis bisnis yang mulai merasakan batasan dari Excel, marketplace, chat operasional, dan tools yang tidak saling terhubung.</p>",
+        "header_fallback_image_url": "https://picsum.photos/seed/koderstory-industries-cover/1800/1000",
+        "content_title": "Setiap industri punya pola kerja yang berbeda.",
+        "content_description": "<p>Kami membaca kebutuhan berdasarkan proses harian: pencatatan, approval, katalog, inventory, transaksi, laporan, dan koordinasi antar tim.</p>",
+        "body_blocks": [
+            ("section", {"eyebrow": "Fit", "heading": "Solusi mengikuti konteks bisnis", "body": "<p>Fitur untuk retail, manufaktur, F&amp;B, atau property tidak selalu sama. Struktur sistem harus mengikuti ritme operasionalnya.</p>"}),
+            ("section", {"eyebrow": "Scale", "heading": "Bisa dimulai dari modul kecil", "body": "<p>Mulai dari proses yang paling sering dipakai, lalu tambahkan integrasi atau dashboard saat data sudah lebih rapi.</p>"}),
+        ],
+        "listing_title": "Industri yang kami bantu",
+        "listing_description": "<p>Pilih contoh industri untuk melihat arah solusi yang bisa dikembangkan dari workflow nyata.</p>",
+        "cards": [("card", {"title": title, "description": f"<p>{desc}</p>", "icon": icon, "fallback_image_url": image, "link_label": "Lihat industri", "link_url": "#"}) for icon, title, desc, image in [
+            ("🛍️", "E-commerce & Online Retail", "Online store, catalog, checkout, payment gateway, dan sales dashboard.", "https://picsum.photos/seed/industry-grid-ecommerce/900/600"),
+            ("☕", "Food & Beverage", "Digital menu, QR ordering, online ordering, payment, dan order dashboard.", "https://picsum.photos/seed/industry-grid-fnb/900/600"),
+            ("🏭", "Manufacturing & Production", "Production order, inventory, purchase workflow, dan progress dashboard.", "https://picsum.photos/seed/industry-grid-manufacturing/900/600"),
+            ("🏠", "Property & Real Estate", "Property listing, unit catalog, inquiry, CRM property, dan lead dashboard.", "https://picsum.photos/seed/industry-grid-property/900/600"),
+        ]],
+        "cta_title": "Industri Anda punya workflow khusus?",
+        "cta_description": "<p>Ceritakan proses utamanya. Kami bantu memetakan sistem berdasarkan cara bisnis Anda beroperasi.</p>",
+    }
+    content_panels = Page.content_panels + _dark_content_panels()
+    section_settings_panels = _dark_section_settings_panels()
+    edit_handler = TabbedInterface([ObjectList(content_panels, heading="Content"), ObjectList(section_settings_panels, heading="Section settings"), ObjectList(Page.promote_panels, heading="Promote"), ObjectList(Page.settings_panels, heading="Settings")])
+
+
+class IndustryDetailPage(DarkFlatPageMixin, Page):
+    template = "home/dark/page.html"
+    DARK_FLAT_PAGE_TITLE = "Manufacturing & Production"
+    DARK_FLAT_PAGE_SLUG = "manufacturing-production"
+    parent_page_types = ["home.IndustryIndexPage"]
+    subpage_types = []
+    DARK_FLAT_SEED = {
+        "header_eyebrow": "Industry",
+        "header_title": "Manufacturing & Production",
+        "header_description": "<p>Production order, raw material inventory, purchase, progress dashboard, dan reports.</p>",
+        "header_fallback_image_url": "https://picsum.photos/seed/industry-manufacturing-production-main-1/1280/820",
+        "content_title": "How Koderstory Helps",
+        "content_description": "<p>Kami membantu merancang website, sistem custom, ERP, dashboard, dan workflow automation yang sesuai dengan kebutuhan operasional industri ini.</p>",
+        "body_blocks": [
+            ("section", {"eyebrow": "Operational map", "heading": "Lihat alur produksi dari request sampai selesai", "body": "<p>Sistem dapat membantu menghubungkan permintaan, bahan baku, progress produksi, stok barang jadi, dan laporan operasional.</p>"}),
+            ("section", {"eyebrow": "Visibility", "heading": "Kurangi keputusan berbasis file tersebar", "body": "<p>Data produksi dan inventory yang lebih terstruktur membuat tim lebih mudah memantau status dan mengambil keputusan.</p>"}),
+        ],
+        "listing_title": "Contoh solusi yang bisa dibangun",
+        "listing_description": "<p>Modul dapat dipilih sesuai prioritas proses, mulai dari inventory hingga production dashboard.</p>",
+        "cards": [("card", {"title": title, "description": "<p>Solusi operasional yang membuat proses lebih terlihat, tercatat, dan mudah dikembangkan.</p>", "icon": "✅"}) for title in ["Production Order System", "Inventory Bahan Baku", "Finished Goods Inventory", "Purchase Request/Order Workflow", "Production Progress Dashboard", "Odoo Inventory/Manufacturing Setup"]],
+        "cta_title": "Butuh sistem untuk production atau inventory workflow?",
+        "cta_description": "<p>Kami bisa bantu mulai dari satu modul prioritas sebelum masuk ke integrasi yang lebih besar.</p>",
+    }
+    content_panels = Page.content_panels + _dark_content_panels()
+    section_settings_panels = _dark_section_settings_panels()
+    edit_handler = TabbedInterface([ObjectList(content_panels, heading="Content"), ObjectList(section_settings_panels, heading="Section settings"), ObjectList(Page.promote_panels, heading="Promote"), ObjectList(Page.settings_panels, heading="Settings")])
+
+
+class ResourceIndexPage(DarkFlatPageMixin, Page):
+    template = "home/dark/page.html"
+    DARK_FLAT_PAGE_TITLE = "Resources"
+    DARK_FLAT_PAGE_SLUG = "resources"
+    parent_page_types = ["home.KoderstoryHomePage", "home.HomePage"]
+    subpage_types = ["home.ArticlePage"]
+    DARK_FLAT_SEED = {
+        "header_eyebrow": "Resources",
+        "header_title": "Insight untuk membangun sistem digital yang lebih rapi.",
+        "header_description": "<p>Kumpulan artikel, catatan pengembangan, insight teknologi, dan studi kasus untuk membantu bisnis memahami transformasi digital.</p>",
+        "header_fallback_image_url": "https://picsum.photos/seed/koderstory-resources-cover/1800/1000",
+        "content_title": "Practical notes before building a system.",
+        "content_description": "<p>Resource ini membantu owner, operator, dan tim internal memahami kapan workflow manual perlu dirapikan menjadi sistem.</p>",
+        "body_blocks": [
+            ("section", {"eyebrow": "Guide", "heading": "Baca dari masalah bisnis, bukan dari jargon teknologi", "body": "<p>Setiap artikel diarahkan untuk membantu Anda mengenali pola kerja yang mulai sulit dikelola dengan tools lama.</p>"}),
+            ("section", {"eyebrow": "Use", "heading": "Gunakan sebagai bahan diskusi internal", "body": "<p>Artikel dapat menjadi titik awal untuk menyusun kebutuhan, prioritas modul, dan pertanyaan sebelum memulai project.</p>"}),
+        ],
+        "listing_title": "Artikel terbaru",
+        "listing_description": "<p>Seed artikel awal siap diedit menjadi tulisan asli, studi kasus, atau catatan project.</p>",
+        "cards": [("card", {"eyebrow": cat, "title": title, "description": "<p>Ringkasan artikel untuk membantu pembaca memahami konteks dan manfaatnya.</p>", "link_label": "Read article", "link_url": "#"}) for cat, title in [
+            ("Business Workflow", "Kenapa Excel Mulai Membatasi Pertumbuhan Bisnis?"),
+            ("Technology Insight", "Apa Bedanya Custom Business System dan ERP?"),
+            ("Website & CMS", "Kenapa Bisnis Perlu Website Sendiri di Luar Marketplace?"),
+        ]],
+        "cta_title": "Ingin membahas topik workflow bisnis Anda?",
+        "cta_description": "<p>Kami bisa bantu membaca apakah masalahnya cukup dengan website, automation kecil, atau perlu sistem operasional khusus.</p>",
+    }
+    content_panels = Page.content_panels + _dark_content_panels()
+    section_settings_panels = _dark_section_settings_panels()
+    edit_handler = TabbedInterface([ObjectList(content_panels, heading="Content"), ObjectList(section_settings_panels, heading="Section settings"), ObjectList(Page.promote_panels, heading="Promote"), ObjectList(Page.settings_panels, heading="Settings")])
+
+
+class ArticlePage(DarkFlatPageMixin, Page):
+    template = "home/dark/page.html"
+    DARK_FLAT_PAGE_TITLE = "Kenapa Excel Mulai Membatasi Pertumbuhan Bisnis?"
+    DARK_FLAT_PAGE_SLUG = "kenapa-excel-mulai-membatasi-pertumbuhan-bisnis"
+    parent_page_types = ["home.ResourceIndexPage"]
+    subpage_types = []
+    DARK_FLAT_SEED = {
+        "header_eyebrow": "Business Workflow",
+        "header_title": "Kenapa Excel Mulai Membatasi Pertumbuhan Bisnis?",
+        "header_description": "<p>Excel sangat fleksibel di tahap awal, tetapi saat data, tim, dan proses semakin kompleks, bisnis membutuhkan sistem yang lebih terstruktur.</p>",
+        "content_title": "Article",
+        "body_blocks": [
+            ("section", {"heading": "Excel membantu bisnis bergerak cepat", "body": "<p>Di tahap awal, spreadsheet memberi fleksibilitas untuk mencatat data, membuat formula, dan membangun laporan sederhana.</p>"}),
+            ("section", {"heading": "Masalah muncul saat proses semakin kompleks", "body": "<p>Ketika banyak orang mengedit file, status pekerjaan sulit dilacak dan data penting mulai tersebar.</p>"}),
+            ("section", {"heading": "Sistem digital membantu merapikan workflow", "body": "<p>Sistem yang tepat membuat proses lebih konsisten, data lebih aman, dan laporan lebih mudah dipercaya.</p>"}),
+        ],
+        "listing_title": "Related reading",
+        "listing_description": "<p>Gunakan bagian ini untuk menautkan artikel, layanan, atau studi kasus yang masih relevan dengan topik.</p>",
+        "cards": [("card", {"eyebrow": "Related", "title": title, "description": "<p>Konten pendukung untuk membantu pembaca melanjutkan eksplorasi.</p>", "link_label": "Read next", "link_url": "#"}) for title in ["Apa Bedanya Custom Business System dan ERP?", "Kenapa Bisnis Perlu Website Sendiri?", "Checklist Sebelum Membuat Sistem Internal"]],
+        "cta_title": "Punya masalah workflow yang mirip?",
+        "cta_description": "<p>Bagikan konteks bisnis Anda agar kami bisa bantu membaca kebutuhan sistem awalnya.</p>",
+        "listing_enabled": False,
+    }
+    content_panels = Page.content_panels + _dark_content_panels()
+    section_settings_panels = _dark_section_settings_panels()
+    edit_handler = TabbedInterface([ObjectList(content_panels, heading="Content"), ObjectList(section_settings_panels, heading="Section settings"), ObjectList(Page.promote_panels, heading="Promote"), ObjectList(Page.settings_panels, heading="Settings")])
+
+
+class WorkIndexPage(DarkFlatPageMixin, Page):
+    template = "home/dark/page.html"
+    DARK_FLAT_PAGE_TITLE = "Work"
+    DARK_FLAT_PAGE_SLUG = "work"
+    parent_page_types = ["home.KoderstoryHomePage", "home.HomePage"]
+    subpage_types = ["home.WorkDetailPage"]
+    DARK_FLAT_SEED = {
+        "header_eyebrow": "Work",
+        "header_title": "Project dan implementasi sistem digital untuk workflow bisnis.",
+        "header_description": "<p>Kumpulan contoh work, studi kasus, dan konsep implementasi yang menunjukkan bagaimana Koderstory membantu bisnis merapikan proses.</p>",
+        "header_fallback_image_url": "https://picsum.photos/seed/koderstory-services-cover/1800/1000",
+        "content_title": "Work yang ditampilkan fokus pada masalah operasional.",
+        "content_description": "<p>Setiap case dapat menjelaskan tantangan, pendekatan, solusi, dan hasil yang relevan untuk calon klien.</p>",
+        "body_blocks": [
+            ("section", {"eyebrow": "Case format", "heading": "Tampilkan konteks sebelum solusi", "body": "<p>Gunakan bagian ini untuk menjelaskan jenis bisnis, workflow awal, dan alasan sistem perlu dibangun.</p>"}),
+            ("section", {"eyebrow": "Proof", "heading": "Buat hasilnya mudah dipahami", "body": "<p>Ringkas outcome dalam bahasa operasional seperti waktu kerja, visibilitas status, kualitas data, atau kemudahan laporan.</p>"}),
+        ],
+        "listing_title": "Selected work",
+        "listing_description": "<p>Seed card ini dapat diganti menjadi studi kasus nyata saat project detail sudah siap.</p>",
+        "cards": [("card", {"eyebrow": cat, "title": title, "description": "<p>Contoh implementasi sistem digital untuk kebutuhan bisnis yang spesifik.</p>", "fallback_image_url": image, "link_label": "View case", "link_url": "#"}) for cat, title, image in [
+            ("Hospitality", "SIRASA Hospitality QR Ordering", "https://picsum.photos/seed/work-sirasa/1200/800"),
+            ("Education", "BIMORA Education Admin System", "https://picsum.photos/seed/work-bimora/1200/800"),
+            ("Retail", "Retail Sales & Inventory Workflow", "https://picsum.photos/seed/work-retail/1200/800"),
+        ]],
+        "cta_title": "Punya workflow yang bisa menjadi case berikutnya?",
+        "cta_description": "<p>Kita bisa mulai dari scope kecil dan dokumentasikan hasilnya sebagai sistem yang mudah dipahami tim.</p>",
+    }
+    content_panels = Page.content_panels + _dark_content_panels()
+    section_settings_panels = _dark_section_settings_panels()
+    edit_handler = TabbedInterface([ObjectList(content_panels, heading="Content"), ObjectList(section_settings_panels, heading="Section settings"), ObjectList(Page.promote_panels, heading="Promote"), ObjectList(Page.settings_panels, heading="Settings")])
+
+
+class WorkDetailPage(DarkFlatPageMixin, Page):
+    template = "home/dark/page.html"
+    DARK_FLAT_PAGE_TITLE = "SIRASA Hospitality QR Ordering"
+    DARK_FLAT_PAGE_SLUG = "sirasa-hospitality-qr-ordering"
+    parent_page_types = ["home.WorkIndexPage"]
+    subpage_types = []
+    DARK_FLAT_SEED = {
+        "header_eyebrow": "Hospitality · QR Ordering",
+        "header_title": "SIRASA Hospitality QR Ordering",
+        "header_description": "<p>Konsep sistem pemesanan berbasis QR untuk membantu hotel mengarahkan tamu memesan menu internal dan merchant partner melalui alur yang lebih rapi.</p>",
+        "header_fallback_image_url": "https://picsum.photos/seed/work-detail-sirasa/1400/900",
+        "content_title": "Project Summary",
+        "body_blocks": [
+            ("section", {"heading": "Challenge", "body": "<p>Alur pemesanan tersebar dan sulit dipantau secara real-time oleh operasional.</p>"}),
+            ("section", {"heading": "Solution", "body": "<p>Sistem QR ordering memberi alur pemesanan yang lebih jelas, dashboard transaksi, dan katalog merchant partner.</p>"}),
+            ("section", {"heading": "Outcome", "body": "<p>Operasional mendapatkan proses yang lebih rapi dan data transaksi yang lebih mudah dianalisis.</p>"}),
+        ],
+        "listing_title": "Key Features",
+        "listing_description": "<p>Fitur ini menjadi fondasi alur pemesanan dan monitoring transaksi pada contoh work detail.</p>",
+        "cards": [("card", {"title": title, "description": "<p>Fitur inti yang mendukung workflow hospitality.</p>", "icon": "✓"}) for title in ["QR Menu & Ordering", "Merchant Partner Catalog", "Transaction Dashboard"]],
+        "cta_title": "Ingin membuat workflow digital seperti ini?",
+        "cta_description": "<p>Kami bisa bantu menyesuaikan konsepnya dengan proses dan operasional bisnis Anda.</p>",
+    }
+    content_panels = Page.content_panels + _dark_content_panels()
+    section_settings_panels = _dark_section_settings_panels()
+    edit_handler = TabbedInterface([ObjectList(content_panels, heading="Content"), ObjectList(section_settings_panels, heading="Section settings"), ObjectList(Page.promote_panels, heading="Promote"), ObjectList(Page.settings_panels, heading="Settings")])
+
+
+class PrivacyPolicyPage(DarkFlatPageMixin, Page):
+    template = "home/dark/page.html"
+    DARK_FLAT_PAGE_TITLE = "Privacy Policy"
+    DARK_FLAT_PAGE_SLUG = "privacy-policy"
+    parent_page_types = ["home.KoderstoryHomePage", "home.HomePage"]
+    subpage_types = []
+    DARK_FLAT_SEED = {
+        "header_title": "Privacy Policy",
+        "header_description": "<p>Draft halaman privacy policy sederhana untuk website Koderstory. Sesuaikan kembali dengan kebutuhan legal, analytics, form, dan tools yang digunakan.</p>",
+        "content_title": "Informasi privasi",
+        "content_description": "<p>Gunakan halaman ini sebagai seed awal kebijakan privasi sederhana, lalu sesuaikan dengan kebutuhan legal dan tools yang digunakan.</p>",
+        "body_blocks": [
+            ("section", {"heading": "Informasi yang Dikumpulkan", "body": "<p>Kami dapat mengumpulkan informasi yang Anda kirim melalui form kontak, email, atau komunikasi langsung.</p>"}),
+            ("section", {"heading": "Penggunaan Informasi", "body": "<p>Informasi digunakan untuk menanggapi pertanyaan, memahami kebutuhan awal, dan menyiapkan komunikasi proyek.</p>"}),
+            ("section", {"heading": "Kontak", "body": "<p>Untuk pertanyaan terkait privacy policy, hubungi kami melalui email resmi Koderstory.</p>"}),
+        ],
+        "listing_title": "Area yang perlu dicek ulang",
+        "listing_description": "<p>Bagian ini dapat dipakai sebagai checklist internal sebelum privacy policy dipublikasikan.</p>",
+        "cards": [("card", {"title": title, "description": "<p>Pastikan isi policy sesuai dengan praktik aktual website dan kebutuhan legal bisnis.</p>", "icon": "✓"}) for title in ["Contact form submissions", "Analytics and tracking", "Third-party integrations"]],
+        "cta_title": "Ada pertanyaan tentang data yang dikirim?",
+        "cta_description": "<p>Hubungi Koderstory jika Anda membutuhkan klarifikasi terkait formulir, komunikasi, atau penggunaan data.</p>",
+        "listing_enabled": False,
+        "cta_enabled": False,
+    }
+    content_panels = Page.content_panels + _dark_content_panels()
+    section_settings_panels = _dark_section_settings_panels()
+    edit_handler = TabbedInterface([ObjectList(content_panels, heading="Content"), ObjectList(section_settings_panels, heading="Section settings"), ObjectList(Page.promote_panels, heading="Promote"), ObjectList(Page.settings_panels, heading="Settings")])
+
+
+class ContactPage(DarkFlatPageMixin, AbstractEmailForm):
+    template = "home/dark/page.html"
+    DARK_FLAT_PAGE_TITLE = "Contact"
+    DARK_FLAT_PAGE_SLUG = "contact"
+    parent_page_types = ["home.KoderstoryHomePage", "home.HomePage"]
+    subpage_types = []
+    landing_page_template = "home/dark/contact_landing.html"
+    DARK_FLAT_SEED = {
+        "header_eyebrow": "Contact",
+        "header_title": "Punya workflow yang masih manual?",
+        "header_description": "<p>Kirim gambaran singkat. Kami akan bantu membaca kebutuhan awal dan menentukan solusi yang paling masuk akal untuk dimulai.</p>",
+        "header_fallback_image_url": "https://picsum.photos/seed/koderstory-contact-cover/1800/1000",
+        "content_title": "Ceritakan kebutuhan awal Anda",
+        "content_description": "<p>Form ini menyimpan submission di Wagtail dan dapat dikonfigurasi untuk mengirim email dari tab form settings.</p>",
+        "body_blocks": [
+            ("section", {"eyebrow": "Before sending", "heading": "Tuliskan proses yang ingin dirapikan", "body": "<p>Berikan gambaran singkat: workflow apa yang masih manual, siapa saja yang terlibat, dan hasil apa yang ingin dibuat lebih jelas.</p>"}),
+            ("section", {"eyebrow": "Response", "heading": "Kami akan membaca konteksnya dulu", "body": "<p>Balasan awal biasanya berisi pertanyaan scope, opsi pendekatan, dan saran langkah pertama yang paling masuk akal.</p>"}),
+        ],
+        "listing_title": "Informasi yang membantu diskusi awal",
+        "listing_description": "<p>Semakin jelas konteks awal, semakin mudah menentukan bentuk sistem yang paling tepat.</p>",
+        "cards": [("card", {"title": title, "description": "<p>Tambahkan informasi ini pada pesan agar diskusi pertama lebih terarah.</p>", "icon": "✓"}) for title in ["Current workflow", "Main problem", "Expected outcome"]],
+        "cta_title": "Lebih nyaman lewat email langsung?",
+        "cta_description": "<p>Gunakan CTA ini untuk menautkan alamat email atau kanal komunikasi resmi Koderstory.</p>",
+        "listing_enabled": False,
+        "cta_enabled": False,
+    }
+    content_panels = AbstractEmailForm.content_panels + _dark_content_panels(include_form=True)
+    section_settings_panels = _dark_section_settings_panels()
+    edit_handler = TabbedInterface([ObjectList(content_panels, heading="Content"), ObjectList(section_settings_panels, heading="Section settings"), ObjectList([FormSubmissionsPanel()], heading="Submissions"), ObjectList(Page.promote_panels, heading="Promote"), ObjectList(Page.settings_panels, heading="Settings")])
+
+    def save(self, *args, **kwargs):
+        is_new = self.pk is None
+        super().save(*args, **kwargs)
+        if is_new and not self.form_fields.exists():
+            for sort_order, (label, field_type, required, help_text) in enumerate(
+                [
+                    ("Name", "singleline", True, ""),
+                    ("Email", "email", True, ""),
+                    ("Company", "singleline", False, ""),
+                    ("Project context", "multiline", True, "Tell us the workflow, problem, or system you want to discuss."),
+                ]
+            ):
+                ContactFormField.objects.create(
+                    page=self,
+                    sort_order=sort_order,
+                    label=label,
+                    field_type=field_type,
+                    required=required,
+                    help_text=help_text,
+                )
+
+
+class ContactFormField(AbstractFormField):
+    page = ParentalKey("home.ContactPage", on_delete=models.CASCADE, related_name="form_fields")

@@ -1,0 +1,22 @@
+{% load wagtailcore_tags %}
+
+<section id="{{ page.listing_anchor_id }}" class="ks-dark-section ks-height-{{ page.listing_section_height }}" data-ks-vertical="{{ page.listing_vertical_alignment }}"{% if page.listing_style %} style="{{ page.listing_style }}"{% endif %}>
+    <div class="container" data-ks-width="{{ page.listing_content_width }}" data-ks-align="{{ page.listing_text_alignment }}">
+        <div class="row g-5 mb-5">
+            <div class="col-lg-5">
+                {% if page.listing_eyebrow %}<p class="small ks-dark-accent mb-3">{{ page.listing_eyebrow }}</p>{% endif %}
+                {% if page.listing_title %}<h2 class="display-6 mb-0">{{ page.listing_title }}</h2>{% endif %}
+            </div>
+            <div class="col-lg-7">
+                {% if page.listing_description %}<div class="ks-dark-muted">{{ page.listing_description|richtext }}</div>{% endif %}
+            </div>
+        </div>
+        <div class="row g-4">
+            {% for block in page.cards %}
+            <div class="col-md-6 col-lg-4">
+                {% include "home/dark/components/card.html" with card=block.value %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>

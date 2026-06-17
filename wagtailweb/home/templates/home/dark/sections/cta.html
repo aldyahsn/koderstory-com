@@ -1,0 +1,19 @@
+{% load wagtailcore_tags %}
+
+<section id="{{ page.cta_anchor_id }}" class="ks-dark-section ks-dark-section--panel ks-height-{{ page.cta_section_height }}" data-ks-vertical="{{ page.cta_vertical_alignment }}"{% if page.cta_style %} style="{{ page.cta_style }}"{% endif %}>
+    <div class="container" data-ks-width="{{ page.cta_content_width }}" data-ks-align="{{ page.cta_text_alignment }}">
+        <div class="row g-5 align-items-center">
+            <div class="col-lg-8">
+                {% if page.cta_eyebrow %}<span class="ks-dark-pill">{{ page.cta_eyebrow }}</span>{% endif %}
+                {% if page.cta_title %}<h2 class="display-6 mt-4 mb-4">{{ page.cta_title }}</h2>{% endif %}
+                {% if page.cta_description %}<div class="ks-dark-muted mb-0">{{ page.cta_description|richtext }}</div>{% endif %}
+            </div>
+            <div class="col-lg-4">
+                <div class="ks-dark-buttons ks-dark-cta-buttons justify-content-lg-end">
+                    {% if page.cta_primary_button_label %}<a href="{{ page.cta_primary_button_url|default:'#' }}" class="btn btn-success btn-lg rounded-pill px-4">{{ page.cta_primary_button_label }}</a>{% endif %}
+                    {% if page.cta_secondary_button_label %}<a href="{{ page.cta_secondary_button_url|default:'#' }}" class="btn btn-outline-light btn-lg rounded-pill px-4">{{ page.cta_secondary_button_label }}</a>{% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

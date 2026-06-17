@@ -91,3 +91,66 @@ class FooterColumnsBlock(blocks.StreamBlock):
 
     class Meta:
         label = "Footer columns"
+
+
+class DarkFlatCardBlock(blocks.StructBlock):
+    eyebrow = blocks.CharBlock(required=False, max_length=80)
+    title = blocks.CharBlock(max_length=160)
+    description = blocks.RichTextBlock(required=False)
+    icon = blocks.CharBlock(required=False, max_length=16, help_text="Emoji, number, or short label.")
+    image = ImageChooserBlock(required=False)
+    fallback_image_url = blocks.URLBlock(required=False, help_text="Used when no Wagtail image is selected.")
+    image_alt = blocks.CharBlock(required=False, max_length=140)
+    link_label = blocks.CharBlock(required=False, max_length=80)
+    link_url = blocks.CharBlock(required=False, max_length=255)
+    meta = blocks.CharBlock(required=False, max_length=120)
+
+    class Meta:
+        icon = "form"
+        label = "Card"
+
+
+class DarkFlatTextSectionBlock(blocks.StructBlock):
+    eyebrow = blocks.CharBlock(required=False, max_length=80)
+    heading = blocks.CharBlock(required=False, max_length=180)
+    body = blocks.RichTextBlock(required=False)
+    image = ImageChooserBlock(required=False)
+    fallback_image_url = blocks.URLBlock(required=False)
+    image_alt = blocks.CharBlock(required=False, max_length=140)
+
+    class Meta:
+        icon = "doc-full"
+        label = "Text section"
+
+
+class DarkFlatBodyBlock(blocks.StreamBlock):
+    section = DarkFlatTextSectionBlock()
+    card = DarkFlatCardBlock()
+
+    class Meta:
+        label = "Body content"
+
+
+class DarkFlatCardListBlock(blocks.StreamBlock):
+    card = DarkFlatCardBlock()
+
+    class Meta:
+        label = "Cards"
+
+
+class DarkFlatClientBlock(blocks.StructBlock):
+    image = ImageChooserBlock(required=False)
+    fallback_image_url = blocks.URLBlock(required=False, help_text="Used when no Wagtail image is selected.")
+    image_alt = blocks.CharBlock(required=False, max_length=140)
+    url = blocks.CharBlock(required=False, max_length=255)
+
+    class Meta:
+        icon = "image"
+        label = "Client logo"
+
+
+class DarkFlatClientListBlock(blocks.StreamBlock):
+    client = DarkFlatClientBlock()
+
+    class Meta:
+        label = "Client list"

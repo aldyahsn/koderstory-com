@@ -1,0 +1,25 @@
+{% load wagtailcore_tags wagtailimages_tags %}
+
+<section id="{{ page.header_anchor_id }}" class="ks-dark-section ks-dark-cover ks-height-{{ page.header_section_height }}" data-ks-vertical="{{ page.header_vertical_alignment }}"{% if page.header_style %} style="{{ page.header_style }}"{% endif %}>
+    {% if page.header_image %}
+    {% image page.header_image fill-1800x1100 as header_img %}
+    <img class="ks-dark-cover__image" src="{{ header_img.url }}" alt="{{ page.header_image_alt }}">
+    {% elif page.header_fallback_image_url %}
+    <img class="ks-dark-cover__image" src="{{ page.header_fallback_image_url }}" alt="{{ page.header_image_alt }}">
+    {% endif %}
+    <div class="container" data-ks-width="{{ page.header_content_width }}" data-ks-align="{{ page.header_text_alignment }}">
+        <div class="row g-5 align-items-center">
+            <div class="col-lg-7">
+                {% if page.header_eyebrow %}<span class="ks-dark-pill">{{ page.header_eyebrow }}</span>{% endif %}
+                {% if page.header_title %}<h1 class="display-4 mt-4 mb-4">{{ page.header_title }}</h1>{% endif %}
+                {% if page.header_description %}<div class="lead ks-dark-muted mb-4">{{ page.header_description|richtext }}</div>{% endif %}
+                {% if page.header_primary_button_label or page.header_secondary_button_label %}
+                <div class="ks-dark-buttons">
+                    {% if page.header_primary_button_label %}<a href="{{ page.header_primary_button_url|default:'#' }}" class="btn btn-success btn-lg rounded-pill px-4">{{ page.header_primary_button_label }}</a>{% endif %}
+                    {% if page.header_secondary_button_label %}<a href="{{ page.header_secondary_button_url|default:'#' }}" class="btn btn-outline-light btn-lg rounded-pill px-4">{{ page.header_secondary_button_label }}</a>{% endif %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>

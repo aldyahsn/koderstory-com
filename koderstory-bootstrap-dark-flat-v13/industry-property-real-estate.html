@@ -1,0 +1,532 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Koderstory membantu bisnis membangun sistem digital untuk workflow yang lebih rapi dan scalable.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400&family=Poppins:wght@700&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" rel="stylesheet">
+<style>
+  :root {
+    --ks-bg: #05070d;
+    --ks-panel: #0b0f19;
+    --ks-panel-2: #101624;
+    --ks-line: rgba(255, 255, 255, .14);
+    --ks-muted: rgba(255, 255, 255, .68);
+    --ks-soft: rgba(255, 255, 255, .08);
+    --ks-green: #00c49a;
+  }
+
+  body {
+    background: var(--ks-bg);
+    color: #ffffff;
+    font-family: "Nunito Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 18px;
+    font-weight: 400;
+    line-height: 1.8;
+  }
+
+  p,
+  .lead {
+    font-size: 18px;
+    line-height: 1.8;
+  }
+
+  .small,
+  small,
+  .badge,
+  .btn,
+  .nav-link,
+  .form-label,
+  .form-control,
+  .form-select {
+    font-size: 1rem;
+  }
+
+  h1, h2, h3, h4, h5, h6,
+  .navbar-brand,
+  .font-heading {
+    font-family: "Poppins", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-weight: 700;
+    line-height: 1.4em;
+    letter-spacing: -.025em;
+  }
+
+  h1,
+  .display-1,
+  .display-2,
+  .display-3,
+  .display-4 {
+    font-size: clamp(2.35rem, 5vw, 3.5rem);
+    line-height: 1.4em;
+  }
+
+  h2,
+  .display-5,
+  .display-6 {
+    font-size: clamp(1.85rem, 4vw, 3rem);
+    line-height: 1.4em;
+  }
+
+  .ks-bg { background: var(--ks-bg); }
+  .ks-panel { background: var(--ks-panel); }
+  .ks-panel-2 { background: var(--ks-panel-2); }
+  .ks-border { border-color: var(--ks-line) !important; }
+  .ks-muted { color: var(--ks-muted) !important; }
+  .ks-green { color: var(--ks-green) !important; }
+  .ks-section { padding-top: 6.5rem; padding-bottom: 6.5rem; }
+  .ks-section-sm { padding-top: 4.5rem; padding-bottom: 4.5rem; }
+
+  .ks-flat-card {
+    background: var(--ks-panel);
+    border: 1px solid var(--ks-line);
+    border-radius: 1.5rem;
+  }
+
+  .ks-flat-card-2 {
+    background: var(--ks-panel-2);
+    border: 1px solid var(--ks-line);
+    border-radius: 1.5rem;
+  }
+
+  .ks-pill {
+    border: 0;
+    background: var(--ks-soft);
+    color: rgba(255,255,255,.72);
+  }
+
+  .ks-img {
+    border: 0;
+    border-radius: 1.5rem;
+  }
+
+  .ks-cover {
+    position: relative;
+    overflow: hidden;
+    background-size: cover;
+    background-position: center;
+  }
+
+  .ks-cover > .container {
+    position: relative;
+    z-index: 2;
+  }
+
+  .ks-cover::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(90deg, rgba(5,7,13,.96) 0%, rgba(5,7,13,.86) 48%, rgba(5,7,13,.56) 100%),
+      linear-gradient(180deg, rgba(5,7,13,.35) 0%, rgba(5,7,13,.88) 100%);
+    z-index: 1;
+  }
+
+  .ks-cover-center::before {
+    background:
+      linear-gradient(180deg, rgba(5,7,13,.84) 0%, rgba(5,7,13,.94) 100%),
+      linear-gradient(90deg, rgba(5,7,13,.35) 0%, rgba(5,7,13,.55) 100%);
+  }
+
+  .ks-cover-hero { background-image: url("https://picsum.photos/seed/koderstory-hero-cover/1800/1100"); }
+  .ks-cover-services { background-image: url("https://picsum.photos/seed/koderstory-services-cover/1800/1000"); }
+  .ks-cover-industries { background-image: url("https://picsum.photos/seed/koderstory-industries-cover/1800/1000"); }
+  .ks-cover-resources { background-image: url("https://picsum.photos/seed/koderstory-resources-cover/1800/1000"); }
+  .ks-cover-about { background-image: url("https://picsum.photos/seed/koderstory-about-cover/1800/1000"); }
+  .ks-cover-contact { background-image: url("https://picsum.photos/seed/koderstory-contact-cover/1800/1000"); }
+
+  .btn-success {
+    --bs-btn-bg: var(--ks-green);
+    --bs-btn-border-color: var(--ks-green);
+    --bs-btn-color: #03110e;
+    --bs-btn-hover-bg: #ffffff;
+    --bs-btn-hover-border-color: #ffffff;
+    --bs-btn-hover-color: #05070d;
+  }
+
+  .btn-outline-light {
+    --bs-btn-border-color: rgba(255,255,255,.22);
+  }
+
+  .form-control,
+  .form-select {
+    background-color: var(--ks-panel);
+    border-color: var(--ks-line);
+    color: #fff;
+  }
+
+  .form-control::placeholder { color: rgba(255,255,255,.42); }
+
+  .form-control:focus,
+  .form-select:focus {
+    background-color: var(--ks-panel);
+    border-color: var(--ks-green);
+    color: #fff;
+    box-shadow: none;
+  }
+
+  .ks-card-img {
+    width: 100%;
+    height: 260px;
+    object-fit: cover;
+  }
+
+  .ks-card-img-sm {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+  }
+
+  .ks-card-img-lg {
+    width: 100%;
+    height: 360px;
+    object-fit: cover;
+  }
+@media (min-width: 768px) {
+}
+
+  @media (min-width: 1200px) {
+}
+
+
+  .ks-img-cover-parent {
+    width: 100%;
+    height: 100%;
+    min-height: 520px;
+    object-fit: cover;
+    border-radius: 1.5rem;
+  }
+100% { background-position: 62% 46%; }
+  }
+100% { transform: translate3d(4%, 3%, 0) scale(1.06); opacity: 1; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    
+}
+
+  .ks-navbar {
+    background: transparent !important;
+    border-radius: 0;
+    box-shadow: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    transition:
+      padding .24s ease,
+      background-color .24s ease,
+      box-shadow .24s ease,
+      backdrop-filter .24s ease,
+      border-radius .24s ease,
+      margin .24s ease;
+  }
+
+  .ks-navbar .container {
+    transition: padding-top .24s ease, padding-bottom .24s ease;
+  }
+
+  .ks-navbar:not(.ks-navbar-scrolled) .navbar-brand,
+  .ks-navbar:not(.ks-navbar-scrolled) .nav-link,
+  .ks-navbar:not(.ks-navbar-scrolled) .btn {
+    text-shadow: 0 2px 12px rgba(0, 0, 0, .65);
+  }
+@media (min-width: 1200px) {
+    .ks-navbar-scrolled {
+      max-width: 1140px;
+    }
+  }
+
+  @media (min-width: 1400px) {
+    .ks-navbar-scrolled {
+      max-width: 1320px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ks-navbar,
+    .ks-navbar .container {
+      transition: none;
+    }
+  }
+
+
+  .ks-emoji-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    filter: drop-shadow(0 2px 8px rgba(0,0,0,.22));
+  }
+
+  .ks-step-image {
+    width: 100%;
+    height: 260px;
+    object-fit: cover;
+  }
+
+  .ks-step-card {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .ks-step-number {
+    width: 3rem;
+    height: 3rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--ks-green);
+    color: #03110e;
+    border-radius: 999px;
+    font-family: "Poppins", sans-serif;
+    font-weight: 700;
+  }
+
+  .ks-step-arrow {
+    color: var(--ks-green);
+    font-size: 2rem;
+    line-height: 1;
+  }
+
+
+  .ks-navbar-scrolled {
+    margin: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    max-width: none;
+    background: rgba(0, 0, 0, 0.31) !important;
+    border-radius: 0;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(9.6px);
+    -webkit-backdrop-filter: blur(9.6px);
+  }
+
+  .ks-navbar-scrolled .container {
+    padding-top: .55rem !important;
+    padding-bottom: .55rem !important;
+  }
+
+  .ks-hero-side-img {
+    width: 100%;
+    height: 100%;
+    min-height: 520px;
+    object-fit: cover;
+    border-radius: 1.5rem;
+  }
+
+  .ks-work-thumb {
+    width: 100%;
+    height: 320px;
+    object-fit: cover;
+  }
+
+  .ks-work-thumb-lg {
+    width: 100%;
+    height: 520px;
+    object-fit: cover;
+  }
+
+</style>
+<title>Property &amp; Real Estate — Koderstory</title>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark fixed-top ks-navbar">
+  <div class="container py-3">
+    <a class="navbar-brand d-flex align-items-center gap-2" href="index.html">
+      <span class="badge text-bg-success rounded-circle p-2">K</span>
+      <span>Koderstory</span>
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="mainNavbar">
+      <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-lg-center gap-lg-2">
+        <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+        <li class="nav-item"><a class="nav-link" href="services.html">Services</a></li>
+        <li class="nav-item"><a class="nav-link active" href="industries.html">Industries</a></li>
+        <li class="nav-item"><a class="nav-link" href="work.html">Work</a></li>
+        <li class="nav-item"><a class="nav-link" href="resources.html">Resources</a></li>
+        <li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
+        <li class="nav-item ms-lg-3"><a class="btn btn-success rounded-pill px-4" href="contact.html">Konsultasikan Sistem</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<main>
+  <section class="ks-section ks-bg ks-cover ks-cover-industries">
+    <div class="container">
+      <a href="industries.html" class="link-success link-underline-opacity-0">← Back to Industries</a>
+      <div class="row g-5 align-items-center mt-3">
+        <div class="col-lg-7">
+          <span class="badge ks-pill rounded-pill px-3 py-2 mb-4">Industry</span>
+          <h1 class="display-4 mb-4">Property & Real Estate</h1>
+          <p class="lead ks-muted mb-0">Property listing, unit catalog, inquiry, CRM property, dan lead dashboard.</p>
+        </div>
+        <div class="col-lg-5">
+          <img src="https://picsum.photos/seed/industry-property-real-estate-main-1/1280/820" class="img-fluid ks-img" alt="Property & Real Estate">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="ks-section ks-panel">
+    <div class="container">
+      <div class="row g-5 align-items-center">
+        <div class="col-lg-5">
+          <div class="ks-flat-card p-4 p-lg-5">
+            <span class="ks-emoji-icon display-6" aria-hidden="true">🏠</span>
+            <h2 class="display-6 mt-4 mb-4">How Koderstory Helps</h2>
+            <p class="ks-muted mb-0">Kami membantu merancang website, sistem custom, ERP, dashboard, dan workflow automation yang sesuai dengan kebutuhan operasional industri ini.</p>
+          </div>
+        </div>
+        <div class="col-lg-7">
+          <div class="row g-3">
+            <div class="col-12"><img src="https://picsum.photos/seed/industry-property-real-estate-square-2/800/800" class="img-fluid ks-img" alt="Property & Real Estate workflow"></div>
+            <div class="col-6"><img src="https://picsum.photos/seed/industry-property-real-estate-wide-3/1000/650" class="img-fluid ks-img" alt="Property & Real Estate visual"></div>
+            <div class="col-6"><img src="https://picsum.photos/seed/industry-property-real-estate-card-4/900/600" class="img-fluid ks-img" alt="Property & Real Estate visual"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="ks-section ks-bg">
+    <div class="container">
+      <p class="small ks-green mb-3">Example Solutions</p>
+      <h2 class="display-6 mb-5">Contoh solusi yang bisa dibangun</h2>
+      <div class="row g-4">
+<div class="col-md-6">
+  <div class="ks-flat-card h-100">
+    <img src="https://picsum.photos/seed/industry-property-real-estate-square-5/800/800" class="ks-card-img rounded-top-4" alt="Property Listing Website">
+    <div class="p-4">
+      <span class="ks-emoji-icon fs-3" aria-hidden="true">✅</span>
+      <h3 class="h5 mt-4 mb-3">Property Listing Website</h3>
+      <p class="ks-muted mb-0">Website listing untuk menampilkan rumah, tanah, villa, apartemen, atau properti lain yang tersedia.</p>
+    </div>
+  </div>
+</div>
+<div class="col-md-6">
+  <div class="ks-flat-card h-100">
+    <img src="https://picsum.photos/seed/industry-property-real-estate-wide-6/1000/650" class="ks-card-img rounded-top-4" alt="Unit Catalog">
+    <div class="p-4">
+      <span class="ks-emoji-icon fs-3" aria-hidden="true">✅</span>
+      <h3 class="h5 mt-4 mb-3">Unit Catalog</h3>
+      <p class="ks-muted mb-0">Katalog unit untuk tipe, harga, lokasi, luas, fasilitas, dan status ketersediaan.</p>
+    </div>
+  </div>
+</div>
+<div class="col-md-6">
+  <div class="ks-flat-card h-100">
+    <img src="https://picsum.photos/seed/industry-property-real-estate-card-7/900/600" class="ks-card-img rounded-top-4" alt="Property Detail Page">
+    <div class="p-4">
+      <span class="ks-emoji-icon fs-3" aria-hidden="true">✅</span>
+      <h3 class="h5 mt-4 mb-3">Property Detail Page</h3>
+      <p class="ks-muted mb-0">Halaman detail untuk foto, deskripsi, spesifikasi, fasilitas, lokasi, harga, dan kontak inquiry.</p>
+    </div>
+  </div>
+</div>
+<div class="col-md-6">
+  <div class="ks-flat-card h-100">
+    <img src="https://picsum.photos/seed/industry-property-real-estate-square-8/800/800" class="ks-card-img rounded-top-4" alt="Inquiry Form">
+    <div class="p-4">
+      <span class="ks-emoji-icon fs-3" aria-hidden="true">✅</span>
+      <h3 class="h5 mt-4 mb-3">Inquiry Form</h3>
+      <p class="ks-muted mb-0">Form untuk pertanyaan, permintaan survey, atau minat pembelian dari calon pelanggan.</p>
+    </div>
+  </div>
+</div>
+<div class="col-md-6">
+  <div class="ks-flat-card h-100">
+    <img src="https://picsum.photos/seed/industry-property-real-estate-wide-9/1000/650" class="ks-card-img rounded-top-4" alt="CRM Property">
+    <div class="p-4">
+      <span class="ks-emoji-icon fs-3" aria-hidden="true">✅</span>
+      <h3 class="h5 mt-4 mb-3">CRM Property</h3>
+      <p class="ks-muted mb-0">CRM untuk lead, customer, status follow-up, minat unit, jadwal survey, dan histori komunikasi.</p>
+    </div>
+  </div>
+</div>
+<div class="col-md-6">
+  <div class="ks-flat-card h-100">
+    <img src="https://picsum.photos/seed/industry-property-real-estate-card-10/900/600" class="ks-card-img rounded-top-4" alt="Lead Tracking Dashboard">
+    <div class="p-4">
+      <span class="ks-emoji-icon fs-3" aria-hidden="true">✅</span>
+      <h3 class="h5 mt-4 mb-3">Lead Tracking Dashboard</h3>
+      <p class="ks-muted mb-0">Dashboard untuk memantau lead, status prospek, sumber inquiry, jadwal survey, dan peluang closing.</p>
+    </div>
+  </div>
+</div></div>
+    </div>
+  </section>
+
+  
+<section class="ks-section-sm ks-panel">
+  <div class="container">
+    <div class="row g-5 align-items-center">
+      <div class="col-lg-8">
+        <span class="badge ks-pill rounded-pill px-3 py-2 mb-4">Next Step</span>
+        <h2 class="display-6 mb-4">Siap Merapikan Workflow Bisnis Anda?</h2>
+        <p class="ks-muted mb-0">Jika bisnis Anda mulai merasa terbatas dengan Excel, dokumen manual, marketplace, atau proses operasional yang tersebar, Koderstory dapat membantu merancang sistem digital yang lebih rapi dan scalable.</p>
+      </div>
+      <div class="col-lg-4 text-lg-end">
+        <a href="contact.html" class="btn btn-success btn-lg rounded-pill px-4">Diskusikan Kebutuhan Sistem</a>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+
+<footer class="ks-bg text-white">
+  <div class="container py-5">
+    <div class="row g-5">
+      <div class="col-lg-5">
+        <div class="d-flex align-items-center gap-2 mb-4">
+          <span class="badge text-bg-success rounded-circle p-2">K</span>
+          <span class="h5 mb-0 font-heading">Koderstory</span>
+        </div>
+        <p class="ks-muted mb-4">Membantu bisnis bertransformasi dari workflow manual berbasis Excel, dokumen, chat, atau tools terpisah menjadi sistem digital yang lebih rapi dan scalable.</p>
+        <a href="contact.html" class="btn btn-success rounded-pill px-4">Diskusikan Kebutuhan Sistem</a>
+      </div>
+      <div class="col-6 col-lg-2">
+        <h6>Pages</h6>
+        <ul class="list-unstyled small mt-3">
+          <li class="mb-2"><a class="link-light link-underline-opacity-0" href="index.html">Home</a></li>
+          <li class="mb-2"><a class="link-light link-underline-opacity-0" href="services.html">Services</a></li>
+          <li class="mb-2"><a class="link-light link-underline-opacity-0" href="industries.html">Industries</a></li>
+          <li class="mb-2"><a class="link-light link-underline-opacity-0" href="resources.html">Resources</a></li>
+          <li class="mb-2"><a class="link-light link-underline-opacity-0" href="about.html">About</a></li>
+        </ul>
+      </div>
+      <div class="col-6 col-lg-3">
+        <h6>Services</h6>
+        <ul class="list-unstyled small mt-3">
+          <li class="mb-2"><a class="link-light link-underline-opacity-0" href="service-website-cms-online-store.html">Website, CMS & Online Store</a></li>
+          <li class="mb-2"><a class="link-light link-underline-opacity-0" href="service-custom-business-system.html">Custom Business System</a></li>
+          <li class="mb-2"><a class="link-light link-underline-opacity-0" href="service-erp-workflow-automation.html">ERP & Workflow Automation</a></li>
+        </ul>
+      </div>
+      <div class="col-lg-2">
+        <h6>Contact</h6>
+        <div class="small ks-muted mt-3">
+          <p class="mb-2">Karangkajen MG III/894 Yogyakarta</p>
+          <p class="mb-2">hello@koderstory.com</p>
+          <p class="mb-0">+62 89 77 377 477</p>
+        </div>
+      </div>
+    </div>
+    <hr class="ks-border my-5">
+    <div class="d-flex flex-column flex-md-row justify-content-between gap-2 small ks-muted">
+      <span>© 2026 PT. koderstory software indonesia. All rights reserved.</span>
+      <a class="link-light link-underline-opacity-0" href="privacy-policy.html">Privacy Policy</a>
+    </div>
+  </div>
+</footer>
+<script src="assets/main.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

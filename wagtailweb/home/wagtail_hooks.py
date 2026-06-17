@@ -1,5 +1,6 @@
 import json
 
+from django.dispatch import receiver
 from django.templatetags.static import static
 from django.urls import path
 from django.utils.html import format_html
@@ -10,8 +11,15 @@ from wagtail.admin.rich_text.converters.html_to_contentstate import (
     BlockElementHandler,
 )
 from wagtail.admin.rich_text.editors.draftail import features as draftail_features
+from wagtail.signals import init_new_page
 from . import views
-from .models import BlogIndexPage, HomePage, ServiceDetailPage, ServicePage
+from .models import (
+    DARK_FLAT_LAYOUT,
+    BlogIndexPage,
+    HomePage,
+    ServiceDetailPage,
+    ServicePage,
+)
 
 
 RICH_TEXT_ALIGNMENT_FEATURES = [
@@ -37,6 +45,35 @@ RICH_TEXT_ALIGNMENT_FEATURES = [
         "description": _("Align right"),
     },
 ]
+
+
+def _unique_child_slug(parent, base_slug):
+    existing_slugs = set(parent.get_children().values_list("slug", flat=True))
+    slug = base_slug
+    counter = 2
+    while slug in existing_slugs:
+        slug = f"{base_slug}-{counter}"
+        counter += 1
+    return slug
+
+
+@receiver(init_new_page)
+def seed_dark_flat_page_identity(sender, page, parent, **kwargs):
+    page_title = getattr(page, "DARK_FLAT_PAGE_TITLE", "")
+    page_slug = getattr(page, "DARK_FLAT_PAGE_SLUG", "")
+    if not page_title and not page_slug:
+        return
+
+    if page_title and not page.title:
+        page.title = page_title
+    if page_title and not page.draft_title:
+        page.draft_title = page_title
+    if page_slug:
+        page.slug = _unique_child_slug(parent, page_slug)
+
+    populate = getattr(page, "_populate_dark_content", None)
+    if populate:
+        populate(apply_boolean_seed=True)
 
 
 @hooks.register("register_icons")
@@ -131,6 +168,11 @@ def global_admin_js():
             for key, value in ServicePage.SERVICES_VARIANTS.items()
         },
     }
+    variants.setdefault("header", {})[DARK_FLAT_LAYOUT] = ["copy", "buttons", "media"]
+    variants.setdefault("clients", {})[DARK_FLAT_LAYOUT] = ["logos"]
+    variants.setdefault("content", {})[DARK_FLAT_LAYOUT] = ["copy"]
+    variants.setdefault("listing", {})[DARK_FLAT_LAYOUT] = ["cards"]
+    variants.setdefault("cta", {})[DARK_FLAT_LAYOUT] = ["copy", "buttons"]
     return format_html(
         '<script>window.KS_SECTION_VARIANTS = {};</script>'
         '<script src="{}?v=5"></script>'

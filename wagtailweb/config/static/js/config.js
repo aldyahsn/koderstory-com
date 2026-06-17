@@ -14,7 +14,7 @@
 
   function onScroll() {
     var scrollY = window.scrollY;
-    var scrolled = scrollY > 50;
+    var scrolled = scrollY > 0;
 
     if (scrolled) {
       navbar.classList.add('ks-navbar-scrolled');
