@@ -48,24 +48,6 @@ def register_alignment_icons(icons):
     ]
 
 
-@hooks.register("register_page_listing_more_buttons")
-def explore_page_listing_more_buttons(page, user, next_url=None):
-    """Replace Edit with Explore in the dropdown for navigable pages."""
-    from wagtail.admin.wagtail_hooks import PageListingEditButton
-
-    if page.is_navigable:
-        # Show Explore (arrow) for pages with children
-        class ExploreButton(PageListingEditButton):
-            label = _("Explore")
-            icon_name = "arrow-right"
-            url_name = "wagtailadmin_explore"
-
-        yield ExploreButton(page=page, next_url=next_url, priority=2)
-    else:
-        # Show Edit (pencil) for leaf pages
-        yield PageListingEditButton(page=page, next_url=next_url, priority=2)
-
-
 @hooks.register("register_rich_text_features")
 def register_rich_text_alignment(features):
     for alignment in RICH_TEXT_ALIGNMENT_FEATURES:
@@ -154,13 +136,11 @@ def global_admin_js():
         '<script src="{}?v=5"></script>'
         '<script src="{}?v=1"></script>'
         '<script src="{}?v=1"></script>'
-        '<script src="{}?v=3"></script>'
         '<script src="{}?v=1"></script>',
         mark_safe(json.dumps(variants)),
         static("admin/js/section-editor.js"),
         static("admin/js/reset-settings.js"),
         static("admin/js/set-default-theme.js"),
-        static("admin/js/page-explorer-link-swap.js"),
         static("admin/js/social-icon-variant.js"),
     )
 
