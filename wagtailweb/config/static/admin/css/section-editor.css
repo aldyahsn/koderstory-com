@@ -206,19 +206,78 @@
   height: 1.5rem;
 }
 
-.ks-global-color-group input[type="text"] {
-  padding-inline-start: 3.25rem;
-  background:
-    linear-gradient(
-      90deg,
-      var(--ks-color-preview, transparent) 0 2.25rem,
-      transparent 2.25rem
-    ),
-    var(--w-color-surface-field);
+.ks-color-row > .w-panel__content {
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)) !important;
+  gap: 1.5rem 1.75rem !important;
 }
 
-.ks-color-row > .w-panel__content {
-  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)) !important;
+.ks-global-color-group .ks-color-input {
+  display: grid;
+  grid-template-columns: 2.5rem minmax(0, 1fr);
+  gap: 0.5rem;
+  align-items: center;
+  width: 100%;
+  max-width: 24rem;
+}
+
+.ks-global-color-group .ks-color-input__main,
+.ks-global-color-group .ks-color-input__value {
+  min-width: 0;
+  width: 100%;
+}
+
+.ks-global-color-group .ks-color-input__value {
+  font-family:
+    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
+    "Courier New", monospace;
+}
+
+.ks-global-color-group .ks-color-input__picker {
+  width: 2.5rem;
+  max-width: 2.5rem;
+  height: 2.5rem;
+  min-width: 2.5rem;
+  padding: 0;
+  border: 1px solid var(--w-color-border-field-default);
+  border-radius: 0.25rem;
+  background: var(--w-color-surface-field);
+  cursor: pointer;
+}
+
+.ks-global-color-group .ks-color-input__picker::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+.ks-global-color-group .ks-color-input__picker::-webkit-color-swatch {
+  border: 0;
+  border-radius: 0.1875rem;
+}
+
+.ks-global-color-group .ks-color-input__picker::-moz-color-swatch {
+  border: 0;
+  border-radius: 0.1875rem;
+}
+
+.ks-global-color-group .ks-color-input__alpha {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) 3rem;
+  gap: 0.5rem;
+  align-items: center;
+  margin: 0;
+  color: var(--w-color-text-label);
+  font-size: 0.8125rem;
+}
+
+.ks-global-color-group .ks-color-input__alpha-range {
+  width: 100%;
+  min-width: 0;
+}
+
+.ks-global-color-group .ks-color-input__alpha-output {
+  color: var(--w-color-text-context);
+  font-variant-numeric: tabular-nums;
+  text-align: end;
 }
 
 .ks-component-group[hidden] {

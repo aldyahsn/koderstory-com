@@ -104,7 +104,7 @@ def register_rich_text_alignment(features):
 @hooks.register("insert_global_admin_css")
 def global_admin_css():
     return format_html(
-        '<link rel="stylesheet" href="{}?v=13">'
+        '<link rel="stylesheet" href="{}?v=14">'
         '<link rel="stylesheet" href="{}?v=1">',
         static("admin/css/section-editor.css"),
         static("admin/css/reset-settings.css"),
@@ -151,10 +151,10 @@ def global_admin_js():
     }
     return format_html(
         '<script>window.KS_SECTION_VARIANTS = {};</script>'
-        '<script src="{}?v=4"></script>'
+        '<script src="{}?v=5"></script>'
         '<script src="{}?v=1"></script>'
         '<script src="{}?v=1"></script>'
-        '<script src="{}?v=2"></script>'
+        '<script src="{}?v=3"></script>'
         '<script src="{}?v=1"></script>',
         mark_safe(json.dumps(variants)),
         static("admin/js/section-editor.js"),

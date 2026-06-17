@@ -202,7 +202,7 @@ class DesignSystemSettings(BaseSiteSetting):
         help_text="Button border width in pixels (0-5)",
     )
     button_border_color = models.CharField(
-        max_length=16,
+        max_length=32,
         default="#4f46e5",
         verbose_name="Button border color",
         help_text="Border color for outlined buttons",
@@ -221,7 +221,7 @@ class DesignSystemSettings(BaseSiteSetting):
     # Image overlay
     OVERLAY_OPACITY_CHOICES = [(i, f"{i}%") for i in range(0, 101, 5)]
     overlay_color = models.CharField(
-        max_length=16,
+        max_length=32,
         default="#ffffff",
         verbose_name="Overlay color",
         help_text="Color for the image overlay. Applied to: hero background image overlay.",
@@ -456,7 +456,7 @@ class DesignSystemSettings(BaseSiteSetting):
 def _color_field(verbose_name, default="", help_text=""):
     """Reusable color field — blank = inherit global."""
     return models.CharField(
-        max_length=16,
+        max_length=32,
         blank=True,
         default=default,
         verbose_name=verbose_name,
@@ -1441,7 +1441,7 @@ class HomePage(Page):
     )
     hero_image_alt = models.CharField(max_length=120, blank=True)
     hero_overlay_color = models.CharField(
-        max_length=16, blank=True, default="#0f172a", verbose_name="Overlay color",
+        max_length=32, blank=True, default="#0f172a", verbose_name="Overlay color",
         help_text="Color tint for the background image overlay.",
     )
     OVERLAY_OPACITY_CHOICES = [(i, f"{i}%") for i in range(0, 101, 5)]
@@ -2157,7 +2157,7 @@ class ServicePage(Page):
     header_secondary_button_url = models.CharField(max_length=255, blank=True)
     header_image = models.ForeignKey("wagtailimages.Image", null=True, blank=True, on_delete=models.SET_NULL, related_name="+")
     header_image_alt = models.CharField(max_length=120, blank=True)
-    header_overlay_color = models.CharField(max_length=16, blank=True, default="#0f172a", verbose_name="Overlay color")
+    header_overlay_color = models.CharField(max_length=32, blank=True, default="#0f172a", verbose_name="Overlay color")
     header_overlay_opacity = models.PositiveSmallIntegerField(choices=HomePage.OVERLAY_OPACITY_CHOICES, blank=True, null=True, default=70, verbose_name="Overlay opacity")
 
     content_enabled = models.BooleanField(default=True, verbose_name="Section enabled")
@@ -2498,7 +2498,7 @@ class ServiceDetailPage(Page):
     header_secondary_button_url = models.CharField(max_length=255, blank=True)
     header_image = models.ForeignKey("wagtailimages.Image", null=True, blank=True, on_delete=models.SET_NULL, related_name="+")
     header_image_alt = models.CharField(max_length=120, blank=True)
-    header_overlay_color = models.CharField(max_length=16, blank=True, default="#0f172a", verbose_name="Overlay color")
+    header_overlay_color = models.CharField(max_length=32, blank=True, default="#0f172a", verbose_name="Overlay color")
     header_overlay_opacity = models.PositiveSmallIntegerField(choices=HomePage.OVERLAY_OPACITY_CHOICES, blank=True, null=True, default=70, verbose_name="Overlay opacity")
 
     bento_enabled = models.BooleanField(default=True, verbose_name="Section enabled")
@@ -2961,7 +2961,7 @@ class BlogIndexPage(Page):
     header_secondary_button_url = models.CharField(max_length=255, blank=True)
     header_image = models.ForeignKey("wagtailimages.Image", null=True, blank=True, on_delete=models.SET_NULL, related_name="+")
     header_image_alt = models.CharField(max_length=120, blank=True)
-    header_overlay_color = models.CharField(max_length=16, blank=True, default="#0f172a", verbose_name="Overlay color")
+    header_overlay_color = models.CharField(max_length=32, blank=True, default="#0f172a", verbose_name="Overlay color")
     header_overlay_opacity = models.PositiveSmallIntegerField(choices=HomePage.OVERLAY_OPACITY_CHOICES, blank=True, null=True, default=70, verbose_name="Overlay opacity")
 
     blog_enabled = models.BooleanField(default=True, verbose_name="Section enabled")

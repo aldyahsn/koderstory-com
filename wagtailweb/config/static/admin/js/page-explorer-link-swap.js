@@ -1,31 +1,68 @@
 (() => {
   const rowSelector = ".c-page-explorer__item";
   const titleLinkSelector = ".c-page-explorer__item__link";
-  const actionLinkSelector = ".c-page-explorer__item__action--small";
+  const editActionSelector = ".c-page-explorer__item__action--small";
+  const exploreActionSelector =
+    '.c-page-explorer__item__action[data-ks-page-explorer-action="explore"]';
+  const childActionSelector =
+    ".c-page-explorer__item__action:not(.c-page-explorer__item__action--small)";
+
+  const setIcon = (link, iconName, titleText) => {
+    const icon = link.querySelector("svg use");
+    if (icon) {
+      icon.setAttribute("href", `#icon-${iconName}`);
+      icon.setAttribute("xlink:href", `#icon-${iconName}`);
+    }
+
+    const title = link.querySelector("svg title");
+    if (title) {
+      title.textContent = titleText;
+    }
+  };
+
+  const ensureExploreAction = (row, editAction) => {
+    const existingAction =
+      row.querySelector(exploreActionSelector) ||
+      row.querySelector(childActionSelector);
+
+    if (existingAction) {
+      existingAction.dataset.ksPageExplorerAction = "explore";
+      return existingAction;
+    }
+
+    const exploreAction = editAction.cloneNode(true);
+    exploreAction.classList.remove("c-page-explorer__item__action--small");
+    exploreAction.dataset.ksPageExplorerAction = "explore";
+    editAction.insertAdjacentElement("afterend", exploreAction);
+
+    return exploreAction;
+  };
 
   const getPageUrls = (row) => {
     const titleLink = row.querySelector(titleLinkSelector);
-    const actionLink = row.querySelector(actionLinkSelector);
+    const editAction = row.querySelector(editActionSelector);
 
-    if (!titleLink || !actionLink) {
+    if (!titleLink || !editAction) {
       return null;
     }
 
     const pageUrl =
       row.dataset.ksPageExplorerUrl ||
-      actionLink.href.replace(/edit\/(?:\?.*)?$/, "");
+      editAction.href.replace(/edit\/(?:\?.*)?$/, "");
 
-    if (!row.dataset.ksPageExplorerUrl && pageUrl === actionLink.href) {
+    if (!row.dataset.ksPageExplorerUrl && pageUrl === editAction.href) {
       return null;
     }
 
     row.dataset.ksPageExplorerUrl = pageUrl;
+    const editUrl = `${pageUrl}edit/`;
 
     return {
       titleLink,
-      actionLink,
+      editAction,
+      exploreAction: ensureExploreAction(row, editAction),
       pageUrl,
-      editUrl: `${pageUrl}edit/`,
+      editUrl,
     };
   };
 
@@ -36,18 +73,11 @@
     }
 
     urls.titleLink.href = urls.editUrl;
-    urls.actionLink.href = urls.pageUrl;
+    urls.editAction.href = urls.editUrl;
+    urls.exploreAction.href = urls.pageUrl;
 
-    const icon = urls.actionLink.querySelector("svg use");
-    if (icon) {
-      icon.setAttribute("href", "#icon-arrow-right");
-      icon.setAttribute("xlink:href", "#icon-arrow-right");
-    }
-
-    const title = urls.actionLink.querySelector("svg title");
-    if (title) {
-      title.textContent = "View child pages";
-    }
+    setIcon(urls.editAction, "edit", "Edit this page");
+    setIcon(urls.exploreAction, "arrow-right", "View child pages");
   };
 
   const updateRows = (root) => {
@@ -58,7 +88,9 @@
     "click",
     (event) => {
       const target = event.target instanceof Element ? event.target : null;
-      const link = target?.closest(`${titleLinkSelector}, ${actionLinkSelector}`);
+      const link = target?.closest(
+        `${titleLinkSelector}, ${editActionSelector}, ${exploreActionSelector}, ${childActionSelector}`,
+      );
       const row = link?.closest(rowSelector);
       const urls = row && getPageUrls(row);
 
@@ -66,7 +98,10 @@
         return;
       }
 
-      const destination = link === urls.titleLink ? urls.editUrl : urls.pageUrl;
+      const destination =
+        link === urls.titleLink || link === urls.editAction
+          ? urls.editUrl
+          : urls.pageUrl;
       link.href = destination;
 
       if (

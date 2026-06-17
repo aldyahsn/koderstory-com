@@ -63,23 +63,116 @@
     });
   }
 
-  function initColorPreviews(root = document) {
-    root
-      .querySelectorAll('.ks-global-color-group input[type="text"]')
-      .forEach((input) => {
-        if (input.dataset.ksColorPreviewReady === "true") return;
-        input.dataset.ksColorPreviewReady = "true";
+  function clamp(value, min, max) {
+    return Math.min(Math.max(value, min), max);
+  }
 
-        const refresh = () => {
-          const value = input.value.trim();
-          const isColor = CSS.supports("color", value);
-          input.style.setProperty(
-            "--ks-color-preview",
-            isColor ? value : "transparent",
-          );
+  function toHex(value) {
+    return clamp(Math.round(value), 0, 255).toString(16).padStart(2, "0");
+  }
+
+  function alphaToHex(alpha) {
+    return toHex((clamp(alpha, 0, 100) / 100) * 255);
+  }
+
+  function hexToAlpha(hex) {
+    return Math.round((parseInt(hex, 16) / 255) * 100);
+  }
+
+  function parseHex(value) {
+    const match = value
+      .trim()
+      .match(/^#([0-9a-f]{3}|[0-9a-f]{4}|[0-9a-f]{6}|[0-9a-f]{8})$/i);
+    if (!match) return null;
+
+    const raw = match[1];
+    if (raw.length === 3 || raw.length === 4) {
+      const chars = raw.split("");
+      return {
+        hex: `#${chars[0]}${chars[0]}${chars[1]}${chars[1]}${chars[2]}${chars[2]}`,
+        alpha: raw.length === 4 ? hexToAlpha(`${chars[3]}${chars[3]}`) : 100,
+      };
+    }
+
+    return {
+      hex: `#${raw.slice(0, 6)}`,
+      alpha: raw.length === 8 ? hexToAlpha(raw.slice(6, 8)) : 100,
+    };
+  }
+
+  function parseRgb(value) {
+    const match = value
+      .trim()
+      .match(/^rgba?\(\s*([0-9.]+)\s*,\s*([0-9.]+)\s*,\s*([0-9.]+)(?:\s*,\s*([0-9.]+))?\s*\)$/i);
+    if (!match) return null;
+
+    const alpha =
+      match[4] === undefined ? 100 : clamp(Number(match[4]) * 100, 0, 100);
+
+    return {
+      hex: `#${toHex(Number(match[1]))}${toHex(Number(match[2]))}${toHex(Number(match[3]))}`,
+      alpha,
+    };
+  }
+
+  function colorState(value) {
+    if (!value.trim()) {
+      return { hex: "#ffffff", alpha: 100, preview: "transparent", blank: true };
+    }
+
+    const parsed = parseHex(value) || parseRgb(value);
+    if (parsed) {
+      return {
+        ...parsed,
+        preview: colorValue(parsed.hex, parsed.alpha),
+        blank: false,
+      };
+    }
+
+    return {
+      hex: "#ffffff",
+      alpha: 100,
+      preview: CSS.supports("color", value) ? value : "transparent",
+      blank: false,
+    };
+  }
+
+  function colorValue(hex, alpha) {
+    return alpha >= 100 ? hex : `${hex}${alphaToHex(alpha)}`;
+  }
+
+  function initColorInputs(root = document) {
+    root
+      .querySelectorAll("[data-ks-color-input]")
+      .forEach((widget) => {
+        if (widget.dataset.ksColorInputReady === "true") return;
+
+        const input = widget.querySelector(".ks-color-input__value");
+        const picker = widget.querySelector(".ks-color-input__picker");
+        const alpha = widget.querySelector(".ks-color-input__alpha-range");
+        const alphaOutput = widget.querySelector(".ks-color-input__alpha-output");
+
+        if (!input || !picker || !alpha || !alphaOutput) return;
+        widget.dataset.ksColorInputReady = "true";
+
+        const refresh = (syncPicker = true) => {
+          const state = colorState(input.value);
+          if (syncPicker) picker.value = state.hex;
+          alpha.value = String(Math.round(state.alpha));
+          alphaOutput.value = `${Math.round(state.alpha)}%`;
+          picker.style.background = state.preview;
         };
 
         input.addEventListener("input", refresh);
+        picker.addEventListener("input", () => {
+          input.value = colorValue(picker.value, Number(alpha.value));
+          refresh(false);
+        });
+        alpha.addEventListener("input", () => {
+          input.value = colorValue(picker.value, Number(alpha.value));
+          refresh(false);
+        });
+
         refresh();
       });
   }
@@ -100,7 +193,7 @@
 
   function init() {
     initHelpTooltips();
-    initColorPreviews();
+    initColorInputs();
 
     Object.keys(variants).forEach((section) => {
       const select = document.querySelector(`[name="${section}_layout"]`);
