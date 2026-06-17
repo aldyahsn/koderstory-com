@@ -1,0 +1,20 @@
+{% load wagtailimages_tags %}
+<article class="ks-blog-card">
+    {% if blog.image %}
+    <a class="ks-blog-card-media" href="{{ blog.link_url|default:'#' }}" aria-label="{{ blog.title }}">
+        {% image blog.image fill-900x600 alt=blog.image_alt|default:blog.title %}
+    </a>
+    {% endif %}
+    <div class="ks-blog-card-body">
+        <div class="ks-blog-meta">
+            {% if blog.category %}<span>{{ blog.category }}</span>{% endif %}
+            {% if blog.publish_date %}<time datetime="{{ blog.publish_date|date:'Y-m-d' }}">{{ blog.publish_date|date:"M j, Y" }}</time>{% endif %}
+        </div>
+        <h3 class="h5 mb-3"><a href="{{ blog.link_url|default:'#' }}">{{ blog.title }}</a></h3>
+        {% if blog.excerpt %}<p class="text-secondary mb-0">{{ blog.excerpt }}</p>{% endif %}
+        <div class="ks-blog-card-footer">
+            {% if blog.author_name %}<span>{{ blog.author_name }}</span>{% endif %}
+            {% if blog.link_label %}<a class="ks-text-link" href="{{ blog.link_url|default:'#' }}">{{ blog.link_label }} <span aria-hidden="true">&rarr;</span></a>{% endif %}
+        </div>
+    </div>
+</article>

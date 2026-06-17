@@ -1,0 +1,10 @@
+<section id="{{ page.bento_anchor_id|default:'service-highlights' }}" class="ks-section ks-height-{{ page.bento_section_height }}" data-ks-vertical="{{ page.bento_vertical_alignment }}"{% if page.bento_style %} style="{{ page.bento_style }}"{% endif %}>
+    <div class="container ks-container" data-ks-align="{{ page.bento_text_alignment }}" data-ks-width="{{ page.bento_content_width }}">
+        {% include "home/components/bento_heading.html" %}
+        <div class="ks-bento-grid ks-bento-grid--featured">
+            {% for item in page.bento_items.all %}
+            {% include "home/components/bento_card.html" %}
+            {% endfor %}
+        </div>
+    </div>
+</section>

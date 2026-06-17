@@ -11,7 +11,7 @@ from wagtail.admin.rich_text.converters.html_to_contentstate import (
 )
 from wagtail.admin.rich_text.editors.draftail import features as draftail_features
 from . import views
-from .models import HomePage, ServicePage
+from .models import BlogIndexPage, HomePage, ServiceDetailPage, ServicePage
 
 
 RICH_TEXT_ALIGNMENT_FEATURES = [
@@ -135,6 +135,14 @@ def global_admin_js():
         "content": {
             key: value["components"]
             for key, value in ServicePage.CONTENT_VARIANTS.items()
+        },
+        "bento": {
+            key: value["components"]
+            for key, value in ServiceDetailPage.BENTO_VARIANTS.items()
+        },
+        "blog": {
+            key: value["components"]
+            for key, value in BlogIndexPage.BLOG_VARIANTS.items()
         },
         "services": {
             key: value["components"]

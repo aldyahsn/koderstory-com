@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block body_class %}template-servicedetailpage{% endblock %}
+
+{% block content %}
+<main>
+    {% if page.header_enabled %}{% include page.header_template_name %}{% endif %}
+    {% if page.bento_enabled %}{% include page.bento_template_name %}{% endif %}
+    {% if page.content_enabled %}{% include page.content_template_name %}{% endif %}
+    {% if page.features_enabled %}{% include page.features_template_name %}{% endif %}
+    {% if page.cta_enabled %}{% include page.cta_template_name %}{% endif %}
+</main>
+{% endblock %}

@@ -1,0 +1,14 @@
+{% load wagtailcore_tags wagtailimages_tags %}
+<article class="ks-bento-card">
+    {% if item.image %}
+    <div class="ks-bento-media">
+        {% image item.image fill-900x600 alt=item.image_alt|default:item.title %}
+    </div>
+    {% endif %}
+    <div class="ks-bento-body">
+        {% if item.label %}<p class="ks-eyebrow mb-2">{{ item.label }}</p>{% endif %}
+        <h3 class="h5 mb-3">{{ item.title }}</h3>
+        {% if item.description %}<div class="text-secondary mb-0">{{ item.description|richtext }}</div>{% endif %}
+        {% if item.link_label %}<a class="ks-text-link" href="{{ item.link_url|default:'#' }}">{{ item.link_label }} <span aria-hidden="true">&rarr;</span></a>{% endif %}
+    </div>
+</article>

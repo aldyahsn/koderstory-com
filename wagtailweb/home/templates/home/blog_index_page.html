@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block body_class %}template-blogindexpage{% endblock %}
+
+{% block content %}
+<main>
+    {% if page.header_enabled %}{% include page.header_template_name %}{% endif %}
+    {% if page.blog_enabled %}{% include page.blog_template_name %}{% endif %}
+    {% if page.cta_enabled %}{% include page.cta_template_name %}{% endif %}
+</main>
+{% endblock %}

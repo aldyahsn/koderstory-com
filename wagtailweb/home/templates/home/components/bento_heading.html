@@ -1,0 +1,6 @@
+{% load wagtailcore_tags %}
+<div class="ks-copy mb-5">
+    {% if page.bento_eyebrow %}<p class="ks-eyebrow mb-3">{{ page.bento_eyebrow }}</p>{% endif %}
+    {% if page.bento_title %}<h2 class="display-5 mb-3">{{ page.bento_title }}</h2>{% endif %}
+    {% if page.bento_description %}<div class="lead text-secondary mb-0">{{ page.bento_description|richtext }}</div>{% endif %}
+</div>

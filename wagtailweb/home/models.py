@@ -2094,6 +2094,8 @@ class HomePage(Page):
 
 
 class ServicePage(Page):
+    subpage_types = []
+
     SECTION_HEIGHT_CHOICES = HomePage.SECTION_HEIGHT_CHOICES
     CONTENT_WIDTH_CHOICES = HomePage.CONTENT_WIDTH_CHOICES
     ALIGNMENT_CHOICES = HomePage.ALIGNMENT_CHOICES
@@ -2424,6 +2426,784 @@ class ServicePageServiceItem(Orderable):
     panels = [
         FieldRowPanel([FieldPanel("title"), FieldPanel("subtitle")]),
         FieldPanel("description"),
+        FieldRowPanel([FieldPanel("image"), FieldPanel("image_alt")]),
+        FieldRowPanel([FieldPanel("link_label"), FieldPanel("link_url")]),
+    ]
+
+    def __str__(self):
+        return self.title
+
+
+class ServiceDetailPage(Page):
+    parent_page_types = ["home.HomePage"]
+    subpage_types = []
+
+    SECTION_HEIGHT_CHOICES = HomePage.SECTION_HEIGHT_CHOICES
+    CONTENT_WIDTH_CHOICES = HomePage.CONTENT_WIDTH_CHOICES
+    ALIGNMENT_CHOICES = HomePage.ALIGNMENT_CHOICES
+    VERTICAL_ALIGNMENT_CHOICES = HomePage.VERTICAL_ALIGNMENT_CHOICES
+
+    HEADER_CENTERED = ServicePage.HEADER_CENTERED
+    HEADER_SIMPLE = ServicePage.HEADER_SIMPLE
+    HEADER_BACKGROUND_IMAGE = ServicePage.HEADER_BACKGROUND_IMAGE
+    HEADER_VARIANTS = {
+        HEADER_CENTERED: ServicePage.HEADER_VARIANTS[HEADER_CENTERED],
+        HEADER_SIMPLE: ServicePage.HEADER_VARIANTS[HEADER_SIMPLE],
+        HEADER_BACKGROUND_IMAGE: ServicePage.HEADER_VARIANTS[HEADER_BACKGROUND_IMAGE],
+    }
+    HEADER_LAYOUT_CHOICES = [(key, value["label"]) for key, value in HEADER_VARIANTS.items()]
+
+    CONTENT_CENTERED = ServicePage.CONTENT_CENTERED
+    CONTENT_SPLIT_IMAGE = ServicePage.CONTENT_SPLIT_IMAGE
+    CONTENT_TWO_COLUMN = ServicePage.CONTENT_TWO_COLUMN
+    CONTENT_WITH_TESTIMONIAL = ServicePage.CONTENT_WITH_TESTIMONIAL
+    CONTENT_VARIANTS = {
+        CONTENT_CENTERED: ServicePage.CONTENT_VARIANTS[CONTENT_CENTERED],
+        CONTENT_SPLIT_IMAGE: ServicePage.CONTENT_VARIANTS[CONTENT_SPLIT_IMAGE],
+        CONTENT_TWO_COLUMN: ServicePage.CONTENT_VARIANTS[CONTENT_TWO_COLUMN],
+        CONTENT_WITH_TESTIMONIAL: ServicePage.CONTENT_VARIANTS[CONTENT_WITH_TESTIMONIAL],
+    }
+    CONTENT_LAYOUT_CHOICES = [(key, value["label"]) for key, value in CONTENT_VARIANTS.items()]
+
+    BENTO_THREE_COLUMN = "three_column"
+    BENTO_TWO_ROW = "two_row"
+    BENTO_FEATURED_LARGE = "featured_large"
+    BENTO_COMPACT_CARDS = "compact_cards"
+    BENTO_VARIANTS = {
+        BENTO_THREE_COLUMN: {"label": "Three column", "template": "home/sections/service_detail/bento/three_column.html", "components": ["copy", "items"]},
+        BENTO_TWO_ROW: {"label": "Two row", "template": "home/sections/service_detail/bento/two_row.html", "components": ["copy", "items"]},
+        BENTO_FEATURED_LARGE: {"label": "Featured large", "template": "home/sections/service_detail/bento/featured_large.html", "components": ["copy", "items"]},
+        BENTO_COMPACT_CARDS: {"label": "Compact cards", "template": "home/sections/service_detail/bento/compact_cards.html", "components": ["copy", "items"]},
+    }
+    BENTO_LAYOUT_CHOICES = [(key, value["label"]) for key, value in BENTO_VARIANTS.items()]
+
+    FEATURES_VARIANTS = HomePage.FEATURES_VARIANTS
+    FEATURES_LAYOUT_CHOICES = HomePage.FEATURES_LAYOUT_CHOICES
+    CTA_VARIANTS = HomePage.CTA_VARIANTS
+    CTA_LAYOUT_CHOICES = HomePage.CTA_LAYOUT_CHOICES
+
+    header_enabled = models.BooleanField(default=True, verbose_name="Section enabled")
+    header_layout = models.CharField(max_length=40, choices=HEADER_LAYOUT_CHOICES, default=HEADER_CENTERED, verbose_name="Layout")
+    header_anchor_id = models.CharField(max_length=40, blank=True, default="service-detail-header", verbose_name="Anchor ID")
+    header_section_height = models.CharField(max_length=16, choices=SECTION_HEIGHT_CHOICES, default="spacious", verbose_name="Section height")
+    header_content_width = models.CharField(max_length=16, choices=CONTENT_WIDTH_CHOICES, default="normal", verbose_name="Section width")
+    header_text_alignment = models.CharField(max_length=16, choices=ALIGNMENT_CHOICES, default="center", verbose_name="Horizontal alignment")
+    header_vertical_alignment = models.CharField(max_length=16, choices=VERTICAL_ALIGNMENT_CHOICES, default="center", verbose_name="Vertical alignment")
+    header_eyebrow = models.CharField(max_length=80, blank=True)
+    header_title = models.CharField(max_length=180, blank=True)
+    header_description = RichTextField(blank=True, features=RICH_TEXT_FEATURES)
+    header_primary_button_label = models.CharField(max_length=80, blank=True)
+    header_primary_button_url = models.CharField(max_length=255, blank=True)
+    header_secondary_button_label = models.CharField(max_length=80, blank=True)
+    header_secondary_button_url = models.CharField(max_length=255, blank=True)
+    header_image = models.ForeignKey("wagtailimages.Image", null=True, blank=True, on_delete=models.SET_NULL, related_name="+")
+    header_image_alt = models.CharField(max_length=120, blank=True)
+    header_overlay_color = models.CharField(max_length=16, blank=True, default="#0f172a", verbose_name="Overlay color")
+    header_overlay_opacity = models.PositiveSmallIntegerField(choices=HomePage.OVERLAY_OPACITY_CHOICES, blank=True, null=True, default=70, verbose_name="Overlay opacity")
+
+    bento_enabled = models.BooleanField(default=True, verbose_name="Section enabled")
+    bento_layout = models.CharField(max_length=40, choices=BENTO_LAYOUT_CHOICES, default=BENTO_FEATURED_LARGE, verbose_name="Layout")
+    bento_anchor_id = models.CharField(max_length=40, blank=True, default="service-highlights", verbose_name="Anchor ID")
+    bento_section_height = models.CharField(max_length=16, choices=SECTION_HEIGHT_CHOICES, default="normal", verbose_name="Section height")
+    bento_content_width = models.CharField(max_length=16, choices=CONTENT_WIDTH_CHOICES, default="wide", verbose_name="Section width")
+    bento_text_alignment = models.CharField(max_length=16, choices=ALIGNMENT_CHOICES, default="center", verbose_name="Horizontal alignment")
+    bento_vertical_alignment = models.CharField(max_length=16, choices=VERTICAL_ALIGNMENT_CHOICES, default="center", verbose_name="Vertical alignment")
+    bento_eyebrow = models.CharField(max_length=80, blank=True)
+    bento_title = models.CharField(max_length=180, blank=True)
+    bento_description = RichTextField(blank=True, features=RICH_TEXT_FEATURES)
+
+    content_enabled = models.BooleanField(default=True, verbose_name="Section enabled")
+    content_layout = models.CharField(max_length=40, choices=CONTENT_LAYOUT_CHOICES, default=CONTENT_TWO_COLUMN, verbose_name="Layout")
+    content_anchor_id = models.CharField(max_length=40, blank=True, default="service-overview", verbose_name="Anchor ID")
+    content_section_height = models.CharField(max_length=16, choices=SECTION_HEIGHT_CHOICES, default="normal", verbose_name="Section height")
+    content_content_width = models.CharField(max_length=16, choices=CONTENT_WIDTH_CHOICES, default="normal", verbose_name="Section width")
+    content_text_alignment = models.CharField(max_length=16, choices=ALIGNMENT_CHOICES, default="left", verbose_name="Horizontal alignment")
+    content_vertical_alignment = models.CharField(max_length=16, choices=VERTICAL_ALIGNMENT_CHOICES, default="center", verbose_name="Vertical alignment")
+    content_eyebrow = models.CharField(max_length=80, blank=True)
+    content_title = models.CharField(max_length=180, blank=True)
+    content_description = RichTextField(blank=True, features=RICH_TEXT_FEATURES)
+    content_body = RichTextField(blank=True, features=RICH_TEXT_FEATURES)
+    content_image = models.ForeignKey("wagtailimages.Image", null=True, blank=True, on_delete=models.SET_NULL, related_name="+")
+    content_image_alt = models.CharField(max_length=120, blank=True)
+    content_testimonial_quote = RichTextField(blank=True, features=RICH_TEXT_FEATURES)
+    content_testimonial_name = models.CharField(max_length=100, blank=True)
+    content_testimonial_role = models.CharField(max_length=120, blank=True)
+
+    features_enabled = models.BooleanField(default=True, verbose_name="Section enabled")
+    features_layout = models.CharField(max_length=40, choices=FEATURES_LAYOUT_CHOICES, default=HomePage.FEATURES_FEATURE_GRID, verbose_name="Layout")
+    features_anchor_id = models.CharField(max_length=40, blank=True, default="service-features", verbose_name="Anchor ID")
+    features_section_height = models.CharField(max_length=16, choices=SECTION_HEIGHT_CHOICES, default="normal", verbose_name="Section height")
+    features_content_width = models.CharField(max_length=16, choices=CONTENT_WIDTH_CHOICES, default="wide", verbose_name="Section width")
+    features_text_alignment = models.CharField(max_length=16, choices=ALIGNMENT_CHOICES, default="left", verbose_name="Horizontal alignment")
+    features_vertical_alignment = models.CharField(max_length=16, choices=VERTICAL_ALIGNMENT_CHOICES, default="center", verbose_name="Vertical alignment")
+    features_eyebrow = models.CharField(max_length=80, blank=True)
+    features_title = models.CharField(max_length=180, blank=True)
+    features_description = RichTextField(blank=True, features=RICH_TEXT_FEATURES)
+    features_image = models.ForeignKey("wagtailimages.Image", null=True, blank=True, on_delete=models.SET_NULL, related_name="+")
+    features_image_alt = models.CharField(max_length=120, blank=True)
+    features_button_label = models.CharField(max_length=80, blank=True)
+    features_button_url = models.CharField(max_length=255, blank=True)
+    features_testimonial_quote = RichTextField(blank=True, features=RICH_TEXT_FEATURES)
+    features_testimonial_name = models.CharField(max_length=100, blank=True)
+    features_testimonial_role = models.CharField(max_length=120, blank=True)
+    features_testimonial_avatar = models.ForeignKey("wagtailimages.Image", null=True, blank=True, on_delete=models.SET_NULL, related_name="+")
+
+    cta_enabled = models.BooleanField(default=True, verbose_name="Section enabled")
+    cta_layout = models.CharField(max_length=40, choices=CTA_LAYOUT_CHOICES, default=HomePage.CTA_CENTERED, verbose_name="Layout")
+    cta_anchor_id = models.CharField(max_length=40, blank=True, default="contact", verbose_name="Anchor ID")
+    cta_section_height = models.CharField(max_length=16, choices=SECTION_HEIGHT_CHOICES, default="compact", verbose_name="Section height")
+    cta_content_width = models.CharField(max_length=16, choices=CONTENT_WIDTH_CHOICES, default="normal", verbose_name="Section width")
+    cta_text_alignment = models.CharField(max_length=16, choices=ALIGNMENT_CHOICES, default="center", verbose_name="Horizontal alignment")
+    cta_vertical_alignment = models.CharField(max_length=16, choices=VERTICAL_ALIGNMENT_CHOICES, default="center", verbose_name="Vertical alignment")
+    cta_eyebrow = models.CharField(max_length=80, blank=True)
+    cta_title = models.CharField(max_length=180, blank=True)
+    cta_description = RichTextField(blank=True, features=RICH_TEXT_FEATURES)
+    cta_primary_button_label = models.CharField(max_length=80, blank=True)
+    cta_primary_button_url = models.CharField(max_length=255, blank=True)
+    cta_secondary_button_label = models.CharField(max_length=80, blank=True)
+    cta_secondary_button_url = models.CharField(max_length=255, blank=True)
+    cta_image = models.ForeignKey("wagtailimages.Image", null=True, blank=True, on_delete=models.SET_NULL, related_name="+")
+    cta_image_alt = models.CharField(max_length=120, blank=True)
+
+    header_theme = models.ForeignKey(ColorTheme, null=True, blank=True, on_delete=models.SET_NULL, related_name="+", verbose_name="Header color theme")
+    bento_theme = models.ForeignKey(ColorTheme, null=True, blank=True, on_delete=models.SET_NULL, related_name="+", verbose_name="Bento color theme")
+    content_theme = models.ForeignKey(ColorTheme, null=True, blank=True, on_delete=models.SET_NULL, related_name="+", verbose_name="Content color theme")
+    features_theme = models.ForeignKey(ColorTheme, null=True, blank=True, on_delete=models.SET_NULL, related_name="+", verbose_name="Features color theme")
+    cta_theme = models.ForeignKey(ColorTheme, null=True, blank=True, on_delete=models.SET_NULL, related_name="+", verbose_name="CTA color theme")
+
+    @staticmethod
+    def _theme_style(theme):
+        return HomePage._theme_style(theme)
+
+    @property
+    def header_style(self):
+        return self._theme_style(self.header_theme)
+
+    @property
+    def bento_style(self):
+        return self._theme_style(self.bento_theme)
+
+    @property
+    def content_style(self):
+        return self._theme_style(self.content_theme)
+
+    @property
+    def features_style(self):
+        return self._theme_style(self.features_theme)
+
+    @property
+    def cta_style(self):
+        return self._theme_style(self.cta_theme)
+
+    @staticmethod
+    def _variant_template(variants, selected, fallback):
+        return variants.get(selected, variants[fallback])["template"]
+
+    @property
+    def header_template_name(self):
+        return self._variant_template(self.HEADER_VARIANTS, self.header_layout, self.HEADER_CENTERED)
+
+    @property
+    def bento_template_name(self):
+        return self._variant_template(self.BENTO_VARIANTS, self.bento_layout, self.BENTO_FEATURED_LARGE)
+
+    @property
+    def content_template_name(self):
+        return self._variant_template(self.CONTENT_VARIANTS, self.content_layout, self.CONTENT_TWO_COLUMN)
+
+    @property
+    def features_template_name(self):
+        return self._variant_template(self.FEATURES_VARIANTS, self.features_layout, HomePage.FEATURES_FEATURE_GRID)
+
+    @property
+    def cta_template_name(self):
+        return self._variant_template(self.CTA_VARIANTS, self.cta_layout, HomePage.CTA_CENTERED)
+
+    content_panels = Page.content_panels + [
+        MultiFieldPanel(
+            [
+                MultiFieldPanel(
+                    [FieldPanel("header_eyebrow"), FieldPanel("header_title"), FieldPanel("header_description")],
+                    heading="Content",
+                    classname="ks-component-group",
+                    attrs={"data-section": "header", "data-component": "copy"},
+                ),
+                MultiFieldPanel(
+                    [
+                        FieldRowPanel([FieldPanel("header_primary_button_label"), FieldPanel("header_primary_button_url")]),
+                        FieldRowPanel([FieldPanel("header_secondary_button_label"), FieldPanel("header_secondary_button_url")]),
+                    ],
+                    heading="Buttons",
+                    classname="ks-component-group",
+                    attrs={"data-section": "header", "data-component": "buttons"},
+                ),
+                MultiFieldPanel(
+                    [
+                        FieldRowPanel([FieldPanel("header_image"), FieldPanel("header_image_alt")]),
+                        FieldRowPanel([FieldPanel("header_overlay_color", widget=ColorInputWidget()), FieldPanel("header_overlay_opacity")]),
+                    ],
+                    heading="Media",
+                    classname="ks-component-group",
+                    attrs={"data-section": "header", "data-component": "media"},
+                ),
+            ],
+            heading="Header section",
+        ),
+        MultiFieldPanel(
+            [
+                MultiFieldPanel(
+                    [FieldPanel("bento_eyebrow"), FieldPanel("bento_title"), FieldPanel("bento_description")],
+                    heading="Content",
+                    classname="ks-component-group",
+                    attrs={"data-section": "bento", "data-component": "copy"},
+                ),
+                MultiFieldPanel(
+                    [InlinePanel("bento_items", label="Bento item")],
+                    heading="Bento items",
+                    classname="ks-component-group",
+                    attrs={"data-section": "bento", "data-component": "items"},
+                ),
+            ],
+            heading="Bento section",
+        ),
+        MultiFieldPanel(
+            [
+                MultiFieldPanel(
+                    [FieldPanel("content_eyebrow"), FieldPanel("content_title"), FieldPanel("content_description"), FieldPanel("content_body")],
+                    heading="Content",
+                    classname="ks-component-group",
+                    attrs={"data-section": "content", "data-component": "copy"},
+                ),
+                MultiFieldPanel(
+                    [FieldRowPanel([FieldPanel("content_image"), FieldPanel("content_image_alt")])],
+                    heading="Media",
+                    classname="ks-component-group",
+                    attrs={"data-section": "content", "data-component": "media"},
+                ),
+                MultiFieldPanel(
+                    [
+                        FieldPanel("content_testimonial_quote"),
+                        FieldRowPanel([FieldPanel("content_testimonial_name"), FieldPanel("content_testimonial_role")]),
+                    ],
+                    heading="Testimonial",
+                    classname="ks-component-group",
+                    attrs={"data-section": "content", "data-component": "testimonial"},
+                ),
+            ],
+            heading="Content section",
+        ),
+        MultiFieldPanel(
+            [
+                MultiFieldPanel(
+                    [FieldPanel("features_eyebrow"), FieldPanel("features_title"), FieldPanel("features_description")],
+                    heading="Content",
+                    classname="ks-component-group",
+                    attrs={"data-section": "features", "data-component": "copy"},
+                ),
+                MultiFieldPanel(
+                    [InlinePanel("features", label="Feature")],
+                    heading="Feature items",
+                    classname="ks-component-group",
+                    attrs={"data-section": "features", "data-component": "items"},
+                ),
+                MultiFieldPanel(
+                    [FieldRowPanel([FieldPanel("features_image"), FieldPanel("features_image_alt")])],
+                    heading="Media",
+                    classname="ks-component-group",
+                    attrs={"data-section": "features", "data-component": "media"},
+                ),
+                MultiFieldPanel(
+                    [FieldRowPanel([FieldPanel("features_button_label"), FieldPanel("features_button_url")])],
+                    heading="Button",
+                    classname="ks-component-group",
+                    attrs={"data-section": "features", "data-component": "button"},
+                ),
+                MultiFieldPanel(
+                    [
+                        FieldPanel("features_testimonial_quote"),
+                        FieldRowPanel([FieldPanel("features_testimonial_name"), FieldPanel("features_testimonial_role")]),
+                        FieldPanel("features_testimonial_avatar"),
+                    ],
+                    heading="Testimonial",
+                    classname="ks-component-group",
+                    attrs={"data-section": "features", "data-component": "testimonial"},
+                ),
+            ],
+            heading="Feature section",
+        ),
+        MultiFieldPanel(
+            [
+                MultiFieldPanel(
+                    [FieldPanel("cta_eyebrow"), FieldPanel("cta_title"), FieldPanel("cta_description")],
+                    heading="Content",
+                    classname="ks-component-group",
+                    attrs={"data-section": "cta", "data-component": "copy"},
+                ),
+                MultiFieldPanel(
+                    [
+                        FieldRowPanel([FieldPanel("cta_primary_button_label"), FieldPanel("cta_primary_button_url")]),
+                        FieldRowPanel([FieldPanel("cta_secondary_button_label"), FieldPanel("cta_secondary_button_url")]),
+                    ],
+                    heading="Buttons",
+                    classname="ks-component-group",
+                    attrs={"data-section": "cta", "data-component": "buttons"},
+                ),
+                MultiFieldPanel(
+                    [FieldRowPanel([FieldPanel("cta_image"), FieldPanel("cta_image_alt")])],
+                    heading="Media",
+                    classname="ks-component-group",
+                    attrs={"data-section": "cta", "data-component": "media"},
+                ),
+            ],
+            heading="CTA section",
+        ),
+    ]
+
+    @classmethod
+    def _settings_panel(cls, prefix, heading, theme_field):
+        return MultiFieldPanel(
+            [
+                FieldRowPanel([FieldPanel(f"{prefix}_enabled", classname="w-field--small"), FieldPanel(f"{prefix}_layout")], heading="Layout"),
+                FieldRowPanel([FieldPanel(f"{prefix}_section_height"), FieldPanel(f"{prefix}_content_width")], heading="Spacing"),
+                FieldRowPanel([FieldPanel(f"{prefix}_text_alignment"), FieldPanel(f"{prefix}_vertical_alignment")], heading="Alignment"),
+                FieldRowPanel([FieldPanel(f"{prefix}_anchor_id")], heading="Advanced"),
+                FieldRowPanel([FieldPanel(theme_field)], heading="Color theme"),
+            ],
+            heading=heading,
+            classname="ks-section-settings",
+        )
+
+    section_settings_panels = [
+        _settings_panel.__func__(None, "header", "Header settings", "header_theme"),
+        _settings_panel.__func__(None, "bento", "Bento settings", "bento_theme"),
+        _settings_panel.__func__(None, "content", "Content settings", "content_theme"),
+        _settings_panel.__func__(None, "features", "Feature settings", "features_theme"),
+        _settings_panel.__func__(None, "cta", "CTA settings", "cta_theme"),
+    ]
+
+    edit_handler = TabbedInterface(
+        [
+            ObjectList(content_panels, heading="Content"),
+            ObjectList(section_settings_panels, heading="Section settings"),
+            ObjectList(Page.promote_panels, heading="Promote"),
+            ObjectList(Page.settings_panels, heading="Settings"),
+        ]
+    )
+
+    class Meta:
+        verbose_name = "Service detail page"
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if not self.pk:
+            has_content = any(kwargs.get(f) for f in ["header_title", "bento_title", "content_title", "features_title", "cta_title"])
+            if not has_content:
+                self._populate_dummy_content()
+
+    def _populate_dummy_content(self):
+        self.header_eyebrow = "Service"
+        self.header_title = "Custom web applications that fit the way your team works"
+        self.header_description = "A focused service detail page for explaining outcomes, scope, workflow, and next steps."
+        self.header_primary_button_label = "Start a project"
+        self.header_primary_button_url = "#contact"
+        self.header_secondary_button_label = "See highlights"
+        self.header_secondary_button_url = "#service-highlights"
+        self.header_image_alt = "Custom web application planning"
+        self.bento_eyebrow = "Highlights"
+        self.bento_title = "What this service gives you"
+        self.bento_description = "Use the bento cards to surface the strongest proof points, capabilities, and delivery outcomes."
+        self.content_eyebrow = "Overview"
+        self.content_title = "Built around the real operational problem"
+        self.content_description = "The work starts with the workflow, users, and constraints, then turns them into a maintainable system."
+        self.content_body = "<p>Use this section for the deeper service explanation: what is included, how delivery works, and where this service creates leverage.</p>"
+        self.content_image_alt = "Service delivery workflow"
+        self.content_testimonial_quote = "The project gave us a cleaner workflow and a system we could actually manage after launch."
+        self.content_testimonial_name = "Client partner"
+        self.content_testimonial_role = "Operations lead"
+        self.features_eyebrow = "Capabilities"
+        self.features_title = "Everything needed to move from idea to shipped system"
+        self.features_description = "Feature cards explain the concrete parts of the service without burying the reader in implementation detail."
+        self.features_button_label = "Discuss the scope"
+        self.features_button_url = "#contact"
+        self.features_image_alt = "Service feature illustration"
+        self.features_testimonial_quote = "The fixed scope and clear build path helped everyone stay aligned."
+        self.features_testimonial_name = "Project sponsor"
+        self.features_testimonial_role = "Founder"
+        self.cta_eyebrow = "Next step"
+        self.cta_title = "Ready to shape this into a practical project?"
+        self.cta_description = "Share the workflow, constraints, and outcome you need. We will turn it into a clear first scope."
+        self.cta_primary_button_label = "Start a project"
+        self.cta_primary_button_url = "/contact/"
+        self.cta_secondary_button_label = "Back to services"
+        self.cta_secondary_button_url = "../"
+        self.cta_image_alt = "Project consultation"
+
+    def save(self, *args, **kwargs):
+        is_new = self.pk is None
+        if is_new:
+            self._populate_dummy_content()
+        super().save(*args, **kwargs)
+        if is_new:
+            self._create_dummy_related()
+
+    def _create_dummy_related(self):
+        if not self.bento_items.exists():
+            for label, title, description in [
+                ("Workflow", "Mapped around daily work", "Model screens, permissions, and actions around the way the team already operates."),
+                ("Delivery", "Shipped in usable stages", "Prioritize the smallest complete release first, then improve with real feedback."),
+                ("Control", "Built for non-technical editors", "Expose the right controls in Wagtail or admin tooling without making the system fragile."),
+                ("Support", "Ready for long-term ownership", "Document decisions and keep the implementation maintainable after launch."),
+            ]:
+                ServiceDetailBentoItem.objects.create(page=self, label=label, title=title, description=description)
+        if not self.features.exists():
+            for icon, title, description in [
+                ("UX", "Workflow-first UX", "Interfaces shaped around repeatable tasks and clear decisions."),
+                ("CMS", "Editorial controls", "Structured Wagtail fields that keep content flexible without chaos."),
+                ("API", "System integrations", "Connect internal tools, third-party APIs, and reporting flows."),
+                ("OPS", "Operational support", "Maintain, refine, and extend the service after launch."),
+            ]:
+                ServiceDetailFeature.objects.create(page=self, icon=icon, title=title, description=description, link_label="Learn more", link_url="#contact")
+
+
+class ServiceDetailBentoItem(Orderable):
+    page = ParentalKey("home.ServiceDetailPage", on_delete=models.CASCADE, related_name="bento_items")
+    label = models.CharField(max_length=80, blank=True)
+    title = models.CharField(max_length=120)
+    description = RichTextField(blank=True, features=RICH_TEXT_FEATURES)
+    image = models.ForeignKey("wagtailimages.Image", null=True, blank=True, on_delete=models.SET_NULL, related_name="+")
+    image_alt = models.CharField(max_length=120, blank=True)
+    link_label = models.CharField(max_length=80, blank=True)
+    link_url = models.CharField(max_length=255, blank=True)
+
+    panels = [
+        FieldRowPanel([FieldPanel("label"), FieldPanel("title")]),
+        FieldPanel("description"),
+        FieldRowPanel([FieldPanel("image"), FieldPanel("image_alt")]),
+        FieldRowPanel([FieldPanel("link_label"), FieldPanel("link_url")]),
+    ]
+
+    def __str__(self):
+        return self.title
+
+
+class ServiceDetailFeature(Orderable):
+    page = ParentalKey("home.ServiceDetailPage", on_delete=models.CASCADE, related_name="features")
+    icon = models.CharField(max_length=8, blank=True, default="✓")
+    title = models.CharField(max_length=120)
+    description = RichTextField(blank=True, features=RICH_TEXT_FEATURES)
+    link_label = models.CharField(max_length=80, blank=True)
+    link_url = models.CharField(max_length=255, blank=True)
+
+    panels = [
+        FieldRowPanel([FieldPanel("icon"), FieldPanel("title")]),
+        FieldPanel("description"),
+        FieldRowPanel([FieldPanel("link_label"), FieldPanel("link_url")]),
+    ]
+
+    def __str__(self):
+        return self.title
+
+
+class BlogIndexPage(Page):
+    parent_page_types = ["home.HomePage"]
+
+    SECTION_HEIGHT_CHOICES = HomePage.SECTION_HEIGHT_CHOICES
+    CONTENT_WIDTH_CHOICES = HomePage.CONTENT_WIDTH_CHOICES
+    ALIGNMENT_CHOICES = HomePage.ALIGNMENT_CHOICES
+    VERTICAL_ALIGNMENT_CHOICES = HomePage.VERTICAL_ALIGNMENT_CHOICES
+
+    HEADER_CENTERED = ServicePage.HEADER_CENTERED
+    HEADER_SIMPLE = ServicePage.HEADER_SIMPLE
+    HEADER_WITH_STATS = ServicePage.HEADER_WITH_STATS
+    HEADER_BACKGROUND_IMAGE = ServicePage.HEADER_BACKGROUND_IMAGE
+    HEADER_VARIANTS = {
+        HEADER_CENTERED: ServicePage.HEADER_VARIANTS[HEADER_CENTERED],
+        HEADER_SIMPLE: ServicePage.HEADER_VARIANTS[HEADER_SIMPLE],
+        HEADER_WITH_STATS: ServicePage.HEADER_VARIANTS[HEADER_WITH_STATS],
+        HEADER_BACKGROUND_IMAGE: ServicePage.HEADER_VARIANTS[HEADER_BACKGROUND_IMAGE],
+    }
+    HEADER_LAYOUT_CHOICES = [(key, value["label"]) for key, value in HEADER_VARIANTS.items()]
+
+    BLOG_THREE_COLUMN = "three_column"
+    BLOG_THREE_COLUMN_IMAGES = "three_column_images"
+    BLOG_BACKGROUND_IMAGES = "background_images"
+    BLOG_SINGLE_COLUMN = "single_column"
+    BLOG_SINGLE_COLUMN_IMAGES = "single_column_images"
+    BLOG_FEATURED_POST = "featured_post"
+    BLOG_PHOTO_LIST = "photo_list"
+    BLOG_VARIANTS = {
+        BLOG_THREE_COLUMN: {"label": "Three column", "template": "home/sections/blog_index/three_column.html", "components": ["copy", "posts"]},
+        BLOG_THREE_COLUMN_IMAGES: {"label": "Three column with images", "template": "home/sections/blog_index/three_column_images.html", "components": ["copy", "posts"]},
+        BLOG_BACKGROUND_IMAGES: {"label": "Background image cards", "template": "home/sections/blog_index/background_images.html", "components": ["copy", "posts"]},
+        BLOG_SINGLE_COLUMN: {"label": "Single column", "template": "home/sections/blog_index/single_column.html", "components": ["copy", "posts"]},
+        BLOG_SINGLE_COLUMN_IMAGES: {"label": "Single column with images", "template": "home/sections/blog_index/single_column_images.html", "components": ["copy", "posts"]},
+        BLOG_FEATURED_POST: {"label": "With featured post", "template": "home/sections/blog_index/featured_post.html", "components": ["copy", "posts"]},
+        BLOG_PHOTO_LIST: {"label": "With photo and list", "template": "home/sections/blog_index/photo_list.html", "components": ["copy", "posts"]},
+    }
+    BLOG_LAYOUT_CHOICES = [(key, value["label"]) for key, value in BLOG_VARIANTS.items()]
+
+    CTA_VARIANTS = HomePage.CTA_VARIANTS
+    CTA_LAYOUT_CHOICES = HomePage.CTA_LAYOUT_CHOICES
+
+    header_enabled = models.BooleanField(default=True, verbose_name="Section enabled")
+    header_layout = models.CharField(max_length=40, choices=HEADER_LAYOUT_CHOICES, default=HEADER_CENTERED, verbose_name="Layout")
+    header_anchor_id = models.CharField(max_length=40, blank=True, default="blog-header", verbose_name="Anchor ID")
+    header_section_height = models.CharField(max_length=16, choices=SECTION_HEIGHT_CHOICES, default="normal", verbose_name="Section height")
+    header_content_width = models.CharField(max_length=16, choices=CONTENT_WIDTH_CHOICES, default="normal", verbose_name="Section width")
+    header_text_alignment = models.CharField(max_length=16, choices=ALIGNMENT_CHOICES, default="center", verbose_name="Horizontal alignment")
+    header_vertical_alignment = models.CharField(max_length=16, choices=VERTICAL_ALIGNMENT_CHOICES, default="center", verbose_name="Vertical alignment")
+    header_eyebrow = models.CharField(max_length=80, blank=True)
+    header_title = models.CharField(max_length=180, blank=True)
+    header_description = RichTextField(blank=True, features=RICH_TEXT_FEATURES)
+    header_primary_button_label = models.CharField(max_length=80, blank=True)
+    header_primary_button_url = models.CharField(max_length=255, blank=True)
+    header_secondary_button_label = models.CharField(max_length=80, blank=True)
+    header_secondary_button_url = models.CharField(max_length=255, blank=True)
+    header_image = models.ForeignKey("wagtailimages.Image", null=True, blank=True, on_delete=models.SET_NULL, related_name="+")
+    header_image_alt = models.CharField(max_length=120, blank=True)
+    header_overlay_color = models.CharField(max_length=16, blank=True, default="#0f172a", verbose_name="Overlay color")
+    header_overlay_opacity = models.PositiveSmallIntegerField(choices=HomePage.OVERLAY_OPACITY_CHOICES, blank=True, null=True, default=70, verbose_name="Overlay opacity")
+
+    blog_enabled = models.BooleanField(default=True, verbose_name="Section enabled")
+    blog_layout = models.CharField(max_length=40, choices=BLOG_LAYOUT_CHOICES, default=BLOG_THREE_COLUMN_IMAGES, verbose_name="Layout")
+    blog_anchor_id = models.CharField(max_length=40, blank=True, default="articles", verbose_name="Anchor ID")
+    blog_section_height = models.CharField(max_length=16, choices=SECTION_HEIGHT_CHOICES, default="normal", verbose_name="Section height")
+    blog_content_width = models.CharField(max_length=16, choices=CONTENT_WIDTH_CHOICES, default="wide", verbose_name="Section width")
+    blog_text_alignment = models.CharField(max_length=16, choices=ALIGNMENT_CHOICES, default="left", verbose_name="Horizontal alignment")
+    blog_vertical_alignment = models.CharField(max_length=16, choices=VERTICAL_ALIGNMENT_CHOICES, default="center", verbose_name="Vertical alignment")
+    blog_eyebrow = models.CharField(max_length=80, blank=True)
+    blog_title = models.CharField(max_length=180, blank=True)
+    blog_description = RichTextField(blank=True, features=RICH_TEXT_FEATURES)
+
+    cta_enabled = models.BooleanField(default=True, verbose_name="Section enabled")
+    cta_layout = models.CharField(max_length=40, choices=CTA_LAYOUT_CHOICES, default=HomePage.CTA_CENTERED, verbose_name="Layout")
+    cta_anchor_id = models.CharField(max_length=40, blank=True, default="subscribe", verbose_name="Anchor ID")
+    cta_section_height = models.CharField(max_length=16, choices=SECTION_HEIGHT_CHOICES, default="compact", verbose_name="Section height")
+    cta_content_width = models.CharField(max_length=16, choices=CONTENT_WIDTH_CHOICES, default="normal", verbose_name="Section width")
+    cta_text_alignment = models.CharField(max_length=16, choices=ALIGNMENT_CHOICES, default="center", verbose_name="Horizontal alignment")
+    cta_vertical_alignment = models.CharField(max_length=16, choices=VERTICAL_ALIGNMENT_CHOICES, default="center", verbose_name="Vertical alignment")
+    cta_eyebrow = models.CharField(max_length=80, blank=True)
+    cta_title = models.CharField(max_length=180, blank=True)
+    cta_description = RichTextField(blank=True, features=RICH_TEXT_FEATURES)
+    cta_primary_button_label = models.CharField(max_length=80, blank=True)
+    cta_primary_button_url = models.CharField(max_length=255, blank=True)
+    cta_secondary_button_label = models.CharField(max_length=80, blank=True)
+    cta_secondary_button_url = models.CharField(max_length=255, blank=True)
+    cta_image = models.ForeignKey("wagtailimages.Image", null=True, blank=True, on_delete=models.SET_NULL, related_name="+")
+    cta_image_alt = models.CharField(max_length=120, blank=True)
+
+    header_theme = models.ForeignKey(ColorTheme, null=True, blank=True, on_delete=models.SET_NULL, related_name="+", verbose_name="Header color theme")
+    blog_theme = models.ForeignKey(ColorTheme, null=True, blank=True, on_delete=models.SET_NULL, related_name="+", verbose_name="Blog index color theme")
+    cta_theme = models.ForeignKey(ColorTheme, null=True, blank=True, on_delete=models.SET_NULL, related_name="+", verbose_name="CTA color theme")
+
+    @staticmethod
+    def _theme_style(theme):
+        return HomePage._theme_style(theme)
+
+    @property
+    def header_style(self):
+        return self._theme_style(self.header_theme)
+
+    @property
+    def blog_style(self):
+        return self._theme_style(self.blog_theme)
+
+    @property
+    def cta_style(self):
+        return self._theme_style(self.cta_theme)
+
+    @staticmethod
+    def _variant_template(variants, selected, fallback):
+        return variants.get(selected, variants[fallback])["template"]
+
+    @property
+    def header_template_name(self):
+        return self._variant_template(self.HEADER_VARIANTS, self.header_layout, self.HEADER_CENTERED)
+
+    @property
+    def blog_template_name(self):
+        return self._variant_template(self.BLOG_VARIANTS, self.blog_layout, self.BLOG_THREE_COLUMN_IMAGES)
+
+    @property
+    def cta_template_name(self):
+        return self._variant_template(self.CTA_VARIANTS, self.cta_layout, HomePage.CTA_CENTERED)
+
+    content_panels = Page.content_panels + [
+        MultiFieldPanel(
+            [
+                MultiFieldPanel(
+                    [FieldPanel("header_eyebrow"), FieldPanel("header_title"), FieldPanel("header_description")],
+                    heading="Content",
+                    classname="ks-component-group",
+                    attrs={"data-section": "header", "data-component": "copy"},
+                ),
+                MultiFieldPanel(
+                    [
+                        FieldRowPanel([FieldPanel("header_primary_button_label"), FieldPanel("header_primary_button_url")]),
+                        FieldRowPanel([FieldPanel("header_secondary_button_label"), FieldPanel("header_secondary_button_url")]),
+                    ],
+                    heading="Buttons",
+                    classname="ks-component-group",
+                    attrs={"data-section": "header", "data-component": "buttons"},
+                ),
+                MultiFieldPanel(
+                    [
+                        FieldRowPanel([FieldPanel("header_image"), FieldPanel("header_image_alt")]),
+                        FieldRowPanel([FieldPanel("header_overlay_color", widget=ColorInputWidget()), FieldPanel("header_overlay_opacity")]),
+                    ],
+                    heading="Media",
+                    classname="ks-component-group",
+                    attrs={"data-section": "header", "data-component": "media"},
+                ),
+            ],
+            heading="Header section",
+        ),
+        MultiFieldPanel(
+            [
+                MultiFieldPanel(
+                    [FieldPanel("blog_eyebrow"), FieldPanel("blog_title"), FieldPanel("blog_description")],
+                    heading="Content",
+                    classname="ks-component-group",
+                    attrs={"data-section": "blog", "data-component": "copy"},
+                ),
+                MultiFieldPanel(
+                    [InlinePanel("blog_items", label="Article")],
+                    heading="Articles",
+                    classname="ks-component-group",
+                    attrs={"data-section": "blog", "data-component": "posts"},
+                ),
+            ],
+            heading="Blog index section",
+        ),
+        MultiFieldPanel(
+            [
+                MultiFieldPanel(
+                    [FieldPanel("cta_eyebrow"), FieldPanel("cta_title"), FieldPanel("cta_description")],
+                    heading="Content",
+                    classname="ks-component-group",
+                    attrs={"data-section": "cta", "data-component": "copy"},
+                ),
+                MultiFieldPanel(
+                    [
+                        FieldRowPanel([FieldPanel("cta_primary_button_label"), FieldPanel("cta_primary_button_url")]),
+                        FieldRowPanel([FieldPanel("cta_secondary_button_label"), FieldPanel("cta_secondary_button_url")]),
+                    ],
+                    heading="Buttons",
+                    classname="ks-component-group",
+                    attrs={"data-section": "cta", "data-component": "buttons"},
+                ),
+                MultiFieldPanel(
+                    [FieldRowPanel([FieldPanel("cta_image"), FieldPanel("cta_image_alt")])],
+                    heading="Media",
+                    classname="ks-component-group",
+                    attrs={"data-section": "cta", "data-component": "media"},
+                ),
+            ],
+            heading="CTA section",
+        ),
+    ]
+
+    @classmethod
+    def _settings_panel(cls, prefix, heading, theme_field):
+        return MultiFieldPanel(
+            [
+                FieldRowPanel([FieldPanel(f"{prefix}_enabled", classname="w-field--small"), FieldPanel(f"{prefix}_layout")], heading="Layout"),
+                FieldRowPanel([FieldPanel(f"{prefix}_section_height"), FieldPanel(f"{prefix}_content_width")], heading="Spacing"),
+                FieldRowPanel([FieldPanel(f"{prefix}_text_alignment"), FieldPanel(f"{prefix}_vertical_alignment")], heading="Alignment"),
+                FieldRowPanel([FieldPanel(f"{prefix}_anchor_id")], heading="Advanced"),
+                FieldRowPanel([FieldPanel(theme_field)], heading="Color theme"),
+            ],
+            heading=heading,
+            classname="ks-section-settings",
+        )
+
+    section_settings_panels = [
+        _settings_panel.__func__(None, "header", "Header settings", "header_theme"),
+        _settings_panel.__func__(None, "blog", "Blog index settings", "blog_theme"),
+        _settings_panel.__func__(None, "cta", "CTA settings", "cta_theme"),
+    ]
+
+    edit_handler = TabbedInterface(
+        [
+            ObjectList(content_panels, heading="Content"),
+            ObjectList(section_settings_panels, heading="Section settings"),
+            ObjectList(Page.promote_panels, heading="Promote"),
+            ObjectList(Page.settings_panels, heading="Settings"),
+        ]
+    )
+
+    class Meta:
+        verbose_name = "Blog index page"
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if not self.pk:
+            has_content = any(kwargs.get(f) for f in ["header_title", "blog_title", "cta_title"])
+            if not has_content:
+                self._populate_dummy_content()
+
+    def _populate_dummy_content(self):
+        self.header_eyebrow = "Journal"
+        self.header_title = "Notes on practical digital systems"
+        self.header_description = "Read field notes, project thinking, and maintainable web-system ideas from the Koderstory team."
+        self.header_primary_button_label = "Read latest"
+        self.header_primary_button_url = "#articles"
+        self.header_secondary_button_label = "Start a project"
+        self.header_secondary_button_url = "/contact/"
+        self.header_image_alt = "Editorial planning workspace"
+        self.blog_eyebrow = "Latest articles"
+        self.blog_title = "Ideas for building clearer web products"
+        self.blog_description = "Use this section to promote articles, project notes, and practical guides."
+        self.cta_eyebrow = "Stay in touch"
+        self.cta_title = "Want these ideas applied to your own system?"
+        self.cta_description = "Tell us what you are building and we will help shape the next practical step."
+        self.cta_primary_button_label = "Start a project"
+        self.cta_primary_button_url = "/contact/"
+        self.cta_secondary_button_label = "View services"
+        self.cta_secondary_button_url = "/services/"
+
+    def save(self, *args, **kwargs):
+        is_new = self.pk is None
+        if is_new:
+            self._populate_dummy_content()
+        super().save(*args, **kwargs)
+        if is_new:
+            self._create_dummy_related()
+
+    def _create_dummy_related(self):
+        if not self.blog_items.exists():
+            for category, title in [
+                ("Strategy", "How to scope a web system without making it vague"),
+                ("Wagtail", "Editor controls that keep content flexible and sane"),
+                ("Operations", "When an internal tool is better than another spreadsheet"),
+            ]:
+                BlogIndexItem.objects.create(
+                    page=self,
+                    category=category,
+                    title=title,
+                    excerpt="A short summary that explains what readers will learn from this article.",
+                    author_name="Koderstory",
+                    link_label="Read article",
+                    link_url="#",
+                )
+
+
+class BlogIndexItem(Orderable):
+    page = ParentalKey("home.BlogIndexPage", on_delete=models.CASCADE, related_name="blog_items")
+    title = models.CharField(max_length=160)
+    excerpt = models.TextField(blank=True)
+    category = models.CharField(max_length=80, blank=True)
+    author_name = models.CharField(max_length=100, blank=True)
+    publish_date = models.DateField(null=True, blank=True)
+    image = models.ForeignKey("wagtailimages.Image", null=True, blank=True, on_delete=models.SET_NULL, related_name="+")
+    image_alt = models.CharField(max_length=120, blank=True)
+    link_label = models.CharField(max_length=80, blank=True)
+    link_url = models.CharField(max_length=255, blank=True)
+
+    panels = [
+        FieldRowPanel([FieldPanel("category"), FieldPanel("title")]),
+        FieldPanel("excerpt"),
+        FieldRowPanel([FieldPanel("author_name"), FieldPanel("publish_date")]),
         FieldRowPanel([FieldPanel("image"), FieldPanel("image_alt")]),
         FieldRowPanel([FieldPanel("link_label"), FieldPanel("link_url")]),
     ]

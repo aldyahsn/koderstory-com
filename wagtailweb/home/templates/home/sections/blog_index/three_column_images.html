@@ -1,0 +1,10 @@
+<section id="{{ page.blog_anchor_id|default:'articles' }}" class="ks-section ks-height-{{ page.blog_section_height }}" data-ks-vertical="{{ page.blog_vertical_alignment }}"{% if page.blog_style %} style="{{ page.blog_style }}"{% endif %}>
+    <div class="container ks-container" data-ks-align="{{ page.blog_text_alignment }}" data-ks-width="{{ page.blog_content_width }}">
+        {% include "home/components/blog_index_heading.html" %}
+        <div class="ks-blog-grid ks-blog-grid--three ks-blog-grid--images">
+            {% for blog in page.blog_items.all %}
+            {% include "home/components/blog_card.html" %}
+            {% endfor %}
+        </div>
+    </div>
+</section>
