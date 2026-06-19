@@ -1,0 +1,62 @@
+{% load wagtailcore_tags wagtailimages_tags %}
+
+<section id="{{ section.anchor_id|default:'hero' }}" class="ks-section{% if section.style == 'cover' %} ks-section-page-cover{% elif section.style == 'simple' %} ks-section-page-panel{% endif %} ks-height-spacious" data-ks-vertical="center">
+    {% if section.style == "cover" %}
+        {% if section.media.image %}
+            {% image section.media.image fill-1800x1100 as hero_img %}
+            <img class="ks-section-page-cover__image" src="{{ hero_img.url }}" alt="{{ section.media.image_alt }}">
+        {% elif section.media.fallback_image_url %}
+            <img class="ks-section-page-cover__image" src="{{ section.media.fallback_image_url }}" alt="{{ section.media.image_alt }}">
+        {% endif %}
+    {% endif %}
+    <div class="container ks-container">
+        <div class="row g-5 align-items-center">
+            <div class="{% if section.style == 'split' %}col-lg-6{% else %}{% if section.side_note %}col-lg-8{% else %}col-lg-8{% endif %}{% endif %}">
+                {% if section.eyebrow %}<p class="ks-eyebrow mb-3">{{ section.eyebrow }}</p>{% endif %}
+                <h1 class="display-4 mt-4 mb-4">{{ section.title }}</h1>
+                {% if section.description %}<div class="lead text-secondary mb-4">{{ section.description|richtext }}</div>{% endif %}
+                {% if section.primary_button.label or section.secondary_button.label %}
+                <div class="ks-button-group">
+                    {% if section.primary_button.label %}<a href="{{ section.primary_button.url|default:'#' }}" class="btn btn-success btn-lg rounded-pill px-4">{{ section.primary_button.label }}</a>{% endif %}
+                    {% if section.secondary_button.label %}<a href="{{ section.secondary_button.url|default:'#' }}" class="btn btn-outline-light btn-lg rounded-pill px-4">{{ section.secondary_button.label }}</a>{% endif %}
+                </div>
+                {% endif %}
+            </div>
+            {% if section.style != "split" and section.side_note %}
+            <div class="col-lg-4">
+                <div class="text-secondary">{{ section.side_note|richtext }}</div>
+            </div>
+            {% endif %}
+            {% if section.style == "split" %}
+            <div class="col-lg-6">
+                {% if section.gallery %}
+                <div class="vstack gap-3">
+                    {% if section.media.image %}
+                        {% image section.media.image fill-1280x820 class="img-fluid ks-section-page-img" alt=section.media.image_alt %}
+                    {% elif section.media.fallback_image_url %}
+                        <img src="{{ section.media.fallback_image_url }}" class="img-fluid ks-section-page-img" alt="{{ section.media.image_alt }}">
+                    {% endif %}
+                    <div class="row g-3">
+                        {% for image_item in section.gallery %}
+                        <div class="col-6">
+                            {% if image_item.image %}
+                                {% image image_item.image fill-800x800 class="img-fluid ks-section-page-img" alt=image_item.image_alt %}
+                            {% elif image_item.fallback_image_url %}
+                                <img src="{{ image_item.fallback_image_url }}" class="img-fluid ks-section-page-img" alt="{{ image_item.image_alt }}">
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% else %}
+                    {% if section.media.image %}
+                        {% image section.media.image fill-1200x820 class="img-fluid ks-section-page-img" alt=section.media.image_alt %}
+                    {% elif section.media.fallback_image_url %}
+                        <img src="{{ section.media.fallback_image_url }}" class="img-fluid ks-section-page-img" alt="{{ section.media.image_alt }}">
+                    {% endif %}
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</section>

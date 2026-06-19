@@ -1,0 +1,20 @@
+{% load wagtailcore_tags wagtailimages_tags %}
+
+{% if card.link_url %}<a href="{{ card.link_url }}" class="ks-section-page-card d-block h-100 overflow-hidden text-decoration-none">{% else %}<div class="ks-section-page-card h-100 overflow-hidden">{% endif %}
+    {% if card.media.image %}
+        {% image card.media.image fill-900x600 class="ks-section-page-card-img" alt=card.media.image_alt %}
+    {% elif card.media.fallback_image_url %}
+        <img src="{{ card.media.fallback_image_url }}" class="ks-section-page-card-img" alt="{{ card.media.image_alt }}">
+    {% endif %}
+    <div class="p-4">
+        <div class="d-flex justify-content-between align-items-start mb-4">
+            {% if card.icon %}<span class="ks-section-pill">{{ card.icon }}</span>{% endif %}
+            {% if card.link_url %}<span class="ks-text-link" aria-hidden="true">↗</span>{% endif %}
+        </div>
+        {% if card.eyebrow %}<p class="small ks-eyebrow mb-3">{{ card.eyebrow }}</p>{% endif %}
+        <h3 class="h4 mb-3">{{ card.title }}</h3>
+        {% if card.description %}<div class="text-secondary mb-4">{{ card.description|richtext }}</div>{% endif %}
+        {% if card.meta %}<p class="small text-secondary mb-0">{{ card.meta }}</p>{% endif %}
+        {% if card.link_label %}<span class="ks-text-link">{{ card.link_label }} <span aria-hidden="true">→</span></span>{% endif %}
+    </div>
+{% if card.link_url %}</a>{% else %}</div>{% endif %}

@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block body_class %}template-homepage template-sectionpage{% endblock %}
+
+{% block content %}
+<main class="ks-section-page">
+    {% for block in page.sections %}
+        {% include "home/sections/section_page/"|add:block.block_type|add:".html" with section=block.value %}
+    {% endfor %}
+</main>
+{% endblock %}

@@ -1090,7 +1090,7 @@ h6 { font-size: var(--ks-h6-size); }
 .template-koderstory-dark .display-6 {
   font-weight: 700;
   line-height: 1.4;
-  letter-spacing: -0.025em;
+  letter-spacing: 0;
 }
 
 .template-koderstory-dark .display-4 {
@@ -1230,6 +1230,73 @@ a.ks-dark-client:hover {
   border-radius: var(--ks-card-radius);
 }
 
+.ks-section-rich h2,
+.ks-section-rich h3 {
+  color: var(--ks-heading-text);
+}
+
+.ks-section-rich blockquote p:last-child,
+.ks-dark-card p:last-child,
+.ks-dark-copy-block p:last-child {
+  margin-bottom: 0;
+}
+
+.ks-dark-copy-block {
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--ks-surface-border) 80%, transparent);
+}
+
+.ks-dark-copy-block:last-child {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+.ks-service-row {
+  display: block;
+  padding: clamp(1.5rem, 4vw, 3rem);
+  color: var(--ks-body-text);
+  background: color-mix(in srgb, var(--ks-body-bg) 92%, var(--ks-surface-bg));
+  border: 1px solid var(--ks-surface-border);
+  border-radius: var(--ks-card-radius);
+}
+
+.ks-service-row:hover {
+  color: var(--ks-body-text);
+  border-color: color-mix(in srgb, var(--ks-link-text) 45%, var(--ks-surface-border));
+}
+
+.ks-service-row__number {
+  display: inline-block;
+  color: color-mix(in srgb, var(--ks-body-text) 55%, transparent);
+  font-size: clamp(2.2rem, 5vw, 3rem);
+  line-height: 1;
+}
+
+.ks-check-row {
+  border-bottom: 1px solid var(--ks-surface-border);
+}
+
+.ks-check-row:first-child {
+  padding-top: 0 !important;
+}
+
+.ks-check-row:last-child {
+  padding-bottom: 0 !important;
+  border-bottom: 0;
+}
+
+.ks-check-row__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 999px;
+  color: #03110e;
+  background: var(--ks-btn-primary-bg);
+  font-weight: 700;
+}
+
 .ks-dark-buttons {
   display: flex;
   flex-wrap: wrap;
@@ -1270,6 +1337,208 @@ a.ks-dark-client:hover {
 .template-koderstory-dark .form-control:focus,
 .template-koderstory-dark .form-select:focus,
 .template-koderstory-dark textarea:focus {
+  background-color: var(--ks-surface-bg);
+  border-color: var(--ks-link-text);
+  color: var(--ks-body-text);
+  box-shadow: none;
+}
+
+.template-sectionpage {
+  background: var(--ks-body-bg);
+  color: var(--ks-body-text);
+  font-size: var(--ks-base-font-size);
+}
+
+.template-sectionpage p,
+.template-sectionpage .lead {
+  font-size: 1rem;
+  line-height: 1.8;
+}
+
+.template-sectionpage h1,
+.template-sectionpage h2,
+.template-sectionpage h3,
+.template-sectionpage h4,
+.template-sectionpage h5,
+.template-sectionpage h6,
+.template-sectionpage .display-4,
+.template-sectionpage .display-5,
+.template-sectionpage .display-6 {
+  font-weight: 700;
+  line-height: 1.4;
+  letter-spacing: 0;
+}
+
+.template-sectionpage .display-4 {
+  font-size: clamp(2.35rem, 5vw, 3.5rem);
+}
+
+.template-sectionpage .display-6 {
+  font-size: clamp(1.85rem, 4vw, 3rem);
+}
+
+.ks-section-page {
+  min-height: 100vh;
+  background: var(--ks-body-bg);
+}
+
+.ks-section-page .ks-section {
+  position: relative;
+  overflow: hidden;
+}
+
+.ks-section-page-panel {
+  background: var(--ks-surface-bg);
+}
+
+.ks-section-page .ks-container {
+  position: relative;
+  z-index: 2;
+}
+
+.ks-section-page-cover {
+  min-height: 75vh;
+  background: var(--ks-body-bg);
+}
+
+.ks-section-page-cover::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background:
+    linear-gradient(90deg, color-mix(in srgb, var(--ks-body-bg) 96%, transparent) 0%, color-mix(in srgb, var(--ks-body-bg) 86%, transparent) 48%, color-mix(in srgb, var(--ks-body-bg) 56%, transparent) 100%),
+    linear-gradient(180deg, color-mix(in srgb, var(--ks-body-bg) 35%, transparent) 0%, color-mix(in srgb, var(--ks-body-bg) 88%, transparent) 100%);
+}
+
+.ks-section-page-cover__image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.ks-section-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  border: 0;
+  border-radius: 999px;
+  padding: 0.45rem 0.9rem;
+  background: color-mix(in srgb, var(--ks-body-text) 8%, transparent);
+  color: var(--ks-muted-text);
+  font-size: 0.95rem;
+  line-height: 1.2;
+}
+
+.ks-section-page-card {
+  color: var(--ks-body-text);
+  background: var(--ks-surface-bg);
+  border: 1px solid var(--ks-surface-border);
+  border-radius: var(--ks-card-radius);
+}
+
+a.ks-section-page-card:hover,
+.ks-section-page-card:hover {
+  color: var(--ks-body-text);
+  border-color: color-mix(in srgb, var(--ks-link-text) 45%, var(--ks-surface-border));
+}
+
+.ks-section-page-card--wide {
+  max-width: 760px;
+  padding: clamp(1.5rem, 4vw, 3rem);
+}
+
+.ks-section-page-card-img {
+  width: 100%;
+  height: 260px;
+  object-fit: cover;
+}
+
+.ks-section-page-clients {
+  padding-block: calc(var(--ks-section-padding) * 0.7);
+}
+
+.ks-section-page-client {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 3.5rem;
+  padding: 0.85rem 0.75rem;
+  color: var(--ks-muted-text);
+  background: color-mix(in srgb, var(--ks-surface-bg) 78%, var(--ks-body-text) 6%);
+  border: 1px solid var(--ks-surface-border);
+  border-radius: var(--ks-card-radius);
+  font-size: 0.95rem;
+}
+
+.ks-section-page-client-logo {
+  display: block;
+  width: auto;
+  max-width: 100%;
+  max-height: 2.5rem;
+  object-fit: contain;
+}
+
+a.ks-section-page-client:hover {
+  color: var(--ks-body-text);
+  border-color: color-mix(in srgb, var(--ks-link-text) 45%, var(--ks-surface-border));
+}
+
+.ks-section-page-img {
+  border-radius: var(--ks-card-radius);
+}
+
+.ks-section-rich blockquote p:last-child,
+.ks-section-page-card p:last-child,
+.ks-section-page-copy-block p:last-child {
+  margin-bottom: 0;
+}
+
+.ks-section-page-copy-block {
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--ks-surface-border) 80%, transparent);
+}
+
+.ks-section-page-copy-block:last-child {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+.ks-section-page-cta-buttons .btn {
+  min-width: 12rem;
+  white-space: nowrap;
+}
+
+.template-sectionpage .btn-success {
+  --bs-btn-bg: var(--ks-btn-primary-bg);
+  --bs-btn-border-color: var(--ks-btn-primary-bg);
+  --bs-btn-color: #03110e;
+  --bs-btn-hover-bg: #ffffff;
+  --bs-btn-hover-border-color: #ffffff;
+  --bs-btn-hover-color: var(--ks-body-bg);
+}
+
+.template-sectionpage .btn-outline-light {
+  --bs-btn-border-color: color-mix(in srgb, var(--ks-body-text) 22%, transparent);
+  --bs-btn-color: var(--ks-body-text);
+  --bs-btn-hover-bg: var(--ks-body-text);
+  --bs-btn-hover-border-color: var(--ks-body-text);
+  --bs-btn-hover-color: var(--ks-body-bg);
+}
+
+.template-sectionpage .form-control,
+.template-sectionpage .form-select,
+.template-sectionpage textarea {
+  background-color: var(--ks-surface-bg);
+  border-color: var(--ks-surface-border);
+  color: var(--ks-body-text);
+}
+
+.template-sectionpage .form-control:focus,
+.template-sectionpage .form-select:focus,
+.template-sectionpage textarea:focus {
   background-color: var(--ks-surface-bg);
   border-color: var(--ks-link-text);
   color: var(--ks-body-text);
@@ -1324,12 +1593,25 @@ a.ks-dark-client:hover {
     padding-block: 4.5rem;
   }
 
+  .ks-section-page .ks-section {
+    padding-block: calc(var(--ks-section-padding) * 0.65);
+  }
+
   .ks-dark-cover {
+    min-height: 100vh;
+  }
+
+  .ks-section-page-cover {
     min-height: 100vh;
   }
 
   .ks-dark-buttons,
   .ks-dark-buttons .btn {
+    width: 100%;
+  }
+
+  .ks-section-page .ks-button-group,
+  .ks-section-page .ks-button-group .btn {
     width: 100%;
   }
 }

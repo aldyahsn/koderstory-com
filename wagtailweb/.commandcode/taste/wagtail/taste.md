@@ -1,5 +1,5 @@
 # wagtail
-- Keep the native `<input type="color">` color picker widget for Wagtail admin color fields — don't replace it with a text input. Users prefer the visual picker over typing CSS color values. Confidence: 0.65
+- Keep the native `<input type="color">` color picker widget for Wagtail admin color fields — don't replace it with a text input. Users prefer the visual picker over typing CSS color values. Confidence: 0.70
 - Button background color should reference the brand color field rather than using a hardcoded default hex. Confidence: 0.60
 - Button style config (border, padding, colors) needs to be implemented across all section layout templates, not just base.html and CSS. Confidence: 0.60
 - Remove the button_shape field — button shape should not be a separate configurable option. Confidence: 0.65

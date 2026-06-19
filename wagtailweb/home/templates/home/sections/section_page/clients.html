@@ -1,0 +1,22 @@
+{% load wagtailimages_tags %}
+
+<section id="{{ section.anchor_id|default:'clients' }}" class="ks-section ks-section-page-panel ks-section-page-clients" data-ks-vertical="center">
+    <div class="container ks-container">
+        {% if section.heading %}<p class="small text-center text-secondary mb-4">{{ section.heading }}</p>{% endif %}
+        <div class="row g-3 text-center">
+            {% for logo in section.logos %}
+            <div class="col-6 col-md">
+                {% if logo.url %}<a href="{{ logo.url }}" class="ks-section-page-client d-block text-decoration-none">{% else %}<div class="ks-section-page-client">{% endif %}
+                    {% if logo.media.image %}
+                        {% image logo.media.image max-220x80 class="ks-section-page-client-logo" alt=logo.media.image_alt %}
+                    {% elif logo.media.fallback_image_url %}
+                        <img src="{{ logo.media.fallback_image_url }}" class="ks-section-page-client-logo" alt="{{ logo.media.image_alt }}">
+                    {% else %}
+                        <span>{{ logo.label }}</span>
+                    {% endif %}
+                {% if logo.url %}</a>{% else %}</div>{% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>

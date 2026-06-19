@@ -1,0 +1,19 @@
+{% load wagtailcore_tags %}
+
+<section id="{{ section.anchor_id|default:'next-step' }}" class="ks-section ks-section-page-panel" data-ks-vertical="center">
+    <div class="container ks-container">
+        <div class="row g-5 align-items-center">
+            <div class="col-lg-8">
+                {% if section.eyebrow %}<p class="ks-eyebrow mb-3">{{ section.eyebrow }}</p>{% endif %}
+                <h2 class="display-6 mt-4 mb-4">{{ section.title }}</h2>
+                {% if section.description %}<div class="text-secondary mb-0">{{ section.description|richtext }}</div>{% endif %}
+            </div>
+            <div class="col-lg-4">
+                <div class="ks-button-group ks-section-page-cta-buttons justify-content-lg-end">
+                    {% if section.primary_button.label %}<a href="{{ section.primary_button.url|default:'#' }}" class="btn btn-success btn-lg rounded-pill px-4">{{ section.primary_button.label }}</a>{% endif %}
+                    {% if section.secondary_button.label %}<a href="{{ section.secondary_button.url|default:'#' }}" class="btn btn-outline-light btn-lg rounded-pill px-4">{{ section.secondary_button.label }}</a>{% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

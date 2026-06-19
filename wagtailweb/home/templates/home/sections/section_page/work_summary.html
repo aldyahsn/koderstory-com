@@ -1,0 +1,27 @@
+{% load wagtailcore_tags wagtailimages_tags %}
+
+<section id="{{ section.anchor_id|default:'summary' }}" class="ks-section ks-section-page-panel" data-ks-vertical="center">
+    <div class="container ks-container">
+        <div class="row g-5 align-items-start">
+            <div class="col-lg-5">
+                {% if section.eyebrow %}<p class="ks-eyebrow mb-3">{{ section.eyebrow }}</p>{% endif %}
+                {% if section.title %}<h2 class="display-6 mt-4 mb-4">{{ section.title }}</h2>{% endif %}
+                {% if section.description %}<div class="text-secondary">{{ section.description|richtext }}</div>{% endif %}
+                {% if section.media.image %}
+                    {% image section.media.image fill-1000x700 class="img-fluid ks-section-page-img mt-4" alt=section.media.image_alt %}
+                {% elif section.media.fallback_image_url %}
+                    <img src="{{ section.media.fallback_image_url }}" class="img-fluid ks-section-page-img mt-4" alt="{{ section.media.image_alt }}">
+                {% endif %}
+            </div>
+            <div class="col-lg-7">
+                <div class="row g-4">
+                    {% for fact in section.facts %}
+                    <div class="col-md-6">
+                        {% include "home/sections/section_page/includes/card.html" with card=fact %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

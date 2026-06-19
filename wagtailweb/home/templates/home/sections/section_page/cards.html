@@ -1,0 +1,125 @@
+{% load wagtailcore_tags wagtailimages_tags %}
+
+<section id="{{ section.anchor_id|default:'list' }}" class="ks-section" data-ks-vertical="center">
+    <div class="container ks-container">
+        {% if section.style == "horizontal" %}
+        <div class="vstack gap-3">
+            {% for card in section.cards %}
+            <a href="{{ card.link_url|default:'#' }}" class="ks-service-row text-decoration-none">
+                <div class="row g-4 align-items-center">
+                    <div class="col-lg-2">
+                        <span class="ks-service-row__number">{{ card.icon|default:forloop.counter }}</span>
+                    </div>
+                    <div class="col-lg-3">
+                        {% if card.eyebrow %}<p class="small ks-eyebrow mb-2">{{ card.eyebrow }}</p>{% endif %}
+                        <h2 class="h4 mb-0">{{ card.title }}</h2>
+                    </div>
+                    <div class="col-lg-5">
+                        {% if card.description %}<div class="text-secondary mb-0">{{ card.description|richtext }}</div>{% endif %}
+                    </div>
+                    <div class="col-lg-2 text-lg-end">
+                        <span class="btn btn-outline-light rounded-pill">{{ card.link_label|default:"Detail" }}</span>
+                    </div>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+        {% elif section.style == "featured" %}
+        {% if section.cards %}
+            {% for card in section.cards %}
+                {% if forloop.first %}
+                <a href="{{ card.link_url|default:'#' }}" class="ks-section-page-card ks-featured-card d-block text-decoration-none mb-5 overflow-hidden">
+                    <div class="row g-0 align-items-center">
+                        <div class="col-lg-6">
+                            {% if card.media.image %}
+                                {% image card.media.image fill-1280x820 class="img-fluid w-100" alt=card.media.image_alt %}
+                            {% elif card.media.fallback_image_url %}
+                                <img src="{{ card.media.fallback_image_url }}" class="img-fluid w-100" alt="{{ card.media.image_alt }}">
+                            {% endif %}
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="p-4 p-lg-5">
+                                {% if card.eyebrow %}<span class="ks-section-pill mb-4">{{ card.eyebrow }}</span>{% endif %}
+                                <h2 class="display-6 mb-4">{{ card.title }}</h2>
+                                {% if card.description %}<div class="text-secondary mb-4">{{ card.description|richtext }}</div>{% endif %}
+                                {% if card.link_label %}<span class="btn btn-outline-light rounded-pill px-4">{{ card.link_label }}</span>{% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </a>
+                <div class="row g-4">
+                {% else %}
+                <div class="col-md-6 col-lg-4">
+                    {% include "home/sections/section_page/includes/card.html" with card=card %}
+                </div>
+                {% endif %}
+            {% endfor %}
+                </div>
+        {% endif %}
+        {% elif section.style == "work" %}
+        <div class="row g-4">
+            {% for card in section.cards %}
+            <div class="{% if forloop.counter == 1 %}col-lg-7{% elif forloop.counter == 2 %}col-md-6 col-lg-5{% else %}col-md-6{% endif %}">
+                {% include "home/sections/section_page/includes/card.html" with card=card %}
+            </div>
+            {% endfor %}
+        </div>
+        {% elif section.style == "steps" %}
+        <div class="row g-5 align-items-end mb-5">
+            <div class="col-lg-7">
+                {% if section.eyebrow %}<p class="small ks-eyebrow mb-3">{{ section.eyebrow }}</p>{% endif %}
+                {% if section.title %}<h2 class="display-6 mb-4">{{ section.title }}</h2>{% endif %}
+                {% if section.description %}<div class="text-secondary mb-0">{{ section.description|richtext }}</div>{% endif %}
+            </div>
+            <div class="col-lg-5 text-lg-end"></div>
+        </div>
+        <div class="row g-4 align-items-stretch">
+            {% for card in section.cards %}
+            <div class="col-lg-4">
+                {% include "home/sections/section_page/includes/card.html" with card=card %}
+            </div>
+            {% endfor %}
+        </div>
+        {% elif section.style == "checklist" %}
+        <div class="row g-5">
+            <div class="col-lg-4">
+                {% if section.eyebrow %}<p class="small ks-eyebrow mb-3">{{ section.eyebrow }}</p>{% endif %}
+                {% if section.title %}<h2 class="display-6 mb-0">{{ section.title }}</h2>{% endif %}
+                {% if section.description %}<div class="text-secondary mt-4">{{ section.description|richtext }}</div>{% endif %}
+            </div>
+            <div class="col-lg-8">
+                <div class="ks-section-page-card p-4 p-lg-5">
+                    {% for card in section.cards %}
+                    <div class="ks-check-row d-flex gap-3 py-4">
+                        <div class="flex-shrink-0">
+                            <span class="ks-check-row__icon">{{ card.icon|default:"✓" }}</span>
+                        </div>
+                        <div>
+                            <h3 class="h5 mb-2">{{ card.title }}</h3>
+                            {% if card.description %}<div class="text-secondary mb-0">{{ card.description|richtext }}</div>{% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="row g-5 mb-5">
+            <div class="col-lg-5">
+                {% if section.eyebrow %}<p class="small ks-eyebrow mb-3">{{ section.eyebrow }}</p>{% endif %}
+                {% if section.title %}<h2 class="display-6 mb-0">{{ section.title }}</h2>{% endif %}
+            </div>
+            <div class="col-lg-7">
+                {% if section.description %}<div class="text-secondary">{{ section.description|richtext }}</div>{% endif %}
+            </div>
+        </div>
+        <div class="row g-4">
+            {% for card in section.cards %}
+            <div class="col-md-6{% if section.columns == 'three' %} col-lg-4{% endif %}">
+                {% include "home/sections/section_page/includes/card.html" with card=card %}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+</section>

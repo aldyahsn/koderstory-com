@@ -1,0 +1,27 @@
+{% load wagtailcore_tags wagtailimages_tags %}
+
+<section id="{{ section.anchor_id|default:'content' }}" class="ks-section ks-section-page-panel" data-ks-vertical="center">
+    <div class="container ks-container">
+        <div class="row g-5">
+            <div class="col-lg-5">
+                {% if section.eyebrow %}<p class="small ks-eyebrow mb-3">{{ section.eyebrow }}</p>{% endif %}
+                {% if section.title %}<h2 class="display-6 mb-4">{{ section.title }}</h2>{% endif %}
+                {% if section.description %}<div class="text-secondary">{{ section.description|richtext }}</div>{% endif %}
+            </div>
+            <div class="col-lg-7">
+                {% for item in section.items %}
+                <div class="ks-section-page-copy-block mb-5">
+                    {% if item.eyebrow %}<p class="small ks-eyebrow mb-3">{{ item.eyebrow }}</p>{% endif %}
+                    {% if item.heading %}<h3 class="h3 mb-3">{{ item.heading }}</h3>{% endif %}
+                    {% if item.body %}<div class="text-secondary">{{ item.body|richtext }}</div>{% endif %}
+                    {% if item.media.image %}
+                        {% image item.media.image fill-1000x650 class="img-fluid ks-section-page-img mt-4" alt=item.media.image_alt %}
+                    {% elif item.media.fallback_image_url %}
+                        <img src="{{ item.media.fallback_image_url }}" class="img-fluid ks-section-page-img mt-4" alt="{{ item.media.image_alt }}">
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>

@@ -9,6 +9,9 @@ from home.models import (
     DesignSystemSettings,
     HomeFeature,
     HomePage,
+    SectionFormField,
+    SectionFormPage,
+    SectionPage,
 )
 
 
@@ -103,10 +106,10 @@ class HomeTests(WagtailPageTestCase):
     def test_global_design_settings_model_is_available(self):
         settings = DesignSystemSettings(
             site=self.site,
-            brand_color="#123456",
+            body_font="Inter",
         )
         settings.save()
-        self.assertEqual(settings.brand_color, "#123456")
+        self.assertEqual(settings.body_font, "Inter")
 
     def test_global_settings_editor_is_organized_into_tabs(self):
         self.assertEqual(DesignSystemSettings._meta.verbose_name, "Global settings")
@@ -137,3 +140,95 @@ class HomeTests(WagtailPageTestCase):
         self.assertIn('class="text-start"', rendered)
         self.assertIn('class="text-center"', rendered)
         self.assertIn('class="text-end"', rendered)
+
+
+class SectionPageTests(WagtailPageTestCase):
+    def setUp(self):
+        root = Page.get_first_root_node()
+        self.site = Site.objects.create(
+            hostname="sections.test",
+            root_page=root,
+            is_default_site=True,
+        )
+        DesignSystemSettings.objects.create(site=self.site)
+        self.homepage = HomePage(title="Section Home", slug="section-home")
+        root.add_child(instance=self.homepage)
+
+    def test_section_page_renders_reusable_sections(self):
+        page = SectionPage(
+            title="Services",
+            slug="services",
+            sections=[
+                ("hero", {
+                    "style": "simple",
+                    "title": "Workflow systems for growing teams",
+                    "description": "<p>Plan, build, and improve useful systems.</p>",
+                }),
+                ("cards", {
+                    "title": "Services",
+                    "cards": [
+                        {
+                            "title": "Custom System",
+                            "description": "<p>Replace manual workflow with a clearer tool.</p>",
+                            "icon": "01",
+                        }
+                    ],
+                }),
+                ("article_body", {
+                    "body": [
+                        ("section", {
+                            "heading": "Article section",
+                            "body": "<p>Useful article copy.</p>",
+                        }),
+                        ("quote", "<p>A practical system follows the workflow.</p>"),
+                    ],
+                }),
+                ("cta", {
+                    "title": "Ready to discuss a workflow?",
+                    "primary_button": {"label": "Contact", "url": "/contact/"},
+                }),
+            ],
+        )
+        self.homepage.add_child(instance=page)
+
+        response = self.client.get(page.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "home/section_page.html")
+        self.assertContains(response, "Workflow systems for growing teams")
+        self.assertContains(response, "Custom System")
+        self.assertContains(response, "Article section")
+        self.assertContains(response, "Ready to discuss a workflow?")
+
+    def test_section_form_page_renders_contact_form_section(self):
+        page = SectionFormPage(
+            title="Contact",
+            slug="contact",
+            sections=[
+                ("contact", {
+                    "title": "Ceritakan kebutuhan awal Anda",
+                    "description": "<p>Tell us the workflow you want to improve.</p>",
+                    "cards": [
+                        {
+                            "title": "Current workflow",
+                            "description": "<p>How the process works today.</p>",
+                            "icon": "01",
+                        }
+                    ],
+                }),
+            ],
+        )
+        self.homepage.add_child(instance=page)
+        SectionFormField.objects.create(
+            page=page,
+            label="Email",
+            field_type="email",
+            required=True,
+            sort_order=0,
+        )
+
+        response = self.client.get(page.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Ceritakan kebutuhan awal Anda")
+        self.assertContains(response, "Current workflow")
+        self.assertContains(response, "Send message")
+        self.assertContains(response, "Email")

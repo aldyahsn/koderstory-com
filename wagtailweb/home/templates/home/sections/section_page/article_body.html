@@ -1,0 +1,31 @@
+{% load wagtailcore_tags wagtailimages_tags %}
+
+<article id="{{ section.anchor_id|default:'article' }}" class="ks-section ks-section-page-panel" data-ks-vertical="center">
+    <div class="container ks-container">
+        <div class="row justify-content-center">
+            <div class="col-lg-9">
+                {% if section.meta %}<p class="small ks-eyebrow mb-4">{{ section.meta }}</p>{% endif %}
+                {% if section.cover.image %}
+                    {% image section.cover.image fill-1600x900 class="img-fluid ks-section-page-img mb-5" alt=section.cover.image_alt %}
+                {% elif section.cover.fallback_image_url %}
+                    <img src="{{ section.cover.fallback_image_url }}" class="img-fluid ks-section-page-img mb-5" alt="{{ section.cover.image_alt }}">
+                {% endif %}
+                <div class="ks-section-rich">
+                    {% for item in section.body %}
+                        {% if item.block_type == "section" %}
+                        <section class="mb-5">
+                            {% if item.value.eyebrow %}<p class="small ks-eyebrow mb-3">{{ item.value.eyebrow }}</p>{% endif %}
+                            {% if item.value.heading %}<h2 class="h3 mb-4">{{ item.value.heading }}</h2>{% endif %}
+                            {% if item.value.body %}<div class="text-secondary">{{ item.value.body|richtext }}</div>{% endif %}
+                        </section>
+                        {% elif item.block_type == "quote" %}
+                        <blockquote class="ks-section-page-card p-4 p-lg-5 my-5">
+                            <div class="h4 mb-0">{{ item.value|richtext }}</div>
+                        </blockquote>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</article>

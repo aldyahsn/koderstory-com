@@ -32,6 +32,7 @@ from home.blocks import (
     DarkFlatCardListBlock,
     DarkFlatClientListBlock,
     FooterColumnsBlock,
+    SectionPageSectionsBlock,
 )
 
 from home.widgets import ColorInputWidget
@@ -683,7 +684,7 @@ class HomeClientLogo(Orderable):
         on_delete=models.SET_NULL,
         related_name="+",
     )
-    url = models.CharField(max_length=255, blank=True)
+    url = models.CharField(max_length=255, blank=True, default="")
 
     panels = [
         FieldRowPanel([FieldPanel("name"), FieldPanel("url")]),
@@ -705,7 +706,7 @@ class HomeFeature(Orderable):
     title = models.CharField(max_length=120)
     description = RichTextField(blank=True, features=RICH_TEXT_FEATURES)
     link_label = models.CharField(max_length=80, blank=True)
-    link_url = models.CharField(max_length=255, blank=True)
+    link_url = models.CharField(max_length=255, blank=True, default="")
 
     panels = [
         FieldRowPanel([FieldPanel("icon"), FieldPanel("title")]),
@@ -820,7 +821,7 @@ class NavbarSettings(ClusterableSiteSetting):
         max_length=80, blank=True, verbose_name="CTA button label",
     )
     cta_url = models.CharField(
-        max_length=255, blank=True, verbose_name="CTA button URL",
+        max_length=255, blank=True, default="", verbose_name="CTA button URL",
     )
     nav_group = models.ForeignKey(
         "home.NavigationLinkGroup", null=True, blank=True,
@@ -1099,7 +1100,7 @@ class NavigationLink(Orderable):
         NavigationLinkGroup, related_name="links", on_delete=models.CASCADE,
     )
     label = models.CharField(max_length=80)
-    url = models.CharField(max_length=255, blank=True)
+    url = models.CharField(max_length=255, blank=True, default="")
     parent = models.ForeignKey(
         "self", null=True, blank=True, on_delete=models.SET_NULL,
         related_name="children",
@@ -1141,7 +1142,7 @@ class SocialLink(Orderable):
         SocialMediaGroup, related_name="links", on_delete=models.CASCADE,
     )
     label = models.CharField(max_length=80)
-    url = models.CharField(max_length=255, blank=True)
+    url = models.CharField(max_length=255, blank=True, default="")
     platform = models.CharField(
         max_length=20,
         choices=[
@@ -1433,13 +1434,13 @@ class HomePage(Page):
     )
     hero_announcement = models.CharField(max_length=160, blank=True)
     hero_announcement_link_label = models.CharField(max_length=80, blank=True)
-    hero_announcement_link_url = models.CharField(max_length=255, blank=True)
+    hero_announcement_link_url = models.CharField(max_length=255, blank=True, default="")
     hero_title = models.CharField(max_length=180, blank=True)
     hero_description = RichTextField(blank=True, features=RICH_TEXT_FEATURES)
     hero_primary_button_label = models.CharField(max_length=80, blank=True)
-    hero_primary_button_url = models.CharField(max_length=255, blank=True)
+    hero_primary_button_url = models.CharField(max_length=255, blank=True, default="")
     hero_secondary_button_label = models.CharField(max_length=80, blank=True)
-    hero_secondary_button_url = models.CharField(max_length=255, blank=True)
+    hero_secondary_button_url = models.CharField(max_length=255, blank=True, default="")
     hero_image = models.ForeignKey(
         "wagtailimages.Image",
         null=True,
@@ -1495,11 +1496,11 @@ class HomePage(Page):
     clients_description = RichTextField(blank=True, features=RICH_TEXT_FEATURES)
     clients_cta_text = models.CharField(max_length=180, blank=True)
     clients_cta_label = models.CharField(max_length=80, blank=True)
-    clients_cta_url = models.CharField(max_length=255, blank=True)
+    clients_cta_url = models.CharField(max_length=255, blank=True, default="")
     clients_primary_button_label = models.CharField(max_length=80, blank=True)
-    clients_primary_button_url = models.CharField(max_length=255, blank=True)
+    clients_primary_button_url = models.CharField(max_length=255, blank=True, default="")
     clients_secondary_button_label = models.CharField(max_length=80, blank=True)
-    clients_secondary_button_url = models.CharField(max_length=255, blank=True)
+    clients_secondary_button_url = models.CharField(max_length=255, blank=True, default="")
 
     features_enabled = models.BooleanField(default=True, verbose_name="Section enabled")
     features_layout = models.CharField(
@@ -1545,7 +1546,7 @@ class HomePage(Page):
     )
     features_image_alt = models.CharField(max_length=120, blank=True)
     features_button_label = models.CharField(max_length=80, blank=True)
-    features_button_url = models.CharField(max_length=255, blank=True)
+    features_button_url = models.CharField(max_length=255, blank=True, default="")
     features_testimonial_quote = RichTextField(blank=True, features=RICH_TEXT_FEATURES)
     features_testimonial_name = models.CharField(max_length=100, blank=True)
     features_testimonial_role = models.CharField(max_length=120, blank=True)
@@ -1593,9 +1594,9 @@ class HomePage(Page):
     cta_title = models.CharField(max_length=180, blank=True)
     cta_description = RichTextField(blank=True, features=RICH_TEXT_FEATURES)
     cta_primary_button_label = models.CharField(max_length=80, blank=True)
-    cta_primary_button_url = models.CharField(max_length=255, blank=True)
+    cta_primary_button_url = models.CharField(max_length=255, blank=True, default="")
     cta_secondary_button_label = models.CharField(max_length=80, blank=True)
-    cta_secondary_button_url = models.CharField(max_length=255, blank=True)
+    cta_secondary_button_url = models.CharField(max_length=255, blank=True, default="")
     cta_image = models.ForeignKey(
         "wagtailimages.Image",
         null=True,
@@ -2101,7 +2102,68 @@ class HomePage(Page):
                 )
 
 
+class SectionPage(Page):
+    template = "home/section_page.html"
+    parent_page_types = ["home.HomePage", "home.SectionPage"]
+    subpage_types = ["home.SectionPage"]
+
+    sections = StreamField(SectionPageSectionsBlock(), blank=True, use_json_field=True)
+
+    content_panels = Page.content_panels + [
+        MultiFieldPanel(
+            [FieldPanel("sections")],
+            heading="Page sections",
+            classname="ks-component-group",
+        ),
+    ]
+
+    edit_handler = TabbedInterface(
+        [
+            ObjectList(content_panels, heading="Content"),
+            ObjectList(Page.promote_panels, heading="Promote"),
+            ObjectList(Page.settings_panels, heading="Settings"),
+        ]
+    )
+
+    class Meta:
+        verbose_name = "Section page"
+
+
+class SectionFormPage(AbstractEmailForm):
+    template = "home/section_page.html"
+    landing_page_template = "home/section_form_landing.html"
+    parent_page_types = ["home.HomePage", "home.SectionPage"]
+    subpage_types = []
+
+    sections = StreamField(SectionPageSectionsBlock(), blank=True, use_json_field=True)
+
+    content_panels = AbstractEmailForm.content_panels + [
+        MultiFieldPanel(
+            [FieldPanel("sections")],
+            heading="Page sections",
+            classname="ks-component-group",
+        ),
+    ]
+
+    edit_handler = TabbedInterface(
+        [
+            ObjectList(content_panels, heading="Content"),
+            ObjectList([FormSubmissionsPanel()], heading="Submissions"),
+            ObjectList(Page.promote_panels, heading="Promote"),
+            ObjectList(Page.settings_panels, heading="Settings"),
+        ]
+    )
+
+    class Meta:
+        verbose_name = "Section form page"
+
+
+class SectionFormField(AbstractFormField):
+    page = ParentalKey("home.SectionFormPage", on_delete=models.CASCADE, related_name="form_fields")
+
+
 class ServicePage(Page):
+    parent_page_types = []
     subpage_types = []
 
     SECTION_HEIGHT_CHOICES = HomePage.SECTION_HEIGHT_CHOICES
@@ -2160,9 +2222,9 @@ class ServicePage(Page):
     header_title = models.CharField(max_length=180, blank=True)
     header_description = RichTextField(blank=True, features=RICH_TEXT_FEATURES)
     header_primary_button_label = models.CharField(max_length=80, blank=True)
-    header_primary_button_url = models.CharField(max_length=255, blank=True)
+    header_primary_button_url = models.CharField(max_length=255, blank=True, default="")
     header_secondary_button_label = models.CharField(max_length=80, blank=True)
-    header_secondary_button_url = models.CharField(max_length=255, blank=True)
+    header_secondary_button_url = models.CharField(max_length=255, blank=True, default="")
     header_image = models.ForeignKey("wagtailimages.Image", null=True, blank=True, on_delete=models.SET_NULL, related_name="+")
     header_image_alt = models.CharField(max_length=120, blank=True)
     header_overlay_color = models.CharField(max_length=32, blank=True, default="#0f172a", verbose_name="Overlay color")
@@ -2429,7 +2491,7 @@ class ServicePageServiceItem(Orderable):
     image = models.ForeignKey("wagtailimages.Image", null=True, blank=True, on_delete=models.SET_NULL, related_name="+")
     image_alt = models.CharField(max_length=120, blank=True)
     link_label = models.CharField(max_length=80, blank=True)
-    link_url = models.CharField(max_length=255, blank=True)
+    link_url = models.CharField(max_length=255, blank=True, default="")
 
     panels = [
         FieldRowPanel([FieldPanel("title"), FieldPanel("subtitle")]),
@@ -2501,9 +2563,9 @@ class ServiceDetailPage(Page):
     header_title = models.CharField(max_length=180, blank=True)
     header_description = RichTextField(blank=True, features=RICH_TEXT_FEATURES)
     header_primary_button_label = models.CharField(max_length=80, blank=True)
-    header_primary_button_url = models.CharField(max_length=255, blank=True)
+    header_primary_button_url = models.CharField(max_length=255, blank=True, default="")
     header_secondary_button_label = models.CharField(max_length=80, blank=True)
-    header_secondary_button_url = models.CharField(max_length=255, blank=True)
+    header_secondary_button_url = models.CharField(max_length=255, blank=True, default="")
     header_image = models.ForeignKey("wagtailimages.Image", null=True, blank=True, on_delete=models.SET_NULL, related_name="+")
     header_image_alt = models.CharField(max_length=120, blank=True)
     header_overlay_color = models.CharField(max_length=32, blank=True, default="#0f172a", verbose_name="Overlay color")
@@ -2550,7 +2612,7 @@ class ServiceDetailPage(Page):
     features_image = models.ForeignKey("wagtailimages.Image", null=True, blank=True, on_delete=models.SET_NULL, related_name="+")
     features_image_alt = models.CharField(max_length=120, blank=True)
     features_button_label = models.CharField(max_length=80, blank=True)
-    features_button_url = models.CharField(max_length=255, blank=True)
+    features_button_url = models.CharField(max_length=255, blank=True, default="")
     features_testimonial_quote = RichTextField(blank=True, features=RICH_TEXT_FEATURES)
     features_testimonial_name = models.CharField(max_length=100, blank=True)
     features_testimonial_role = models.CharField(max_length=120, blank=True)
@@ -2567,9 +2629,9 @@ class ServiceDetailPage(Page):
     cta_title = models.CharField(max_length=180, blank=True)
     cta_description = RichTextField(blank=True, features=RICH_TEXT_FEATURES)
     cta_primary_button_label = models.CharField(max_length=80, blank=True)
-    cta_primary_button_url = models.CharField(max_length=255, blank=True)
+    cta_primary_button_url = models.CharField(max_length=255, blank=True, default="")
     cta_secondary_button_label = models.CharField(max_length=80, blank=True)
-    cta_secondary_button_url = models.CharField(max_length=255, blank=True)
+    cta_secondary_button_url = models.CharField(max_length=255, blank=True, default="")
     cta_image = models.ForeignKey("wagtailimages.Image", null=True, blank=True, on_delete=models.SET_NULL, related_name="+")
     cta_image_alt = models.CharField(max_length=120, blank=True)
 
@@ -2881,7 +2943,7 @@ class ServiceDetailBentoItem(Orderable):
     image = models.ForeignKey("wagtailimages.Image", null=True, blank=True, on_delete=models.SET_NULL, related_name="+")
     image_alt = models.CharField(max_length=120, blank=True)
     link_label = models.CharField(max_length=80, blank=True)
-    link_url = models.CharField(max_length=255, blank=True)
+    link_url = models.CharField(max_length=255, blank=True, default="")
 
     panels = [
         FieldRowPanel([FieldPanel("label"), FieldPanel("title")]),
@@ -2900,7 +2962,7 @@ class ServiceDetailFeature(Orderable):
     title = models.CharField(max_length=120)
     description = RichTextField(blank=True, features=RICH_TEXT_FEATURES)
     link_label = models.CharField(max_length=80, blank=True)
-    link_url = models.CharField(max_length=255, blank=True)
+    link_url = models.CharField(max_length=255, blank=True, default="")
 
     panels = [
         FieldRowPanel([FieldPanel("icon"), FieldPanel("title")]),
@@ -2964,9 +3026,9 @@ class BlogIndexPage(Page):
     header_title = models.CharField(max_length=180, blank=True)
     header_description = RichTextField(blank=True, features=RICH_TEXT_FEATURES)
     header_primary_button_label = models.CharField(max_length=80, blank=True)
-    header_primary_button_url = models.CharField(max_length=255, blank=True)
+    header_primary_button_url = models.CharField(max_length=255, blank=True, default="")
     header_secondary_button_label = models.CharField(max_length=80, blank=True)
-    header_secondary_button_url = models.CharField(max_length=255, blank=True)
+    header_secondary_button_url = models.CharField(max_length=255, blank=True, default="")
     header_image = models.ForeignKey("wagtailimages.Image", null=True, blank=True, on_delete=models.SET_NULL, related_name="+")
     header_image_alt = models.CharField(max_length=120, blank=True)
     header_overlay_color = models.CharField(max_length=32, blank=True, default="#0f172a", verbose_name="Overlay color")
@@ -2994,9 +3056,9 @@ class BlogIndexPage(Page):
     cta_title = models.CharField(max_length=180, blank=True)
     cta_description = RichTextField(blank=True, features=RICH_TEXT_FEATURES)
     cta_primary_button_label = models.CharField(max_length=80, blank=True)
-    cta_primary_button_url = models.CharField(max_length=255, blank=True)
+    cta_primary_button_url = models.CharField(max_length=255, blank=True, default="")
     cta_secondary_button_label = models.CharField(max_length=80, blank=True)
-    cta_secondary_button_url = models.CharField(max_length=255, blank=True)
+    cta_secondary_button_url = models.CharField(max_length=255, blank=True, default="")
     cta_image = models.ForeignKey("wagtailimages.Image", null=True, blank=True, on_delete=models.SET_NULL, related_name="+")
     cta_image_alt = models.CharField(max_length=120, blank=True)
 
@@ -3206,7 +3268,7 @@ class BlogIndexItem(Orderable):
     image = models.ForeignKey("wagtailimages.Image", null=True, blank=True, on_delete=models.SET_NULL, related_name="+")
     image_alt = models.CharField(max_length=120, blank=True)
     link_label = models.CharField(max_length=80, blank=True)
-    link_url = models.CharField(max_length=255, blank=True)
+    link_url = models.CharField(max_length=255, blank=True, default="")
 
     panels = [
         FieldRowPanel([FieldPanel("category"), FieldPanel("title")]),
@@ -3513,12 +3575,12 @@ class DarkFlatPageMixin(models.Model):
     header_title = models.CharField(max_length=220, blank=True)
     header_description = RichTextField(blank=True, features=RICH_TEXT_FEATURES)
     header_primary_button_label = models.CharField(max_length=80, blank=True)
-    header_primary_button_url = models.CharField(max_length=255, blank=True)
+    header_primary_button_url = models.CharField(max_length=255, blank=True, default="")
     header_secondary_button_label = models.CharField(max_length=80, blank=True)
-    header_secondary_button_url = models.CharField(max_length=255, blank=True)
+    header_secondary_button_url = models.CharField(max_length=255, blank=True, default="")
     header_image = models.ForeignKey("wagtailimages.Image", null=True, blank=True, on_delete=models.SET_NULL, related_name="+")
     header_image_alt = models.CharField(max_length=140, blank=True)
-    header_fallback_image_url = models.URLField(blank=True, max_length=500)
+    header_fallback_image_url = models.URLField(blank=True, max_length=500, default="")
 
     content_enabled = models.BooleanField(default=True, verbose_name="Section enabled")
     content_layout = models.CharField(max_length=40, choices=DARK_FLAT_LAYOUT_CHOICES, default=DARK_FLAT_LAYOUT, verbose_name="Layout")
@@ -3555,9 +3617,9 @@ class DarkFlatPageMixin(models.Model):
     cta_title = models.CharField(max_length=220, blank=True)
     cta_description = RichTextField(blank=True, features=RICH_TEXT_FEATURES)
     cta_primary_button_label = models.CharField(max_length=80, blank=True)
-    cta_primary_button_url = models.CharField(max_length=255, blank=True)
+    cta_primary_button_url = models.CharField(max_length=255, blank=True, default="")
     cta_secondary_button_label = models.CharField(max_length=80, blank=True)
-    cta_secondary_button_url = models.CharField(max_length=255, blank=True)
+    cta_secondary_button_url = models.CharField(max_length=255, blank=True, default="")
 
     header_theme = models.ForeignKey(ColorTheme, null=True, blank=True, on_delete=models.SET_NULL, related_name="+", verbose_name="Header color theme")
     content_theme = models.ForeignKey(ColorTheme, null=True, blank=True, on_delete=models.SET_NULL, related_name="+", verbose_name="Content color theme")

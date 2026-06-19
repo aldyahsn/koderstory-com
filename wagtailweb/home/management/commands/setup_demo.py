@@ -116,9 +116,10 @@ class Command(BaseCommand):
         nav_group = NavigationLinkGroup.objects.create(name="Main navigation")
         nav_links = [
             ("Home", "/"),
-            ("Features", "#features"),
-            ("Pricing", "#cta"),
-            ("About", "#"),
+            ("Services", "/services/"),
+            ("Industries", "/industries/"),
+            ("Work", "/work/"),
+            ("Resources", "/resources/"),
         ]
         for i, (label, url) in enumerate(nav_links, start=1):
             NavigationLink.objects.create(group=nav_group, label=label, url=url, sort_order=i)
@@ -142,8 +143,8 @@ class Command(BaseCommand):
             logo_text="KoderStory",
             sticky=True,
             nav_group=nav_group,
-            cta_label="Get started",
-            cta_url="#cta",
+            cta_label="Konsultasikan Sistem",
+            cta_url="/contact/",
         )
 
         # ── Seed footer settings with StreamField columns ──
@@ -167,16 +168,16 @@ class Command(BaseCommand):
                 }),
                 ("newsletter", {
                     "width": 25,
-                    "heading": "Stay updated",
-                    "description": "<p>Get the latest news and updates.</p>",
+                    "heading": "Discuss a project",
+                    "description": "<p>Ceritakan workflow yang ingin dirapikan.</p>",
                     "placeholder_text": "Your email",
-                    "button_label": "Subscribe",
-                    "button_url": "#",
+                    "button_label": "Contact",
+                    "button_url": "/contact/",
                 }),
                 ("text", {
                     "width": 25,
                     "heading": "About",
-                    "body": "<p>Building clear, maintainable websites with Wagtail.</p>",
+                    "body": "<p>Membantu bisnis bertransformasi dari workflow manual menjadi sistem digital yang lebih rapi dan scalable.</p>",
                 }),
             ],
         )
