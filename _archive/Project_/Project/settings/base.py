@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     "Project.home",
     "Project.images",
     "Project.navigation",
+    "Project.typography",
     "Project.news",
     "Project.search",
     "Project.standardpages",
